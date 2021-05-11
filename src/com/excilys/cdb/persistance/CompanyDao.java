@@ -19,7 +19,7 @@ public class CompanyDao {
 	 */
 	public static List<Company> getCompaniesList() throws SQLException {
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name FROM company";
+		String request = "SELECT id, name FROM company ORDER BY id";
 		PreparedStatement statement = dbConnection.prepareStatement(request);
 		ResultSet resultSet = statement.executeQuery();
 		
