@@ -20,6 +20,16 @@ public class Input {
 		}
 		return scanner;
 	}
+	
+	/**
+	 * Close the input
+	 */
+	public static void close() {
+		if (scanner != null) {
+			scanner.close();
+			scanner = null;
+		}
+	}
 
 	/**
 	 * Display a prompt for the user to indicate that his input is attempted
@@ -47,8 +57,76 @@ public class Input {
 	public static Integer readInteger() throws InputMismatchException {
 		displayPrompt();
 		Scanner scanner = getScanner();
-		Integer input = scanner.nextInt();
-		return input;
+		String input = scanner.nextLine();
+		Integer output;
+		try {
+			output = Integer.valueOf(input);
+		}
+		catch (NumberFormatException e) {
+			throw new InputMismatchException();
+		}
+		return output;
+	}
+	
+	/**
+	 * Return a valid integer write by user
+	 * @return the integer
+	 */
+	public static Integer readValidInteger() {
+		boolean isValid = false;
+		Integer integer = null;
+		while (!isValid) {
+			try {
+				integer = readInteger();
+				isValid = true;
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Invalid number, please retry");
+			}
+		}
+		return integer;
+	}
+	
+	/**
+	 * Read a Integer write by user
+	 * @return the integer or null
+	 * @throws InputMismatchException
+	 */
+	public static Integer readIntegerOrNull() throws InputMismatchException {
+		System.out.println("(number or \"null\")");
+		displayPrompt();
+		Scanner scanner = getScanner();
+		String input = scanner.nextLine();
+		if (input.equals("null")) {
+			return null;
+		}
+		Integer output;
+		try {
+			output = Integer.valueOf(input);
+		}
+		catch (NumberFormatException e) {
+			throw new InputMismatchException();
+		}
+		return output;
+	}
+	
+	/**
+	 * Return a valid integer write by user
+	 * @return the integer or null
+	 */
+	public static Integer readValidIntegerOrNull() {
+		boolean isValid = false;
+		Integer integer = null;
+		while (!isValid) {
+			try {
+				integer = readInteger();
+				isValid = true;
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Invalid number, please retry");
+			}
+		}
+		return integer;
 	}
 	
 	/**
@@ -57,7 +135,7 @@ public class Input {
 	 * @throws InputMismatchException
 	 */
 	public static LocalDate readLocalDate() throws InputMismatchException {
-		System.out.println("(format YYYY/MM/DD or \"null\"");
+		System.out.println("(format YYYY/MM/DD or \"null\")");
 		String input = readString();
 		if (input.equals("null")) {
 			return null;
@@ -74,9 +152,21 @@ public class Input {
 	}
 	
 	/**
-	 * Close the input
+	 * Return a valid local date write by user
+	 * @return the localDate or null
 	 */
-	public static void close() {
-		scanner.close();
+	public static LocalDate readValidLocalDate() {
+		boolean isValid = false;
+		LocalDate localDate = null;
+		while (!isValid) {
+			try {
+				localDate = readLocalDate();
+				isValid = true;
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Invalid date, please retry");
+			}
+		}
+		return localDate;
 	}
 }
