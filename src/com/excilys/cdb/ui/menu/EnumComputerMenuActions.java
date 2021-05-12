@@ -2,17 +2,15 @@ package com.excilys.cdb.ui.menu;
 
 import java.util.NoSuchElementException;
 
-public enum EnumPrincipalMenuActions {
-	LIST_ALL_COMPUTERS(1, "List all computers"),
-	LIST_ALL_COMPANIES(2, "List all companies"),
-	SELECT_COMPUTER(3, "Select a computer"),
-	ADD_NEW_COMPUTER(4, "Add a new computer"),
+public enum EnumComputerMenuActions {
+	EDIT_COMPUTER(1, "Edit this computer"),
+	DELETE_COMPUTER(2, "Delete this computer"),
 	EXIT(9, "Exit");
 
 	private final int value;
 	private final String representation;
 	
-	EnumPrincipalMenuActions(int value, String representation) {
+	EnumComputerMenuActions(int value, String representation) {
 		this.value = value;
 		this.representation = representation;
 	}
@@ -27,9 +25,9 @@ public enum EnumPrincipalMenuActions {
 	 * @return the correspondent enumeration value or an exception
 	 * @throws NoSuchElementException
 	 */
-	public static EnumPrincipalMenuActions getAction(int actionId) throws NoSuchElementException{
-		EnumPrincipalMenuActions output = null;
-		for (EnumPrincipalMenuActions myEnum : EnumPrincipalMenuActions.values()) {
+	public static EnumComputerMenuActions getAction(int actionId) throws NoSuchElementException{
+		EnumComputerMenuActions output = null;
+		for (EnumComputerMenuActions myEnum : EnumComputerMenuActions.values()) {
 			if (myEnum.value == actionId) {
 				return myEnum;
 			}

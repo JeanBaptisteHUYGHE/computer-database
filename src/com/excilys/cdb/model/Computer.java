@@ -19,14 +19,14 @@ public class Computer {
 		this.setName(name);
 	}
 	
-	public Computer(String name, LocalDate introductionDate, LocalDate discontinueDate, Company manufacturer) {
+	public Computer(String name, LocalDate introductionDate, LocalDate discontinueDate, Company manufacturer) throws IllegalArgumentException {
 		this.setName(name);
 		this.setIntroductionDate(introductionDate);
 		this.setDiscontinueDate(discontinueDate);
 		this.setManufacturer(manufacturer);
 	}
 	
-	public Computer(Integer id, String name, LocalDate introductionDate, LocalDate discontinueDate, Company manufacturer) {
+	public Computer(Integer id, String name, LocalDate introductionDate, LocalDate discontinueDate, Company manufacturer) throws IllegalArgumentException {
 		this.setId(id);
 		this.setName(name);
 		this.setIntroductionDate(introductionDate);
@@ -51,9 +51,23 @@ public class Computer {
 
 	public void setName(String name) throws IllegalArgumentException {
 		if (name == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Computer can't be null.");
 		}
 		this.name = name;
+	}
+	
+	/**
+	 * Return if the date is valid (=if it can be set in a SQL "timestamp" type)
+	 * @param localDate
+	 * @return if the date is valid
+	 */
+	private static boolean isValidDate(LocalDate localDate) {
+		if (localDate == null) {
+			return true;
+		}
+		LocalDate minDate = LocalDate.of(1970, 1, 1);
+		LocalDate maxDate = LocalDate.of(2038, 1, 19);
+		return (localDate.isAfter(minDate) && localDate.isBefore(maxDate));
 	}
 
 	public LocalDate getIntroductionDate() {
@@ -61,8 +75,11 @@ public class Computer {
 	}
 
 	public void setIntroductionDate(LocalDate introductionDate) {
-		if (introductionDate != null && this.discontinueDate != null && introductionDate.compareTo(this.discontinueDate) > 0) {
-			throw new IllegalArgumentException();
+		if (introductionDate != null && this.discontinueDate != null && introductionDate.isAfter(discontinueDate)) {
+			throw new IllegalArgumentException("Invalid introduction date, introduction date must be before discontinueD date.");
+		}
+		if (!isValidDate(introductionDate)) {
+			throw new IllegalArgumentException("Invalid introduction date: date too extrem");
 		}
 		this.introductionDate = introductionDate;
 	}
@@ -72,8 +89,11 @@ public class Computer {
 	}
 
 	public void setDiscontinueDate(LocalDate discontinueDate) throws IllegalArgumentException {
-		if (discontinueDate != null && this.introductionDate != null && discontinueDate.compareTo(this.introductionDate) < 0) {
-			throw new IllegalArgumentException();
+		if (discontinueDate != null && this.introductionDate != null && discontinueDate.isBefore(introductionDate)) {
+			throw new IllegalArgumentException("Invalid discontinue date, discontinue date must be after introduction date.");
+		}
+		if (!isValidDate(discontinueDate)) {
+			throw new IllegalArgumentException("Invalid discontinue date: date too extrem");
 		}
 		this.discontinueDate = discontinueDate;
 	}

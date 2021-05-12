@@ -21,25 +21,31 @@ public class ComputerDaoMapper {
 	public static List<Computer> getComputersList(ResultSet resultSet) throws SQLException {
 		ArrayList<Computer> computersList = new ArrayList<Computer>();
 		while (resultSet.next()) {
-			Integer computerId = resultSet.getInt("computer.id");
-			String computerName = resultSet.getString("computer.name");
+			Integer computerId = resultSet.getInt("id");
+			String computerName = resultSet.getString("name");
             LocalDate introductionDate = null;
             try {
-            	introductionDate = resultSet.getDate("computer.introduced").toLocalDate();
+            	introductionDate = resultSet.getDate("introduced").toLocalDate();
             }
             catch (NullPointerException e) {}
             LocalDate discontinuedDate = null;
             try {
-            	discontinuedDate = resultSet.getDate("computer.discontinued").toLocalDate();
+            	discontinuedDate = resultSet.getDate("discontinued").toLocalDate();
             }
             catch (NullPointerException e) {}
-            Integer companyId = resultSet.getInt("company.id");
-            String companyName = resultSet.getString("company.name");
+            Integer companyId = null;
+            try {
+            	companyId = resultSet.getInt("company_id");
+    			if (companyId == 0) {
+            		companyId = null;
+            	};
+            }
+            catch (NullPointerException e) {}
             Computer computer = new Computer(computerId,
             		computerName,
             		introductionDate,
             		discontinuedDate,
-            		new Company(companyId, companyName));
+            		new Company(companyId, null));
             computersList.add(computer);
 		}
         return computersList;
@@ -57,25 +63,31 @@ public class ComputerDaoMapper {
 		if (resultSet.getRow() == 0) {
 			throw new NoSuchElementException();
 		}
-		Integer computerId = resultSet.getInt("computer.id");
-		String computerName = resultSet.getString("computer.name");
+		Integer computerId = resultSet.getInt("id");
+		String computerName = resultSet.getString("name");
 		LocalDate introductionDate = null;
 		try {
-        	introductionDate = resultSet.getDate("computer.introduced").toLocalDate();
+        	introductionDate = resultSet.getDate("introduced").toLocalDate();
         }
         catch (NullPointerException e) {}
         LocalDate discontinuedDate = null;
         try {
-        	discontinuedDate = resultSet.getDate("computer.discontinued").toLocalDate();
+        	discontinuedDate = resultSet.getDate("discontinued").toLocalDate();
         }
         catch (NullPointerException e) {}
-        Integer companyId = resultSet.getInt("company.id");
-        String companyName = resultSet.getString("company.name");
+        Integer companyId = null;
+        try {
+        	companyId = resultSet.getInt("company_id");
+        	if (companyId == 0) {
+        		companyId = null;
+        	}
+        }
+        catch (NullPointerException e) {}
         Computer computer = new Computer(computerId,
         		computerName,
         		introductionDate,
         		discontinuedDate,
-        		new Company(companyId, companyName));
+        		new Company(companyId, null));
         return computer;
 	}
 }

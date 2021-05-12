@@ -1,4 +1,4 @@
-package com.excilys.cdb.ui;
+package com.excilys.cdb.ui.input;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -119,7 +119,7 @@ public class Input {
 		Integer integer = null;
 		while (!isValid) {
 			try {
-				integer = readInteger();
+				integer = readIntegerOrNull();
 				isValid = true;
 			}
 			catch (InputMismatchException e) {

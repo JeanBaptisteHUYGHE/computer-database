@@ -21,9 +21,9 @@ public class ComputerDao {
 	 */
 	public static List<Computer> getComputersList() throws SQLException {
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, "
-				+ "company.id, company.name " + "FROM computer INNER JOIN company ON computer.company_id = company.id "
-				+ "ORDER BY computer.id";
+		String request = "SELECT id, name, introduced, discontinued, company_id "
+				+ "FROM computer "
+				+ "ORDER BY id";
 		PreparedStatement statement = dbConnection.prepareStatement(request);
 		ResultSet resultSet = statement.executeQuery();
 
@@ -39,9 +39,9 @@ public class ComputerDao {
 	 */
 	public static Computer getComputer(Computer computer) throws NoSuchElementException, SQLException {
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, "
-				+ "company.id, company.name " + "FROM computer INNER JOIN company ON computer.company_id = company.id "
-				+ "WHERE computer.id = ?";
+		String request = "SELECT id, name, introduced, discontinued, company_id "
+				+ "FROM computer "
+				+ "WHERE id = ?";
 		PreparedStatement statement = dbConnection.prepareStatement(request);
 		statement.setInt(1, computer.getId());
 		ResultSet resultSet = statement.executeQuery();
@@ -60,8 +60,16 @@ public class ComputerDao {
 				+ "WHERE id = ?";
 		PreparedStatement statement = dbConnection.prepareStatement(request);
 		statement.setString(1, computer.getName());
-		statement.setDate(2, Date.valueOf(computer.getIntroductionDate()));
-		statement.setDate(3, Date.valueOf(computer.getDiscontinueDate()));
+		if (computer.getIntroductionDate() == null) {
+			statement.setNull(2, 0);
+		} else {
+			statement.setDate(2, Date.valueOf(computer.getIntroductionDate()));
+		}
+		if (computer.getDiscontinueDate() == null) {
+			statement.setNull(3, 0);
+		} else {
+			statement.setDate(3, Date.valueOf(computer.getDiscontinueDate()));
+		}
 		if (computer.getManufacturer() == null || computer.getManufacturer().getId() == null) {
 			statement.setNull(4, 0);
 		} else {
@@ -82,29 +90,26 @@ public class ComputerDao {
 		String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
 		PreparedStatement statement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
 		statement.setString(1, computer.getName());
-
 		if (computer.getIntroductionDate() == null) {
 			statement.setNull(2, 0);
 		} else {
 			statement.setDate(2, Date.valueOf(computer.getIntroductionDate()));
-
 		}
 		if (computer.getDiscontinueDate() == null) {
 			statement.setNull(3, 0);
 		} else {
 			statement.setDate(3, Date.valueOf(computer.getDiscontinueDate()));
-
 		}
 		if (computer.getManufacturer() == null || computer.getManufacturer().getId() == null) {
 			statement.setNull(4, 0);
 		} else {
 			statement.setInt(4, computer.getManufacturer().getId());
 		}
-
 		statement.executeUpdate();
 		ResultSet resultSet = statement.getGeneratedKeys();
-		resultSet.first();
-		computer.setId(resultSet.getInt(1));
+		resultSet.next();
+		int newId = resultSet.getInt(1);
+		computer.setId(newId);
 	}
 
 	/**

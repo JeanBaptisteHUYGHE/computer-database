@@ -1,11 +1,12 @@
 package com.excilys.cdb.ui.menu;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistance.ComputerDao;
-import com.excilys.cdb.ui.Input;
-import com.excilys.cdb.ui.InputForm;
+import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.ui.input.Input;
+import com.excilys.cdb.ui.input.InputForm;
 
 public class ComputerMenu implements IMenu {
 
@@ -31,9 +32,9 @@ public class ComputerMenu implements IMenu {
 		System.out.println("[COMPUTER MENU]");
 		drawComputer();
 		System.out.println();
-		System.out.println("[1] Edit");
-		System.out.println("[2] Delete");
-		System.out.println("[3] Exit");
+		for (EnumComputerMenuActions action : EnumComputerMenuActions.values()) {
+			System.out.println(action);
+		}
 	}
 
 	/**
@@ -58,21 +59,27 @@ public class ComputerMenu implements IMenu {
 		boolean isAValidUserChoice = false;
 		Integer userChoice = null;
 		while (!isAValidUserChoice) {
-			userChoice = Input.readValidInteger();
-			isAValidUserChoice = true;
-			switch (userChoice) {
-				case 1:
-					editComputer();
-					break;
-				case 2:
-					deleteComputer();
-					break;
-				case 3:
-					exit();
-					break;
-				default:
-					isAValidUserChoice = false;
-					System.out.println("Invalid choice, please retry");
+			try {
+				userChoice = Input.readValidInteger();
+				EnumComputerMenuActions action = EnumComputerMenuActions.getAction(userChoice);
+				isAValidUserChoice = true;
+				switch (action) {
+					case EDIT_COMPUTER:
+						editComputer();
+						break;
+					case DELETE_COMPUTER:
+						deleteComputer();
+						break;
+					case EXIT:
+						exit();
+						break;
+					default:
+						throw new NoSuchElementException();
+				}
+			}
+			catch(NoSuchElementException e) {
+				isAValidUserChoice = false;
+				System.out.println("Invalid choice, please retry");
 			}
 		}
 	}
@@ -88,15 +95,16 @@ public class ComputerMenu implements IMenu {
 			computer.setIntroductionDate(newComputer.getIntroductionDate());
 			computer.setDiscontinueDate(newComputer.getDiscontinueDate());
 			computer.setManufacturer(newComputer.getManufacturer());
-			ComputerDao.updateComputer(computer);
-			computer = ComputerDao.getComputer(computer);
+			ComputerService computerService = new ComputerService();
+			computerService.updateComputer(computer);
+			computer = computerService.getComputer(computer);
 			System.out.println("Computer updated successfully");
 		}
 		catch (IllegalArgumentException e) {
-			System.out.println("Operation canceled, argument(s) invalid(s)");
+			System.out.println("Operation canceled, argument(s) invalid(s): " + e.getMessage());
 		}
 		catch (SQLException e) {
-			System.err.println("SQL error: " + e.getMessage());
+			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -106,7 +114,7 @@ public class ComputerMenu implements IMenu {
 	 */
 	private void deleteComputer() {
 		try {
-			ComputerDao.deleteComputer(computer);
+			new ComputerService().deleteComputer(computer);
 			System.out.println("Computer deleted successfully");
 		} catch (SQLException e) {
 			System.err.println("An SQL error is occur: " + e.getMessage());

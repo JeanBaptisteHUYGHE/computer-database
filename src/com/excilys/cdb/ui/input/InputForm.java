@@ -1,4 +1,4 @@
-package com.excilys.cdb.ui;
+package com.excilys.cdb.ui.input;
 
 import java.time.LocalDate;
 
@@ -22,7 +22,7 @@ public class InputForm {
 		Integer companyId = Input.readValidIntegerOrNull();
 		
 		Computer newComputer = new Computer(computerName, computerIntroductionDate,
-					computerDiscontinueDate, new Company(companyId, ""));
+					computerDiscontinueDate, new Company(companyId, null));
 		return newComputer;
 	}
 }

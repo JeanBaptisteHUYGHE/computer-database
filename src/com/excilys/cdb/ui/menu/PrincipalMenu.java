@@ -1,16 +1,15 @@
 package com.excilys.cdb.ui.menu;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistance.CompanyDao;
-import com.excilys.cdb.persistance.ComputerDao;
-import com.excilys.cdb.ui.Input;
-import com.excilys.cdb.ui.InputForm;
+import com.excilys.cdb.service.CompanyService;
+import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.ui.input.Input;
+import com.excilys.cdb.ui.input.InputForm;
 
 public class PrincipalMenu implements IMenu {
 	
@@ -30,11 +29,9 @@ public class PrincipalMenu implements IMenu {
 	private void drawInterface() {
 		System.out.println("\n======================");
 		System.out.println("[PRINCIPAL MENU]");
-		System.out.println("[" + EnumPrincipalMenuActions.LIST_ALL_COMPUTERS + "] List all computers");
-		System.out.println("[" + EnumPrincipalMenuActions.LIST_ALL_COMPANIES + "] List all companies");
-		System.out.println("[" + EnumPrincipalMenuActions.SELECT_COMPUTER    + "] Select a computer");
-		System.out.println("[" + EnumPrincipalMenuActions.ADD_NEW_COMPUTER   + "] Add a new computers");
-		System.out.println("[" + EnumPrincipalMenuActions.EXIT               +  "] Exit");
+		for (EnumPrincipalMenuActions action : EnumPrincipalMenuActions.values()) {
+			System.out.println(action);
+		}
 	}
 	
 	/**
@@ -44,29 +41,34 @@ public class PrincipalMenu implements IMenu {
 		boolean isAValidUserChoice = false;
 		Integer userChoice = null;
 		while (!isAValidUserChoice) {
-			userChoice = Input.readValidInteger();
-			isAValidUserChoice = true;
-			switch (userChoice) {
-				case 1:
-					listAllComputers();
-					break;
-				case 2:
-					listAllCompanies();
-					break;
-				case 3:
-					selectComputer();
-					break;
-				case 4:
-					addNewComputer();
-					break;
-				case 9:
-					exit();
-					break;
-				default:
-					isAValidUserChoice = false;
-					System.out.println("Invalid choice, please retry");
+			try {
+				userChoice = Input.readValidInteger();
+				EnumPrincipalMenuActions action = EnumPrincipalMenuActions.getAction(userChoice);
+				isAValidUserChoice = true;
+				switch (action) {
+					case LIST_ALL_COMPUTERS:
+						listAllComputers();
+						break;
+					case LIST_ALL_COMPANIES:
+						listAllCompanies();
+						break;
+					case SELECT_COMPUTER:
+						selectComputer();
+						break;
+					case ADD_NEW_COMPUTER:
+						addNewComputer();
+						break;
+					case EXIT:
+						exit();
+						break;
+					default:
+						throw new NoSuchElementException();
+				}
 			}
-			
+			catch (NoSuchElementException e) {
+				isAValidUserChoice = false;
+				System.out.println("Invalid choice, please retry");
+			}
 		}
 	}
 	
@@ -75,18 +77,18 @@ public class PrincipalMenu implements IMenu {
 	 */
 	private void listAllComputers() {
 		try {
-			List<Computer> computersList = ComputerDao.getComputersList();
+			List<Computer> computersList = new ComputerService().getComputersList();
 			System.out.println("ID\tNAME                                                      \t"
-					+ "INTRODUCTION DATE\tDISCONTINUE DATE\tMANUFACTURER");
+					+ "INTRODUCTION DATE\tDISCONTINUE DATE\tMANUFACTURER ID");
 			for (Computer computer : computersList) {
-				System.out.println(String.format("%-6s\t%-56s\t%-20s\t%-20s\t%s30",
+				System.out.println(String.format("%-6s\t%-60s\t%-20s\t%-20s\t%s",
 						computer.getId(), computer.getName(), computer.getIntroductionDate(),
-						computer.getDiscontinueDate(), computer.getManufacturer().getName()
+						computer.getDiscontinueDate(), computer.getManufacturer().getId()
 						)
 					);
 			}
 		} catch (SQLException e) {
-			System.err.println("An error is occur: " + e.getMessage());
+			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -96,13 +98,13 @@ public class PrincipalMenu implements IMenu {
 	 */
 	private void listAllCompanies() {
 		try {
-			List<Company> companiesList = CompanyDao.getCompaniesList();
+			List<Company> companiesList = new CompanyService().getCompaniesList();
 			System.out.println("ID\tNAME");
 			for (Company company : companiesList) {
 				System.out.println(String.format("%s\t%s",company.getId(), company.getName()));
 			}
 		} catch (SQLException e) {
-			System.err.println("An error is occur: " + e.getMessage());
+			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -117,14 +119,14 @@ public class PrincipalMenu implements IMenu {
 		
 		Computer computer = new Computer(computerId, "");
 		try {
-			computer = ComputerDao.getComputer(computer);
+			computer = new ComputerService().getComputer(computer);
 			new ComputerMenu(computer);
 		} 
 		catch(NoSuchElementException e) {
 			System.out.println("This computer don't exist");
 		}
 		catch (SQLException e) {
-			System.err.println("SQL error: " + e.getMessage());
+			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -135,14 +137,14 @@ public class PrincipalMenu implements IMenu {
 	private void addNewComputer() {
 		try {
 			Computer newComputer = InputForm.readComputer();
-			ComputerDao.addComputer(newComputer);
+			new ComputerService().addComputer(newComputer);
 			System.out.println("Computer succesfully added");
 		}
 		catch (IllegalArgumentException e) {
-			System.out.println("Operation canceled, argument(s) invalid(s)");
+			System.out.println("Operation canceled, argument(s) invalid(s): " + e.getMessage());
 		}
 		catch (SQLException e) {
-			System.err.println("SQL error: " + e.getMessage());
+			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
