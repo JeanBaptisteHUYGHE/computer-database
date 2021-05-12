@@ -10,6 +10,8 @@ import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.ui.input.Input;
 import com.excilys.cdb.ui.input.InputForm;
+import com.excilys.cdb.ui.page.CompaniesPage;
+import com.excilys.cdb.ui.page.ComputersPage;
 
 public class PrincipalMenu implements IMenu {
 	
@@ -59,7 +61,8 @@ public class PrincipalMenu implements IMenu {
 						addNewComputer();
 						break;
 					case EXIT:
-						exit();
+						isRunning = false;
+						System.out.println("Bye");
 						break;
 					default:
 						throw new NoSuchElementException();
@@ -77,16 +80,7 @@ public class PrincipalMenu implements IMenu {
 	 */
 	private void listAllComputers() {
 		try {
-			List<Computer> computersList = new ComputerService().getComputersList();
-			System.out.println("ID\tNAME                                                      \t"
-					+ "INTRODUCTION DATE\tDISCONTINUE DATE\tMANUFACTURER ID");
-			for (Computer computer : computersList) {
-				System.out.println(String.format("%-6s\t%-60s\t%-20s\t%-20s\t%s",
-						computer.getId(), computer.getName(), computer.getIntroductionDate(),
-						computer.getDiscontinueDate(), computer.getManufacturer().getId()
-						)
-					);
-			}
+			new PageMenu(new ComputersPage());
 		} catch (SQLException e) {
 			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
@@ -98,11 +92,7 @@ public class PrincipalMenu implements IMenu {
 	 */
 	private void listAllCompanies() {
 		try {
-			List<Company> companiesList = new CompanyService().getCompaniesList();
-			System.out.println("ID\tNAME");
-			for (Company company : companiesList) {
-				System.out.println(String.format("%s\t%s",company.getId(), company.getName()));
-			}
+			new PageMenu(new CompaniesPage());
 		} catch (SQLException e) {
 			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
@@ -147,13 +137,5 @@ public class PrincipalMenu implements IMenu {
 			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Exit this menu
-	 */
-	private void exit() {
-		isRunning = false;
-		System.out.println("Bye");
 	}
 }

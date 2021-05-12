@@ -18,12 +18,33 @@ public class CompanyDao {
 	 * @return the companies list
 	 * @throws SQLException
 	 */
+	@Deprecated
 	public static List<Company> getCompaniesList() throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name FROM company ORDER BY id";
 		PreparedStatement statement = dbConnection.prepareStatement(request);
 		ResultSet resultSet = statement.executeQuery();
 		
+		return CompanyDaoMapper.getCompaniesList(resultSet);
+	}
+	
+	/**
+	 * Return the companies list from the database in the page range
+	 * @param pageIndex the page index
+	 * @param pageSize the page size
+	 * @return the companies list page
+	 * @throws SQLException
+	 */
+	public static List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
+		Connection dbConnection = Database.getConnection();
+		String request = "SELECT id, name "
+				+ "FROM company "
+				+ "ORDER BY id "
+				+ "LIMIT ? OFFSET ?";
+		PreparedStatement statement = dbConnection.prepareStatement(request);
+		statement.setInt(1, pageSize);
+		statement.setInt(2, pageSize * pageIndex);
+		ResultSet resultSet = statement.executeQuery();
 		return CompanyDaoMapper.getCompaniesList(resultSet);
 	}
 	

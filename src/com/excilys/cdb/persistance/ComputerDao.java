@@ -19,6 +19,7 @@ public class ComputerDao {
 	 * @return the computers list
 	 * @throws SQLException
 	 */
+	@Deprecated
 	public static List<Computer> getComputersList() throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name, introduced, discontinued, company_id "
@@ -26,7 +27,26 @@ public class ComputerDao {
 				+ "ORDER BY id";
 		PreparedStatement statement = dbConnection.prepareStatement(request);
 		ResultSet resultSet = statement.executeQuery();
-
+		return ComputerDaoMapper.getComputersList(resultSet);
+	}
+	
+	/**
+	 * Return the computers list from the database in the page range
+	 * @param pageIndex the page index
+	 * @param pageSize the page size
+	 * @return the computer list page
+	 * @throws SQLException
+	 */
+	public static List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
+		Connection dbConnection = Database.getConnection();
+		String request = "SELECT id, name, introduced, discontinued, company_id "
+				+ "FROM computer "
+				+ "ORDER BY id "
+				+ "LIMIT ? OFFSET ?";
+		PreparedStatement statement = dbConnection.prepareStatement(request);
+		statement.setInt(1, pageSize);
+		statement.setInt(2, pageSize * pageIndex);
+		ResultSet resultSet = statement.executeQuery();
 		return ComputerDaoMapper.getComputersList(resultSet);
 	}
 
@@ -125,5 +145,4 @@ public class ComputerDao {
 		statement.setInt(1, computer.getId());
 		statement.executeUpdate();
 	}
-
 }

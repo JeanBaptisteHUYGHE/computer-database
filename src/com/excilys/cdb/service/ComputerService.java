@@ -18,6 +18,17 @@ public class ComputerService {
 	public List<Computer> getComputersList() throws SQLException {
 		return ComputerDao.getComputersList();
 	}
+	
+	/**
+	 * Return a list of computer by page
+	 * @param pageIndex page index
+	 * @param pageSize page size
+	 * @return the computer list
+	 * @throws SQLException
+	 */
+	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
+		return ComputerDao.getComputersListPage(pageIndex, pageSize);
+	}
 
 	/**
 	 * Return desire computer
@@ -60,5 +71,4 @@ public class ComputerService {
 	public void deleteComputer(Computer computer) throws SQLException {
 		ComputerDao.deleteComputer(computer);
 	}
-
 }

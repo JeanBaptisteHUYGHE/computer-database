@@ -71,7 +71,7 @@ public class ComputerMenu implements IMenu {
 						deleteComputer();
 						break;
 					case EXIT:
-						exit();
+						isRunning = false;
 						break;
 					default:
 						throw new NoSuchElementException();
@@ -120,16 +120,6 @@ public class ComputerMenu implements IMenu {
 			System.err.println("An SQL error is occur: " + e.getMessage());
 			e.printStackTrace();
 		}
-		exit();
-	}
-
-	/**
-	 * Exit this menu
-	 */
-	private void exit() {
 		isRunning = false;
 	}
-
-	
-
 }

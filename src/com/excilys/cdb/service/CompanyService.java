@@ -28,4 +28,15 @@ public class CompanyService {
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
 		return CompanyDao.getCompany(company);
 	}
+
+	/**
+	 * Return a list of companies by page
+	 * @param pageIndex page index
+	 * @param pageSize page size
+	 * @return the computer list
+	 * @throws SQLException
+	 */
+	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
+		return CompanyDao.getCompaniesListPage(pageIndex, pageSize);
+	}
 }
