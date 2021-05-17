@@ -23,6 +23,7 @@ public class Input {
 	
 	/**
 	 * Close the input
+	 * @warning Only use if you will not use it again on the program
 	 */
 	public static void close() {
 		if (scanner != null) {

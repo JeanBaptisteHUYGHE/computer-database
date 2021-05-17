@@ -8,6 +8,11 @@ import com.excilys.cdb.persistance.ComputerDao;
 
 public class InputForm {
 
+	/**
+	 * Return the computer write in console by user
+	 * @return the correspondent computer
+	 * @throws IllegalArgumentException
+	 */
 	public static Computer readComputer() throws IllegalArgumentException{
 		System.out.println("Computer name ?");
 		String computerName = Input.readString();

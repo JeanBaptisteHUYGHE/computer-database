@@ -13,8 +13,11 @@ import com.excilys.cdb.ui.CommandLineInterface;
 
 public class Main {
 
-	public static void main(String[] args) {
-		
+	/**
+	 * Class use to run the application
+	 * @param args program arguments
+	 */
+	public static void main(String[] args) {	
 		
 		/*
 		System.out.println(new Computer(1, "ROG Strix GL703VM"));		
@@ -53,8 +56,6 @@ public class Main {
 			ComputerDao.updateComputer(myComputer);
 			*/
 			
-			
-
 
 		/*} catch (SQLException e) {
 			System.err.println(e.getMessage());
