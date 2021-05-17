@@ -14,30 +14,13 @@ import com.excilys.cdb.model.Computer;
 public class ComputerDao {
 
 	/**
-	 * Return the computers list from the database
-	 * 
-	 * @return the computers list
-	 * @throws SQLException
-	 */
-	@Deprecated
-	public static List<Computer> getComputersList() throws SQLException {
-		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name, introduced, discontinued, company_id "
-				+ "FROM computer "
-				+ "ORDER BY id";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		ResultSet resultSet = statement.executeQuery();
-		return ComputerDaoMapper.getComputersList(resultSet);
-	}
-	
-	/**
 	 * Return the computers list from the database in the page range
 	 * @param pageIndex the page index
 	 * @param pageSize the page size
 	 * @return the computer list page
 	 * @throws SQLException
 	 */
-	public static List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
+	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name, introduced, discontinued, company_id "
 				+ "FROM computer "
@@ -57,7 +40,7 @@ public class ComputerDao {
 	 * @throws SQLException
 	 * @throws NoSuchElementException
 	 */
-	public static Computer getComputer(Computer computer) throws NoSuchElementException, SQLException {
+	public Computer getComputer(Computer computer) throws NoSuchElementException, SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name, introduced, discontinued, company_id "
 				+ "FROM computer "
@@ -74,7 +57,7 @@ public class ComputerDao {
 	 * @return the computer
 	 * @throws SQLException
 	 */
-	public static void updateComputer(Computer computer) throws SQLException {
+	public void updateComputer(Computer computer) throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "UPDATE computer " + "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
 				+ "WHERE id = ?";
@@ -105,7 +88,7 @@ public class ComputerDao {
 	 * @param computer the computer to add
 	 * @throws SQLException
 	 */
-	public static void addComputer(Computer computer) throws SQLException {
+	public void addComputer(Computer computer) throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
 		PreparedStatement statement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
@@ -138,7 +121,7 @@ public class ComputerDao {
 	 * @param computer the computer to remove
 	 * @throws SQLException
 	 */
-	public static void deleteComputer(Computer computer) throws SQLException {
+	public void deleteComputer(Computer computer) throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "DELETE FROM computer WHERE id = ?";
 		PreparedStatement statement = dbConnection.prepareStatement(request);

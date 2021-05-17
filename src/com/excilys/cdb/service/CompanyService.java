@@ -10,15 +10,6 @@ import com.excilys.cdb.persistance.CompanyDao;
 public class CompanyService {
 
 	/**
-	 * Return a list of all companies
-	 * @return companies list
-	 * @throws SQLException 
-	 */
-	public List<Company> getCompaniesList() throws SQLException {
-		return CompanyDao.getCompaniesList();
-	}
-	
-	/**
 	 * Return the company
 	 * @param company the company
 	 * @return the company
@@ -26,7 +17,7 @@ public class CompanyService {
 	 * @throws SQLException
 	 */
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
-		return CompanyDao.getCompany(company);
+		return new CompanyDao().getCompany(company);
 	}
 
 	/**
@@ -37,6 +28,6 @@ public class CompanyService {
 	 * @throws SQLException
 	 */
 	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
-		return CompanyDao.getCompaniesListPage(pageIndex, pageSize);
+		return new CompanyDao().getCompaniesListPage(pageIndex, pageSize);
 	}
 }

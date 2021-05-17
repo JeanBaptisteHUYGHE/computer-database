@@ -11,15 +11,6 @@ import com.excilys.cdb.persistance.ComputerDao;
 public class ComputerService {
 
 	/**
-	 * Return a list of all computers
-	 * @return computers list
-	 * @throws SQLException
-	 */
-	public List<Computer> getComputersList() throws SQLException {
-		return ComputerDao.getComputersList();
-	}
-	
-	/**
 	 * Return a list of computer by page
 	 * @param pageIndex page index
 	 * @param pageSize page size
@@ -27,7 +18,7 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
-		return ComputerDao.getComputersListPage(pageIndex, pageSize);
+		return new ComputerDao().getComputersListPage(pageIndex, pageSize);
 	}
 
 	/**
@@ -38,9 +29,9 @@ public class ComputerService {
 	 * @throws NoSuchElementException 
 	 */
 	public Computer getComputer(Computer computerSrc) throws NoSuchElementException, SQLException {
-		Computer computer = ComputerDao.getComputer(computerSrc);
+		Computer computer = new ComputerDao().getComputer(computerSrc);
 		if (computer.getManufacturer().getId() != null) {
-			computer.setManufacturer(CompanyDao.getCompany(computer.getManufacturer()));
+			computer.setManufacturer(new CompanyDao().getCompany(computer.getManufacturer()));
 		}
 		return computer;
 	}
@@ -51,7 +42,7 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public void addComputer(Computer newComputer) throws SQLException {
-		ComputerDao.addComputer(newComputer);
+		new ComputerDao().addComputer(newComputer);
 	}
 
 	/**
@@ -60,7 +51,7 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public void updateComputer(Computer computer) throws SQLException {
-		ComputerDao.updateComputer(computer);
+		new ComputerDao().updateComputer(computer);
 	}
 
 	/**
@@ -69,6 +60,6 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public void deleteComputer(Computer computer) throws SQLException {
-		ComputerDao.deleteComputer(computer);
+		new ComputerDao().deleteComputer(computer);
 	}
 }

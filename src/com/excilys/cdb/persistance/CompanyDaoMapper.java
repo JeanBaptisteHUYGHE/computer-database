@@ -16,7 +16,7 @@ public class CompanyDaoMapper {
 	 * @return companies list
 	 * @throws SQLException
 	 */
-	public static List<Company> getCompaniesList(ResultSet resultSet) throws SQLException {
+	public List<Company> getCompaniesList(ResultSet resultSet) throws SQLException {
 		ArrayList<Company> companiesList = new ArrayList<Company>();
 		while (resultSet.next()) {
 			Integer id = resultSet.getInt("id");
@@ -34,7 +34,7 @@ public class CompanyDaoMapper {
 	 * @throws NoSuchElementException
 	 * @throws SQLException
 	 */
-	public static Company getCompany(ResultSet resultSet) throws NoSuchElementException, SQLException {
+	public Company getCompany(ResultSet resultSet) throws NoSuchElementException, SQLException {
 		resultSet.next();
 		if (resultSet.getRow() == 0) {
 			throw new NoSuchElementException();
