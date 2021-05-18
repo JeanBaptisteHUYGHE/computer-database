@@ -17,7 +17,7 @@ public class CompanyService {
 	 * @throws SQLException
 	 */
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
-		return new CompanyDao().getCompany(company);
+		return CompanyDao.getInstance().getCompany(company);
 	}
 
 	/**
@@ -28,6 +28,6 @@ public class CompanyService {
 	 * @throws SQLException
 	 */
 	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
-		return new CompanyDao().getCompaniesListPage(pageIndex, pageSize);
+		return CompanyDao.getInstance().getCompaniesListPage(pageIndex, pageSize);
 	}
 }

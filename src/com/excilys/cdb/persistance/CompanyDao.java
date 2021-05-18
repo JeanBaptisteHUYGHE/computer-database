@@ -4,14 +4,27 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.model.Computer;
 
 public class CompanyDao {
+	
+private static CompanyDao instance = null;
+	
+	/**
+	 * Return the company Dao instance (singleton)
+	 * @return the company Dao instance
+	 */
+	public static CompanyDao getInstance() {
+		if (instance == null) {
+			instance = new CompanyDao();
+		}
+		return instance;
+	}
+	
+	private CompanyDao() {}
 	
 	/**
 	 * Return the companies list from the database in the page range
@@ -26,11 +39,15 @@ public class CompanyDao {
 				+ "FROM company "
 				+ "ORDER BY id "
 				+ "LIMIT ? OFFSET ?";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		statement.setInt(1, pageSize);
-		statement.setInt(2, pageSize * pageIndex);
-		ResultSet resultSet = statement.executeQuery();
-		return new CompanyDaoMapper().getCompaniesList(resultSet);
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		preparedStatement.setInt(1, pageSize);
+		preparedStatement.setInt(2, pageSize * pageIndex);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		List<Company> companiesList = new CompanyDaoMapper().getCompaniesList(resultSet);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
+		return companiesList;
 	}
 	
 	/**
@@ -43,9 +60,13 @@ public class CompanyDao {
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name FROM company WHERE id = ?";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		statement.setInt(1, company.getId());
-		ResultSet resultSet = statement.executeQuery();
-		return new CompanyDaoMapper().getCompany(resultSet);
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		preparedStatement.setInt(1, company.getId());
+		ResultSet resultSet = preparedStatement.executeQuery();
+		Company gettedCompany = new CompanyDaoMapper().getCompany(resultSet);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
+		return gettedCompany;
 	}
 }

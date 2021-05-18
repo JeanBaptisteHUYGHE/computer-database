@@ -23,11 +23,16 @@ public class InputForm {
 		System.out.println("Discontinue date ?");
 		LocalDate computerDiscontinueDate = Input.readValidLocalDate();
 		
-		System.out.println("Manufacturer id?");
+		System.out.println("Manufacturer id ?");
 		Integer companyId = Input.readValidIntegerOrNull();
 		
-		Computer newComputer = new Computer(computerName, computerIntroductionDate,
-					computerDiscontinueDate, new Company(companyId, null));
+		Company company = null;
+		if (companyId != null) {
+			company = new Company(companyId, null);
+		}
+		
+		Computer newComputer = new Computer.ComputerBuilder(computerName, computerIntroductionDate,
+					computerDiscontinueDate, company).build();
 		return newComputer;
 	}
 }

@@ -107,7 +107,7 @@ public class PrincipalMenu implements IMenu {
 		System.out.println("Computer id ?");
 		Integer computerId = Input.readValidInteger();
 		
-		Computer computer = new Computer(computerId, "");
+		Computer computer = new Computer.ComputerBuilder(computerId, "").build();
 		try {
 			computer = new ComputerService().getComputer(computer);
 			new ComputerMenu(computer);

@@ -20,8 +20,7 @@ public class ComputerMenu implements IMenu {
 		while (isRunning) {
 			drawInterface();
 			readUserChoice();
-		}
-		
+		}	
 	}
 	
 	/**
@@ -42,14 +41,19 @@ public class ComputerMenu implements IMenu {
 	 */
 	private void drawComputer() {
 		System.out.println("Selected Computer:"
-				+ "\n\tId: " + computer.getId()
-				+ "\n\tName: " + computer.getName()
-				+ "\n\tIntroduction date: " + computer.getIntroductionDate()
-				+ "\n\tDiscontinue date: " + computer.getDiscontinueDate()
-				+ "\n\tManufacturer:"
-				+ "\n\t\tManufacturer id: " + computer.getManufacturer().getId()
-				+ "\n\t\tManufacturer name: " + computer.getManufacturer().getName()
+			+ "\n\tId: " + computer.getId().orElse(null)
+			+ "\n\tName: " + computer.getName()
+			+ "\n\tIntroduction date: " + computer.getIntroductionDate().orElse(null)
+			+ "\n\tDiscontinue date: " + computer.getDiscontinueDate().orElse(null));
+		if (computer.getManufacturer().isPresent()) {
+			System.out.println("\tManufacturer:"
+				+ "\n\t\tManufacturer id: " + computer.getManufacturer().get().getId()
+				+ "\n\t\tManufacturer name: " + computer.getManufacturer().get().getName()
 				);
+		}
+		else {
+			System.out.println("\tNo Manufacturer");
+		}
 	}
 
 	/**
@@ -92,9 +96,9 @@ public class ComputerMenu implements IMenu {
 		try {
 			Computer newComputer = InputForm.readComputer();
 			computer.setName(newComputer.getName());
-			computer.setIntroductionDate(newComputer.getIntroductionDate());
-			computer.setDiscontinueDate(newComputer.getDiscontinueDate());
-			computer.setManufacturer(newComputer.getManufacturer());
+			computer.setIntroductionDate(newComputer.getIntroductionDate().get());
+			computer.setDiscontinueDate(newComputer.getDiscontinueDate().get());
+			computer.setManufacturer(newComputer.getManufacturer().get());
 			ComputerService computerService = new ComputerService();
 			computerService.updateComputer(computer);
 			computer = computerService.getComputer(computer);

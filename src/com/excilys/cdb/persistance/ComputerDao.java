@@ -12,6 +12,21 @@ import java.util.NoSuchElementException;
 import com.excilys.cdb.model.Computer;
 
 public class ComputerDao {
+	
+	private static ComputerDao instance = null;
+	
+	/**
+	 * Return the computer Dao instance (singleton)
+	 * @return the computer Dao instance
+	 */
+	public static ComputerDao getInstance() {
+		if (instance == null) {
+			instance = new ComputerDao();
+		}
+		return instance;
+	}
+	
+	private ComputerDao() {}
 
 	/**
 	 * Return the computers list from the database in the page range
@@ -22,64 +37,78 @@ public class ComputerDao {
 	 */
 	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name, introduced, discontinued, company_id "
-				+ "FROM computer "
-				+ "ORDER BY id "
+		String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+				+ "ORDER BY computer.id "
 				+ "LIMIT ? OFFSET ?";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		statement.setInt(1, pageSize);
-		statement.setInt(2, pageSize * pageIndex);
-		ResultSet resultSet = statement.executeQuery();
-		return ComputerDaoMapper.getComputersList(resultSet);
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		preparedStatement.setInt(1, pageSize);
+		preparedStatement.setInt(2, pageSize * pageIndex);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		List<Computer> computersList = new ComputerDaoMapper().getComputersList(resultSet);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
+		return computersList;
 	}
 
 	/**
 	 * Return the computer from the database
 	 * 
 	 * @return the computer
-	 * @throws SQLException
+	 * @throws IllegalArgumentException
 	 * @throws NoSuchElementException
+	 * @throws SQLException
 	 */
-	public Computer getComputer(Computer computer) throws NoSuchElementException, SQLException {
+	public Computer getComputer(Computer computer) throws IllegalArgumentException, NoSuchElementException, SQLException {
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name, introduced, discontinued, company_id "
-				+ "FROM computer "
-				+ "WHERE id = ?";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		statement.setInt(1, computer.getId());
-		ResultSet resultSet = statement.executeQuery();
-		return ComputerDaoMapper.getComputer(resultSet);
+		String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+				+ "WHERE computer.id = ?";
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		Integer id = computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id null"));
+		preparedStatement.setInt(1, id);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		Computer gettedComputer = new ComputerDaoMapper().getComputer(resultSet);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
+		return gettedComputer;
 	}
 
 	/**
 	 * Update the computer in the database
 	 * 
 	 * @return the computer
+	 * @throws IllegalArgumentException
 	 * @throws SQLException
 	 */
-	public void updateComputer(Computer computer) throws SQLException {
+	public void updateComputer(Computer computer) throws IllegalArgumentException, SQLException {
 		Connection dbConnection = Database.getConnection();
-		String request = "UPDATE computer " + "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
+		String request = "UPDATE computer "
+				+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
 				+ "WHERE id = ?";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		statement.setString(1, computer.getName());
-		if (computer.getIntroductionDate() == null) {
-			statement.setNull(2, 0);
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		preparedStatement.setString(1, computer.getName());
+		if (!computer.getIntroductionDate().isPresent()) {
+			preparedStatement.setNull(2, 0);
 		} else {
-			statement.setDate(2, Date.valueOf(computer.getIntroductionDate()));
+			preparedStatement.setDate(2, Date.valueOf(computer.getIntroductionDate().get()));
 		}
-		if (computer.getDiscontinueDate() == null) {
-			statement.setNull(3, 0);
+		if (!computer.getDiscontinueDate().isPresent()) {
+			preparedStatement.setNull(3, 0);
 		} else {
-			statement.setDate(3, Date.valueOf(computer.getDiscontinueDate()));
+			preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
 		}
-		if (computer.getManufacturer() == null || computer.getManufacturer().getId() == null) {
-			statement.setNull(4, 0);
+		if (!computer.getManufacturer().isPresent()) {
+			preparedStatement.setNull(4, 0);
 		} else {
-			statement.setInt(4, computer.getManufacturer().getId());
+			preparedStatement.setInt(4, computer.getManufacturer().get().getId());
 		}
-		statement.setInt(5, computer.getId());
-		statement.executeUpdate();
+		preparedStatement.setInt(5, computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id is null")));
+		preparedStatement.executeUpdate();
+		preparedStatement.close();
+		dbConnection.close();
 	}
 
 	/**
@@ -91,41 +120,48 @@ public class ComputerDao {
 	public void addComputer(Computer computer) throws SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
-		PreparedStatement statement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
-		statement.setString(1, computer.getName());
-		if (computer.getIntroductionDate() == null) {
-			statement.setNull(2, 0);
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
+		preparedStatement.setString(1, computer.getName());
+		if (!computer.getIntroductionDate().isPresent()) {
+			preparedStatement.setNull(2, 0);
 		} else {
-			statement.setDate(2, Date.valueOf(computer.getIntroductionDate()));
+			preparedStatement.setDate(2, Date.valueOf(computer.getIntroductionDate().get()));
 		}
-		if (computer.getDiscontinueDate() == null) {
-			statement.setNull(3, 0);
+		if (!computer.getDiscontinueDate().isPresent()) {
+			preparedStatement.setNull(3, 0);
 		} else {
-			statement.setDate(3, Date.valueOf(computer.getDiscontinueDate()));
+			preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
 		}
-		if (computer.getManufacturer() == null || computer.getManufacturer().getId() == null) {
-			statement.setNull(4, 0);
+		if (!computer.getManufacturer().isPresent()) {
+			preparedStatement.setNull(4, 0);
 		} else {
-			statement.setInt(4, computer.getManufacturer().getId());
+			preparedStatement.setInt(4, computer.getManufacturer().get().getId());
 		}
-		statement.executeUpdate();
-		ResultSet resultSet = statement.getGeneratedKeys();
+		preparedStatement.executeUpdate();
+		ResultSet resultSet = preparedStatement.getGeneratedKeys();
 		resultSet.next();
 		int newId = resultSet.getInt(1);
 		computer.setId(newId);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
 	}
 
 	/**
 	 * Delete a computer in the database
 	 * 
 	 * @param computer the computer to remove
+	 * @throws IllegalArgumentException
 	 * @throws SQLException
 	 */
-	public void deleteComputer(Computer computer) throws SQLException {
+	public void deleteComputer(Computer computer) throws IllegalArgumentException, SQLException {
 		Connection dbConnection = Database.getConnection();
 		String request = "DELETE FROM computer WHERE id = ?";
-		PreparedStatement statement = dbConnection.prepareStatement(request);
-		statement.setInt(1, computer.getId());
-		statement.executeUpdate();
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		Integer id = computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id is null"));
+		preparedStatement.setInt(1, id);
+		preparedStatement.executeUpdate();
+		preparedStatement.close();
+		dbConnection.close();
 	}
 }

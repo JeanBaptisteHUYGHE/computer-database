@@ -18,7 +18,7 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
-		return new ComputerDao().getComputersListPage(pageIndex, pageSize);
+		return ComputerDao.getInstance().getComputersListPage(pageIndex, pageSize);
 	}
 
 	/**
@@ -29,11 +29,7 @@ public class ComputerService {
 	 * @throws NoSuchElementException 
 	 */
 	public Computer getComputer(Computer computerSrc) throws NoSuchElementException, SQLException {
-		Computer computer = new ComputerDao().getComputer(computerSrc);
-		if (computer.getManufacturer().getId() != null) {
-			computer.setManufacturer(new CompanyDao().getCompany(computer.getManufacturer()));
-		}
-		return computer;
+		return ComputerDao.getInstance().getComputer(computerSrc);
 	}
 
 	/**
@@ -42,7 +38,7 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public void addComputer(Computer newComputer) throws SQLException {
-		new ComputerDao().addComputer(newComputer);
+		ComputerDao.getInstance().addComputer(newComputer);
 	}
 
 	/**
@@ -51,7 +47,7 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public void updateComputer(Computer computer) throws SQLException {
-		new ComputerDao().updateComputer(computer);
+		ComputerDao.getInstance().updateComputer(computer);
 	}
 
 	/**
@@ -60,6 +56,6 @@ public class ComputerService {
 	 * @throws SQLException
 	 */
 	public void deleteComputer(Computer computer) throws SQLException {
-		new ComputerDao().deleteComputer(computer);
+		ComputerDao.getInstance().deleteComputer(computer);
 	}
 }
