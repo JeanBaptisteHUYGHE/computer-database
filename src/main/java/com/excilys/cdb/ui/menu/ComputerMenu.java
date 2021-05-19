@@ -3,6 +3,9 @@ package com.excilys.cdb.ui.menu;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.ui.input.Input;
@@ -10,10 +13,12 @@ import com.excilys.cdb.ui.input.InputForm;
 
 public class ComputerMenu implements IMenu {
 
+	private Logger logger;
 	private Computer computer;
 	private boolean isRunning;
 	
 	public ComputerMenu(Computer computer) {
+		logger = LoggerFactory.getLogger(ComputerMenu.class);
 		this.computer = computer;
 		isRunning = true;
 		
@@ -27,6 +32,7 @@ public class ComputerMenu implements IMenu {
 	 * Draw the menu interface
 	 */
 	private void drawInterface() {
+		logger.debug("drawInterface()");
 		System.out.println("\n======================");
 		System.out.println("[COMPUTER MENU]");
 		drawComputer();
@@ -40,6 +46,7 @@ public class ComputerMenu implements IMenu {
 	 * Draw computer representation
 	 */
 	private void drawComputer() {
+		logger.debug("drawComputer()");
 		System.out.println("Selected Computer:"
 			+ "\n\tId: " + computer.getId().orElse(null)
 			+ "\n\tName: " + computer.getName()
@@ -60,6 +67,7 @@ public class ComputerMenu implements IMenu {
 	 * Read the user choice
 	 */
 	private void readUserChoice() {
+		logger.debug("readUserChoice()");
 		boolean isAValidUserChoice = false;
 		Integer userChoice = null;
 		while (!isAValidUserChoice) {
@@ -84,6 +92,7 @@ public class ComputerMenu implements IMenu {
 			catch(NoSuchElementException e) {
 				isAValidUserChoice = false;
 				System.out.println("Invalid choice, please retry");
+				logger.info("Invalid user choice");
 			}
 		}
 	}
@@ -92,6 +101,7 @@ public class ComputerMenu implements IMenu {
 	 * Edit the computer
 	 */
 	private void editComputer() {
+		logger.debug("editComputer()");
 		System.out.println("Enter new values:");
 		try {
 			Computer newComputer = InputForm.readComputer();
@@ -99,17 +109,18 @@ public class ComputerMenu implements IMenu {
 			computer.setIntroductionDate(newComputer.getIntroductionDate().get());
 			computer.setDiscontinueDate(newComputer.getDiscontinueDate().get());
 			computer.setManufacturer(newComputer.getManufacturer().get());
-			ComputerService computerService = new ComputerService();
+			ComputerService computerService = ComputerService.getInstance();
 			computerService.updateComputer(computer);
 			computer = computerService.getComputer(computer);
 			System.out.println("Computer updated successfully");
 		}
 		catch (IllegalArgumentException e) {
 			System.out.println("Operation canceled, argument(s) invalid(s): " + e.getMessage());
+			logger.info("Operation canceled, argument(s) invalid(s): {} in {}", e, e.getStackTrace());
 		}
 		catch (SQLException e) {
-			System.err.println("An SQL error is occur: " + e.getMessage());
-			e.printStackTrace();
+			System.err.println("An error has appeared in edition");
+			logger.error("{} in {}", e, e.getStackTrace());
 		}
 	}
 	
@@ -117,12 +128,13 @@ public class ComputerMenu implements IMenu {
 	 * Delete the computer in database
 	 */
 	private void deleteComputer() {
+		logger.debug("deleteComputer()");
 		try {
-			new ComputerService().deleteComputer(computer);
+			ComputerService.getInstance().deleteComputer(computer);
 			System.out.println("Computer deleted successfully");
 		} catch (SQLException e) {
-			System.err.println("An SQL error is occur: " + e.getMessage());
-			e.printStackTrace();
+			System.err.println("An error has appeared in deletion");
+			logger.error("{} in {}", e, e.getStackTrace());
 		}
 		isRunning = false;
 	}

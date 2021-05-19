@@ -17,7 +17,7 @@ public class ComputersPage extends AbstPage {
 	 */
 	@Override
 	public void drawPage() throws SQLException {
-		List<Computer> computersList = new ComputerService().getComputersListPage(this.pageIndex, PAGE_SIZE);
+		List<Computer> computersList = ComputerService.getInstance().getComputersListPage(this.pageIndex, PAGE_SIZE);
 		System.out.println("ID\tNAME                                                      \t"
 				+ "INTRODUCTION DATE\tDISCONTINUE DATE\tMANUFACTURER ID\tMANUFACTURER NAME");
 		for (Computer computer : computersList) {

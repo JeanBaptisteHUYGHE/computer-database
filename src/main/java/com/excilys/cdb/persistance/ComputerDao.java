@@ -9,11 +9,15 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Computer;
 
 public class ComputerDao {
 	
 	private static ComputerDao instance = null;
+	private Logger logger;
 	
 	/**
 	 * Return the computer Dao instance (singleton)
@@ -26,7 +30,9 @@ public class ComputerDao {
 		return instance;
 	}
 	
-	private ComputerDao() {}
+	private ComputerDao() {
+		logger = LoggerFactory.getLogger(ComputerDao.class);
+	}
 
 	/**
 	 * Return the computers list from the database in the page range
@@ -36,6 +42,7 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
+		logger.debug("getComputersListPage({}, {})", pageIndex, pageSize);
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
 				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
@@ -61,6 +68,8 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public Computer getComputer(Computer computer) throws IllegalArgumentException, NoSuchElementException, SQLException {
+		logger.debug("getComputer({})", computer);
+
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
 				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
@@ -84,6 +93,7 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public void updateComputer(Computer computer) throws IllegalArgumentException, SQLException {
+		logger.debug("updateComputer({})", computer);
 		Connection dbConnection = Database.getConnection();
 		String request = "UPDATE computer "
 				+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
@@ -118,6 +128,7 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public void addComputer(Computer computer) throws SQLException {
+		logger.debug("addComputer({})", computer);
 		Connection dbConnection = Database.getConnection();
 		String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
@@ -155,6 +166,7 @@ public class ComputerDao {
 	 * @throws SQLException
 	 */
 	public void deleteComputer(Computer computer) throws IllegalArgumentException, SQLException {
+		logger.debug("deleteComputer({})", computer);
 		Connection dbConnection = Database.getConnection();
 		String request = "DELETE FROM computer WHERE id = ?";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);

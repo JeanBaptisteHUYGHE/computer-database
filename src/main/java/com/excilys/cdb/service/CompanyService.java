@@ -4,10 +4,33 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistance.CompanyDao;
+import com.excilys.cdb.persistance.ComputerDao;
 
 public class CompanyService {
+	
+	private static CompanyService companyService = null;
+	private Logger logger;
+
+	
+	/**
+	 * Return the company service instance
+	 * @return the company srvice
+	 */
+	public static CompanyService getInstance() {
+		if (companyService == null) {
+			companyService = new CompanyService();
+		}
+		return companyService;
+	}
+	
+	private CompanyService() {
+		logger = LoggerFactory.getLogger(CompanyService.class);
+	}
 
 	/**
 	 * Return the company
@@ -17,7 +40,20 @@ public class CompanyService {
 	 * @throws SQLException
 	 */
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
-		return CompanyDao.getInstance().getCompany(company);
+		logger.debug("getCompany({})", company);
+		Company gettedCompany = null;
+		try {
+			gettedCompany = CompanyDao.getInstance().getCompany(company);
+		}
+		catch (NoSuchElementException e) {
+			logger.info("{} in {}", e, e.getStackTrace());
+			throw e;
+		}
+		catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw e;
+		}
+		return gettedCompany;
 	}
 
 	/**
@@ -28,6 +64,19 @@ public class CompanyService {
 	 * @throws SQLException
 	 */
 	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
-		return CompanyDao.getInstance().getCompaniesListPage(pageIndex, pageSize);
+		logger.debug("getCompaniesListPage({}, {})", pageIndex, pageSize);
+		List<Company> companiesList = null;
+		try {
+			companiesList = CompanyDao.getInstance().getCompaniesListPage(pageIndex, pageSize);
+		}
+		catch (NoSuchElementException e) {
+			logger.info("{} in {}", e, e.getStackTrace());
+			throw e;
+		}
+		catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw e;
+		}
+		return companiesList;
 	}
 }

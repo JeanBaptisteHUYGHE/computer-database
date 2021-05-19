@@ -7,11 +7,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Company;
 
 public class CompanyDao {
 	
-private static CompanyDao instance = null;
+	private static CompanyDao instance = null;
+	private Logger logger;
 	
 	/**
 	 * Return the company Dao instance (singleton)
@@ -24,7 +28,9 @@ private static CompanyDao instance = null;
 		return instance;
 	}
 	
-	private CompanyDao() {}
+	private CompanyDao() {
+		logger = LoggerFactory.getLogger(CompanyDao.class);
+	}
 	
 	/**
 	 * Return the companies list from the database in the page range
@@ -34,6 +40,7 @@ private static CompanyDao instance = null;
 	 * @throws SQLException
 	 */
 	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
+		logger.debug("getCompaniesListPage({}, {})", pageIndex, pageSize);
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name "
 				+ "FROM company "
@@ -58,6 +65,7 @@ private static CompanyDao instance = null;
 	 * @throws SQLException
 	 */
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
+		logger.debug("getCompany({})", company);
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name FROM company WHERE id = ?";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);

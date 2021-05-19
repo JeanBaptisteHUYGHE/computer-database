@@ -17,7 +17,7 @@ public class CompaniesPage extends AbstPage {
 	 */
 	@Override
 	public void drawPage() throws SQLException {
-		List<Company> companiesList = new CompanyService().getCompaniesListPage(this.pageIndex, PAGE_SIZE);
+		List<Company> companiesList = CompanyService.getInstance().getCompaniesListPage(this.pageIndex, PAGE_SIZE);
 		System.out.println("ID\tNAME");
 		for (Company company : companiesList) {
 			System.out.println(String.format("%s\t%s",company.getId(), company.getName()));

@@ -10,7 +10,7 @@
 	<name>CDB</name>
 	<description>Computer Database</description>
 	<url>https://github.com/JeanBaptisteHUYGHE/computer-database</url>
-	
+
 	<packaging>jar</packaging>
 
 	<properties>
@@ -20,6 +20,7 @@
 	</properties>
 
 	<dependencies>
+	
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -27,6 +28,7 @@
 			<version>8.0.25</version>
 			<scope>runtime</scope>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -34,6 +36,7 @@
 			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -41,15 +44,15 @@
 			<version>1.10.19</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.30</version>
-			<scope>compile</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+			<scope>compile</scope><!-- <scope>test</scope> -->
 		</dependency>
+
 	</dependencies>
-
-
 
 </project>

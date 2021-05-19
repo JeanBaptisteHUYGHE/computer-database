@@ -23,19 +23,4 @@ public class Database {
 		}
 		return connection;
 	}
-	
-	/**
-	 * Close the database connection
-	 */
-	/*public static void closeConnection() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			System.err.println("Connection cannot be closed:");
-			e.printStackTrace();
-		}
-		finally {
-			connection = null;
-		}
-	}*/
 }
