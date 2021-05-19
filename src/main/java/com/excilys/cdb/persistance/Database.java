@@ -1,16 +1,27 @@
 package com.excilys.cdb.persistance;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Database {
-
-	private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/computer-database-db";
-	private static final String CONNECTION_LOGIN = "admincdb";
-	private static final String CONNECTION_PASSWORD = "qwerty1234";
 	
+	private static final String DATABASE_PROPERTIES_FILE_PATH = "/database.properties";
+	private static final String DATABASE_PROPERTY_NAME_URL = "jdbc.url";
+	private static final String DATABASE_PROPERTY_NAME_LOGIN = "jdbc.username";
+	private static final String DATABASE_PROPERTY_NAME_PASSWORD = "jdbc.password";
+	private static String connectionUrl = null;
+	private static String connectionLogin = null;
+	private static String connectionPassword = null;
+	
+	private static Database database = null;
 	private static Connection connection = null;
+	private Logger logger;
 	
 	/**
 	 * Return the database connection.
@@ -18,9 +29,36 @@ public class Database {
 	 * @throws SQLException 
 	 */
 	public static Connection getConnection() throws SQLException {
+		if (database == null) {
+			database = new Database();
+		}
 		if (connection == null || connection.isClosed()) {
-			connection = DriverManager.getConnection(CONNECTION_URL, CONNECTION_LOGIN, CONNECTION_PASSWORD);
+			connection = DriverManager.getConnection(connectionUrl, connectionLogin, connectionPassword);
 		}
 		return connection;
+	}
+	
+	private Database() throws SQLException {
+		logger = LoggerFactory.getLogger(Database.class);
+		logger.debug("Database()");
+		try {
+			loadProperties();
+			logger.info("Database properties: {}, {}, {}", connectionUrl, connectionLogin, connectionPassword);
+		} catch (IOException e) {
+			logger.error("Database properties: {} in {}", e, e.getStackTrace());
+			throw new SQLException("Error, cannot load database properties");
+		}
+	}
+	
+	/**
+	 * Load database properties from the properties file.
+	 * @throws IOException 
+	 */
+	private void loadProperties() throws IOException {
+		Properties properties = new Properties();
+		properties.load(Database.class.getResourceAsStream(DATABASE_PROPERTIES_FILE_PATH));
+		connectionUrl = properties.getProperty(DATABASE_PROPERTY_NAME_URL);
+		connectionLogin = properties.getProperty(DATABASE_PROPERTY_NAME_LOGIN);
+		connectionPassword = properties.getProperty(DATABASE_PROPERTY_NAME_PASSWORD);
 	}
 }
