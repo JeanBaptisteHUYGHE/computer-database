@@ -6,10 +6,7 @@ import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.ui.input.Input;
-import com.excilys.cdb.ui.input.InputForm;
 import com.excilys.cdb.ui.page.AbstPage;
 
 public class PageMenu implements IMenu {
@@ -31,7 +28,7 @@ public class PageMenu implements IMenu {
 	}
 	
 	/**
-	 * Draw the menu interface
+	 * Draw the menu interface.
 	 * @throws SQLException 
 	 */
 	private void drawInterface() throws SQLException {
@@ -46,7 +43,7 @@ public class PageMenu implements IMenu {
 	}
 
 	/**
-	 * Read the user choice
+	 * Read the user choice.
 	 */
 	private void readUserChoice() {
 		logger.debug("readUserChoice()");
@@ -70,8 +67,7 @@ public class PageMenu implements IMenu {
 					default:
 						throw new NoSuchElementException();
 				}
-			}
-			catch(NoSuchElementException e) {
+			} catch (NoSuchElementException e) {
 				isAValidUserChoice = false;
 				System.out.println("Invalid choice, please retry");
 				logger.info("Invalid user choice()");

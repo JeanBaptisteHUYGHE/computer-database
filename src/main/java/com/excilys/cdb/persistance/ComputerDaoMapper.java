@@ -13,7 +13,7 @@ import com.excilys.cdb.model.Computer;
 public class ComputerDaoMapper {
 	
 	/**
-	 * Return the computer read from a result set
+	 * Return the computer read from a result set.
 	 * @param resultSet the result set
 	 * @return the correspondent computer
 	 * @throws SQLException
@@ -24,26 +24,22 @@ public class ComputerDaoMapper {
         LocalDate introductionDate = null;
         try {
         	introductionDate = resultSet.getDate("introduced").toLocalDate();
-        }
-        catch (NullPointerException e) {}
+        } catch (NullPointerException e) { }
         LocalDate discontinuedDate = null;
         try {
         	discontinuedDate = resultSet.getDate("discontinued").toLocalDate();
-        }
-        catch (NullPointerException e) {}
+        } catch (NullPointerException e) { }
         Integer companyId = null;
         try {
         	companyId = resultSet.getInt("company_id");
 			if (companyId == 0) {
         		companyId = null;
-        	};
-        }
-        catch (NullPointerException e) {}
+        	}
+        } catch (NullPointerException e) { }
         String companyName = null;
         try {
         	companyName = resultSet.getString("company_name");
-        }
-        catch (NullPointerException e) {}
+        } catch (NullPointerException e) { }
         Company company = null;
         if (companyId != null) {
         	company = new Company(companyId, companyName);
@@ -53,7 +49,7 @@ public class ComputerDaoMapper {
 	}
 
 	/**
-	 * Return the computers list
+	 * Return the computers list.
 	 * @param resultSet the resultSet from the SQL request (DAO file)
 	 * @return computers list
 	 * @throws SQLException
@@ -67,7 +63,7 @@ public class ComputerDaoMapper {
 	}
 	
 	/**
-	 * Return the computer
+	 * Return the computer.
 	 * @param resultSet the resultSet from the SQL request (DAO file)
 	 * @return the computer 
 	 * @throws SQLException

@@ -20,13 +20,12 @@ public enum EnumComputerMenuActions {
 	}
 	
 	/**
-	 * Return the enumeration for this action
+	 * Return the enumeration for this action.
 	 * @param actionId
 	 * @return the correspondent enumeration value or an exception
 	 * @throws NoSuchElementException
 	 */
-	public static EnumComputerMenuActions getAction(int actionId) throws NoSuchElementException{
-		EnumComputerMenuActions output = null;
+	public static EnumComputerMenuActions getAction(int actionId) throws NoSuchElementException {
 		for (EnumComputerMenuActions myEnum : EnumComputerMenuActions.values()) {
 			if (myEnum.value == actionId) {
 				return myEnum;

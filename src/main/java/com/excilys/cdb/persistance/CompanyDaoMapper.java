@@ -11,7 +11,7 @@ import com.excilys.cdb.model.Company;
 public class CompanyDaoMapper {
 
 	/**
-	 * Return the companies list
+	 * Return the companies list.
 	 * @param resultSet the resultSet from the SQL request (DAO file)
 	 * @return companies list
 	 * @throws SQLException
@@ -28,7 +28,7 @@ public class CompanyDaoMapper {
 	}
 
 	/**
-	 * Return the company
+	 * Return the company.
 	 * @param resultSet the result set
 	 * @return the company
 	 * @throws NoSuchElementException

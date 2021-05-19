@@ -20,13 +20,12 @@ public enum EnumPageMenuActions {
 	}
 	
 	/**
-	 * Return the enumeration for this action
+	 * Return the enumeration for this action.
 	 * @param actionId
 	 * @return the correspondent enumeration value or an exception
 	 * @throws NoSuchElementException
 	 */
-	public static EnumPageMenuActions getAction(int actionId) throws NoSuchElementException{
-		EnumPageMenuActions output = null;
+	public static EnumPageMenuActions getAction(int actionId) throws NoSuchElementException {
 		for (EnumPageMenuActions myEnum : EnumPageMenuActions.values()) {
 			if (myEnum.value == actionId) {
 				return myEnum;

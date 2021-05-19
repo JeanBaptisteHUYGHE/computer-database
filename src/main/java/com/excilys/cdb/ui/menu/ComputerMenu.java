@@ -29,7 +29,7 @@ public class ComputerMenu implements IMenu {
 	}
 	
 	/**
-	 * Draw the menu interface
+	 * Draw the menu interface.
 	 */
 	private void drawInterface() {
 		logger.debug("drawInterface()");
@@ -43,7 +43,7 @@ public class ComputerMenu implements IMenu {
 	}
 
 	/**
-	 * Draw computer representation
+	 * Draw computer representation.
 	 */
 	private void drawComputer() {
 		logger.debug("drawComputer()");
@@ -57,14 +57,13 @@ public class ComputerMenu implements IMenu {
 				+ "\n\t\tManufacturer id: " + computer.getManufacturer().get().getId()
 				+ "\n\t\tManufacturer name: " + computer.getManufacturer().get().getName()
 				);
-		}
-		else {
+		} else {
 			System.out.println("\tNo Manufacturer");
 		}
 	}
 
 	/**
-	 * Read the user choice
+	 * Read the user choice.
 	 */
 	private void readUserChoice() {
 		logger.debug("readUserChoice()");
@@ -88,8 +87,7 @@ public class ComputerMenu implements IMenu {
 					default:
 						throw new NoSuchElementException();
 				}
-			}
-			catch(NoSuchElementException e) {
+			} catch (NoSuchElementException e) {
 				isAValidUserChoice = false;
 				System.out.println("Invalid choice, please retry");
 				logger.info("Invalid user choice");
@@ -98,7 +96,7 @@ public class ComputerMenu implements IMenu {
 	}
 	
 	/**
-	 * Edit the computer
+	 * Edit the computer.
 	 */
 	private void editComputer() {
 		logger.debug("editComputer()");
@@ -113,19 +111,17 @@ public class ComputerMenu implements IMenu {
 			computerService.updateComputer(computer);
 			computer = computerService.getComputer(computer);
 			System.out.println("Computer updated successfully");
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Operation canceled, argument(s) invalid(s): " + e.getMessage());
 			logger.info("Operation canceled, argument(s) invalid(s): {} in {}", e, e.getStackTrace());
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			System.err.println("An error has appeared in edition");
 			logger.error("{} in {}", e, e.getStackTrace());
 		}
 	}
 	
 	/**
-	 * Delete the computer in database
+	 * Delete the computer in database.
 	 */
 	private void deleteComputer() {
 		logger.debug("deleteComputer()");

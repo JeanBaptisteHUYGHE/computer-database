@@ -1,10 +1,7 @@
 package com.excilys.cdb.ui.page;
 
-import static java.lang.Math.max;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
@@ -12,7 +9,7 @@ import com.excilys.cdb.service.ComputerService;
 public class ComputersPage extends AbstPage {
 		
 	/**
-	 * Draw the current page of computer list
+	 * Draw the current page of computer list.
 	 * @throws SQLException
 	 */
 	@Override

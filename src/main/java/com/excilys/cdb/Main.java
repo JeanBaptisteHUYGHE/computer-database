@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class Main {
 
 	/**
-	 * Class use to run the application
+	 * Class use to run the application.
 	 * @param args program arguments
 	 */
 	public static void main(String[] args) {	
@@ -62,13 +62,12 @@ public class Main {
 
 
 
-		printLogbackLogOnConfiguration();
+		//printLogbackLogOnConfiguration();
 
 		Logger logger = LoggerFactory.getLogger(Main.class);
 		try {
-			CommandLineInterface cli = new CommandLineInterface();
-		}
-		catch (Exception e) {
+			new CommandLineInterface();
+		} catch (Exception e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			e.printStackTrace();
 		}
@@ -78,6 +77,7 @@ public class Main {
 	 * Display in console potential LogBack (the logger API) warnings or errors
 	 * occur during the parsing of the configuration file.
 	 */
+	@SuppressWarnings("unused")
 	private static void printLogbackLogOnConfiguration() {
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 		StatusPrinter.print(lc);

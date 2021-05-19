@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistance.CompanyDao;
 import com.excilys.cdb.persistance.ComputerDao;
 
 public class ComputerService {
@@ -28,7 +27,7 @@ public class ComputerService {
 	}
 
 	/**
-	 * Return a list of computer by page
+	 * Return a list of computer by page.
 	 * @param pageIndex page index
 	 * @param pageSize page size
 	 * @return the computer list
@@ -39,8 +38,7 @@ public class ComputerService {
 		List<Computer> computersList = null;
 		try {
 			computersList = ComputerDao.getInstance().getComputersListPage(pageIndex, pageSize);
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}
@@ -48,7 +46,7 @@ public class ComputerService {
 	}
 
 	/**
-	 * Return desire computer
+	 * Return desire computer.
 	 * @param computerSrc the computer (just is id is checked)
 	 * @return the correspondent computer in database
 	 * @throws SQLException 
@@ -59,12 +57,10 @@ public class ComputerService {
 		Computer gettedComputer = null;
 		try {
 			gettedComputer = ComputerDao.getInstance().getComputer(computerSrc);
-		}
-		catch (NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			logger.info("{} in {}", e, e.getStackTrace());
 			throw e;
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}
@@ -72,7 +68,7 @@ public class ComputerService {
 	}
 
 	/**
-	 * Add a new computer
+	 * Add a new computer.
 	 * @param newComputer the computer
 	 * @throws SQLException
 	 */
@@ -80,15 +76,14 @@ public class ComputerService {
 		logger.debug("addComputer({})", newComputer);
 		try {
 			ComputerDao.getInstance().addComputer(newComputer);
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}
 	}
 
 	/**
-	 * Update a computer
+	 * Update a computer.
 	 * @param computer the computer
 	 * @throws SQLException
 	 */
@@ -96,15 +91,14 @@ public class ComputerService {
 		logger.debug("updateComputer({})", computer);
 		try {
 			ComputerDao.getInstance().updateComputer(computer);
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}
 	}
 
 	/**
-	 * Delete a computer
+	 * Delete a computer.
 	 * @param computer
 	 * @throws SQLException
 	 */
@@ -112,8 +106,7 @@ public class ComputerService {
 		logger.debug("deleteComputer({})", computer);
 		try {
 			ComputerDao.getInstance().deleteComputer(computer);
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}

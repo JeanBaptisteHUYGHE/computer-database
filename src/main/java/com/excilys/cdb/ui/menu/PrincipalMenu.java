@@ -1,15 +1,12 @@
 package com.excilys.cdb.ui.menu;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 import com.excilys.cdb.ui.input.Input;
 import com.excilys.cdb.ui.input.InputForm;
@@ -32,7 +29,7 @@ public class PrincipalMenu implements IMenu {
 	}
 	
 	/**
-	 * Draw the menu interface
+	 * Draw the menu interface.
 	 */
 	private void drawInterface() {
 		logger.debug("drawInterface()");
@@ -44,7 +41,7 @@ public class PrincipalMenu implements IMenu {
 	}
 	
 	/**
-	 * Read the user choice
+	 * Read the user choice.
 	 */
 	private void readUserChoice() {
 		logger.debug("readUserChoice()");
@@ -75,8 +72,7 @@ public class PrincipalMenu implements IMenu {
 					default:
 						throw new NoSuchElementException();
 				}
-			}
-			catch (NoSuchElementException e) {
+			} catch (NoSuchElementException e) {
 				isAValidUserChoice = false;
 				System.out.println("Invalid choice, please retry");
 				logger.info("Invalid user choice)");
@@ -85,7 +81,7 @@ public class PrincipalMenu implements IMenu {
 	}
 	
 	/**
-	 * Display all computers in database
+	 * Display all computers in database.
 	 */
 	private void listAllComputers() {
 		logger.debug("listAllComputers()");
@@ -98,7 +94,7 @@ public class PrincipalMenu implements IMenu {
 	}
 	
 	/**
-	 * Display all companies in database
+	 * Display all companies in database.
 	 */
 	private void listAllCompanies() {
 		logger.debug("listAllCompanies()");
@@ -111,7 +107,7 @@ public class PrincipalMenu implements IMenu {
 	}
 	
 	/**
-	 * Select a computer and switch to the computer menu
+	 * Select a computer and switch to the computer menu.
 	 */
 	private void selectComputer() {
 		logger.debug("selectComputer()");
@@ -122,19 +118,17 @@ public class PrincipalMenu implements IMenu {
 		try {
 			computer = ComputerService.getInstance().getComputer(computer);
 			new ComputerMenu(computer);
-		} 
-		catch(NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			System.out.println("This computer don't exist");
 			logger.info("User selected a computer which don't exist");
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			System.err.println("An error has appeared");
 			logger.error("{} in {}", e, e.getStackTrace());
 		}
 	}
 	
 	/**
-	 * Add a new computer
+	 * Add a new computer.
 	 */
 	private void addNewComputer() {
 		logger.debug("addNewComputer()");
@@ -142,12 +136,10 @@ public class PrincipalMenu implements IMenu {
 			Computer newComputer = InputForm.readComputer();
 			ComputerService.getInstance().addComputer(newComputer);
 			System.out.println("Computer succesfully added");
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Operation canceled, argument(s) invalid(s): " + e.getMessage());
 			logger.info("Operation canceled, argument(s) invalid(s) {} in {}", e, e.getStackTrace());
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			System.err.println("An error has appeared");
 			logger.error("{} in {}", e, e.getStackTrace());
 		}

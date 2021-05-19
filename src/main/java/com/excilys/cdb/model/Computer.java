@@ -38,7 +38,7 @@ public class Computer {
 	}
 	
 	/**
-	 * Return if the date is valid (=if it can be set in a SQL "timestamp" type)
+	 * Return if the date is valid (=if it can be set in a SQL "timestamp" type).
 	 * @param localDate
 	 * @return if the date is valid
 	 */
@@ -131,7 +131,7 @@ public class Computer {
 		}
 		
 		/**
-		 * Return the builded computer
+		 * Return the builded computer.
 		 * @return the computer
 		 */
 		public Computer build() {

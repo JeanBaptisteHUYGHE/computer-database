@@ -4,16 +4,15 @@ import java.time.LocalDate;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistance.ComputerDao;
 
 public class InputForm {
 
 	/**
-	 * Return the computer write in console by user
+	 * Return the computer write in console by user.
 	 * @return the correspondent computer
 	 * @throws IllegalArgumentException
 	 */
-	public static Computer readComputer() throws IllegalArgumentException{
+	public static Computer readComputer() throws IllegalArgumentException {
 		System.out.println("Computer name ?");
 		String computerName = Input.readString();
 		

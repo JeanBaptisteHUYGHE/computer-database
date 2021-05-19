@@ -22,13 +22,12 @@ public enum EnumPrincipalMenuActions {
 	}
 	
 	/**
-	 * Return the enumeration for this action
+	 * Return the enumeration for this action.
 	 * @param actionId
 	 * @return the correspondent enumeration value or an exception
 	 * @throws NoSuchElementException
 	 */
-	public static EnumPrincipalMenuActions getAction(int actionId) throws NoSuchElementException{
-		EnumPrincipalMenuActions output = null;
+	public static EnumPrincipalMenuActions getAction(int actionId) throws NoSuchElementException {
 		for (EnumPrincipalMenuActions myEnum : EnumPrincipalMenuActions.values()) {
 			if (myEnum.value == actionId) {
 				return myEnum;

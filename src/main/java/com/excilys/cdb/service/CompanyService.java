@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistance.CompanyDao;
-import com.excilys.cdb.persistance.ComputerDao;
 
 public class CompanyService {
 	
@@ -18,8 +17,8 @@ public class CompanyService {
 
 	
 	/**
-	 * Return the company service instance
-	 * @return the company srvice
+	 * Return the company service instance.
+	 * @return the company service
 	 */
 	public static CompanyService getInstance() {
 		if (companyService == null) {
@@ -33,7 +32,7 @@ public class CompanyService {
 	}
 
 	/**
-	 * Return the company
+	 * Return the company.
 	 * @param company the company
 	 * @return the company
 	 * @throws NoSuchElementException
@@ -44,12 +43,10 @@ public class CompanyService {
 		Company gettedCompany = null;
 		try {
 			gettedCompany = CompanyDao.getInstance().getCompany(company);
-		}
-		catch (NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			logger.info("{} in {}", e, e.getStackTrace());
 			throw e;
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}
@@ -57,7 +54,7 @@ public class CompanyService {
 	}
 
 	/**
-	 * Return a list of companies by page
+	 * Return a list of companies by page.
 	 * @param pageIndex page index
 	 * @param pageSize page size
 	 * @return the computer list
@@ -68,12 +65,10 @@ public class CompanyService {
 		List<Company> companiesList = null;
 		try {
 			companiesList = CompanyDao.getInstance().getCompaniesListPage(pageIndex, pageSize);
-		}
-		catch (NoSuchElementException e) {
+		} catch (NoSuchElementException e) {
 			logger.info("{} in {}", e, e.getStackTrace());
 			throw e;
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;
 		}

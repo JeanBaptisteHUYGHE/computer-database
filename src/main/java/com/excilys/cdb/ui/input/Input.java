@@ -11,7 +11,7 @@ public class Input {
 	private static Scanner scanner = null;
 	
 	/**
-	 * Return the scanner / the user input
+	 * Return the scanner / the user input.
 	 * @return the scanner
 	 */
 	private static Scanner getScanner() {
@@ -22,7 +22,7 @@ public class Input {
 	}
 	
 	/**
-	 * Close the input
+	 * Close the input.
 	 * @warning Only use if you will not use it again on the program
 	 */
 	public static void close() {
@@ -33,14 +33,14 @@ public class Input {
 	}
 
 	/**
-	 * Display a prompt for the user to indicate that his input is attempted
+	 * Display a prompt for the user to indicate that his input is attempted.
 	 */
 	private static void displayPrompt() {
 		System.out.print("> ");
 	}
 	
 	/**
-	 * Read a string write by user
+	 * Read a string write by user.
 	 * @return the string
 	 */
 	public static String readString() {
@@ -51,7 +51,7 @@ public class Input {
 	}
 	
 	/**
-	 * Read a Integer write by user
+	 * Read a Integer write by user.
 	 * @return the integer
 	 * @throws InputMismatchException
 	 */
@@ -62,15 +62,14 @@ public class Input {
 		Integer output;
 		try {
 			output = Integer.valueOf(input);
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			throw new InputMismatchException();
 		}
 		return output;
 	}
 	
 	/**
-	 * Return a valid integer write by user
+	 * Return a valid integer write by user.
 	 * @return the integer
 	 */
 	public static Integer readValidInteger() {
@@ -80,8 +79,7 @@ public class Input {
 			try {
 				integer = readInteger();
 				isValid = true;
-			}
-			catch (InputMismatchException e) {
+			} catch (InputMismatchException e) {
 				System.out.println("Invalid number, please retry");
 			}
 		}
@@ -89,7 +87,7 @@ public class Input {
 	}
 	
 	/**
-	 * Read a Integer write by user
+	 * Read a Integer write by user.
 	 * @return the integer or null
 	 * @throws InputMismatchException
 	 */
@@ -104,15 +102,14 @@ public class Input {
 		Integer output;
 		try {
 			output = Integer.valueOf(input);
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			throw new InputMismatchException();
 		}
 		return output;
 	}
 	
 	/**
-	 * Return a valid integer write by user
+	 * Return a valid integer write by user.
 	 * @return the integer or null
 	 */
 	public static Integer readValidIntegerOrNull() {
@@ -122,8 +119,7 @@ public class Input {
 			try {
 				integer = readIntegerOrNull();
 				isValid = true;
-			}
-			catch (InputMismatchException e) {
+			} catch (InputMismatchException e) {
 				System.out.println("Invalid number, please retry");
 			}
 		}
@@ -131,7 +127,7 @@ public class Input {
 	}
 	
 	/**
-	 * Read a date write by user
+	 * Read a date write by user.
 	 * @return the localDate or null
 	 * @throws InputMismatchException
 	 */
@@ -145,15 +141,14 @@ public class Input {
 		LocalDate localDate;
 		try {
 			localDate = LocalDate.parse(input, formatter);
-		}
-		catch(DateTimeParseException e) {
+		} catch (DateTimeParseException e) {
 			throw new InputMismatchException();
 		}
 		return localDate;
 	}
 	
 	/**
-	 * Return a valid local date write by user
+	 * Return a valid local date write by user.
 	 * @return the localDate or null
 	 */
 	public static LocalDate readValidLocalDate() {
@@ -163,8 +158,7 @@ public class Input {
 			try {
 				localDate = readLocalDate();
 				isValid = true;
-			}
-			catch (InputMismatchException e) {
+			} catch (InputMismatchException e) {
 				System.out.println("Invalid date, please retry");
 			}
 		}

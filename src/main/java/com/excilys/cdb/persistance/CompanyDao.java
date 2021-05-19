@@ -18,7 +18,7 @@ public class CompanyDao {
 	private Logger logger;
 	
 	/**
-	 * Return the company Dao instance (singleton)
+	 * Return the company Dao instance (singleton).
 	 * @return the company Dao instance
 	 */
 	public static CompanyDao getInstance() {
@@ -33,7 +33,7 @@ public class CompanyDao {
 	}
 	
 	/**
-	 * Return the companies list from the database in the page range
+	 * Return the companies list from the database in the page range.
 	 * @param pageIndex the page index
 	 * @param pageSize the page size
 	 * @return the companies list page
@@ -58,7 +58,7 @@ public class CompanyDao {
 	}
 	
 	/**
-	 * Return the company from the database
+	 * Return the company from the database.
 	 * @param company the company (just the id is used)
 	 * @return the company
 	 * @throws NoSuchElementException

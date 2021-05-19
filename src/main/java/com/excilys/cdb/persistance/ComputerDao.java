@@ -20,7 +20,7 @@ public class ComputerDao {
 	private Logger logger;
 	
 	/**
-	 * Return the computer Dao instance (singleton)
+	 * Return the computer Dao instance (singleton).
 	 * @return the computer Dao instance
 	 */
 	public static ComputerDao getInstance() {
@@ -35,7 +35,7 @@ public class ComputerDao {
 	}
 
 	/**
-	 * Return the computers list from the database in the page range
+	 * Return the computers list from the database in the page range.
 	 * @param pageIndex the page index
 	 * @param pageSize the page size
 	 * @return the computer list page
@@ -60,8 +60,9 @@ public class ComputerDao {
 	}
 
 	/**
-	 * Return the computer from the database
+	 * Return the computer from the database.
 	 * 
+	 * @param computer the computer
 	 * @return the computer
 	 * @throws IllegalArgumentException
 	 * @throws NoSuchElementException
@@ -86,9 +87,9 @@ public class ComputerDao {
 	}
 
 	/**
-	 * Update the computer in the database
+	 * Update the computer in the database.
 	 * 
-	 * @return the computer
+	 * @param computer the computer
 	 * @throws IllegalArgumentException
 	 * @throws SQLException
 	 */
@@ -122,7 +123,7 @@ public class ComputerDao {
 	}
 
 	/**
-	 * Add a new computer in the database
+	 * Add a new computer in the database.
 	 * 
 	 * @param computer the computer to add
 	 * @throws SQLException
@@ -159,7 +160,7 @@ public class ComputerDao {
 	}
 
 	/**
-	 * Delete a computer in the database
+	 * Delete a computer in the database.
 	 * 
 	 * @param computer the computer to remove
 	 * @throws IllegalArgumentException
