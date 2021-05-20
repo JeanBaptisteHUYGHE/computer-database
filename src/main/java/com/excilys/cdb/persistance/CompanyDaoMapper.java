@@ -36,6 +36,7 @@ public class CompanyDaoMapper {
 	 */
 	public Company getCompany(ResultSet resultSet) throws NoSuchElementException, SQLException {
 		resultSet.next();
+		System.out.println(resultSet.getRow());
 		if (resultSet.getRow() == 0) {
 			throw new NoSuchElementException();
 		}

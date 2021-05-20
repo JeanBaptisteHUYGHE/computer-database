@@ -65,6 +65,9 @@ public class CompanyDao {
 	 * @throws SQLException
 	 */
 	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
+		if (company == null || company.getId() == null) {
+			throw new NoSuchElementException("Company asked is null");
+		}
 		logger.debug("getCompany({})", company);
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name FROM company WHERE id = ?";

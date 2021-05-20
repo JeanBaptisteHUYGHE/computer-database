@@ -74,6 +74,31 @@
 					<configuration>
 						<mainClass>com.excilys.cdb.Main</mainClass>
 					</configuration>
+					<!-- Manage H2 database -->
+					<executions>
+						<execution>
+							<!-- start server before integration tests -->
+							<id>start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>java</goal>
+							</goals>
+							<configuration>
+								<mainClass>com.foo.StartServer</mainClass>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- stop server after integration tests -->
+							<id>stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>java</goal>
+							</goals>
+							<configuration>
+								<mainClass>com.foo.StopServer</mainClass>
+							</configuration>
+						</execution>
+					   </executions>
 				</plugin>
 				
 				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
