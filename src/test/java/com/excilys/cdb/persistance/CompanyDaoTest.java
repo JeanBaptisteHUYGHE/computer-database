@@ -28,13 +28,16 @@ import com.excilys.cdb.model.Company;
  *
  */
 class CompanyDaoTest {
+	
+	private static CompanyDao companyDao;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		
+		companyDao = CompanyDao.getInstance();
+		assertNotNull(companyDao);
 	}
 
 	/**
@@ -42,6 +45,7 @@ class CompanyDaoTest {
 	 */
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
+		companyDao = null;
 	}
 
 	/**
@@ -66,10 +70,8 @@ class CompanyDaoTest {
 	 */
 	@Test
 	void testGetInstance() {
-		CompanyDao companyDao1 = CompanyDao.getInstance();
-		assertNotNull(companyDao1);
 		CompanyDao companyDao2 = CompanyDao.getInstance();
-		assertSame(companyDao1, companyDao2);
+		assertSame(companyDao, companyDao2);
 	}
 
 	/**
@@ -79,7 +81,7 @@ class CompanyDaoTest {
 	void testGetCompaniesListPage() {
 		List<Company> companiesList = null;
 		try {
-			companiesList = CompanyDao.getInstance().getCompaniesListPage(1, 10);
+			companiesList = companyDao.getCompaniesListPage(1, 10);
 		} catch (SQLException e) {
 			fail("Cannot get companies list");
 		}
@@ -91,7 +93,6 @@ class CompanyDaoTest {
 	 */
 	@Test
 	void testGetCompanyNull() {
-		CompanyDao companyDao = CompanyDao.getInstance();
 		assertThrows(NoSuchElementException.class, () -> {
 			companyDao.getCompany(new Company(null, null));
 		});
@@ -102,7 +103,6 @@ class CompanyDaoTest {
 	 */
 	@Test
 	void testGetCompanyNotFound() {
-		CompanyDao companyDao = CompanyDao.getInstance();
 		assertThrows(NoSuchElementException.class, () -> {
 			companyDao.getCompany(new Company(-1, null));
 		});
@@ -124,7 +124,7 @@ class CompanyDaoTest {
 		Company expectedCompany = new Company(4, "MyCompany");
 		Company gettedCompany = null;
 		try {
-			gettedCompany = CompanyDao.getInstance().getCompany(expectedCompany);
+			gettedCompany = companyDao.getCompany(expectedCompany);
 		} catch (NoSuchElementException | SQLException e) {
 			fail(e + " in " + e.getStackTrace());
 		}
