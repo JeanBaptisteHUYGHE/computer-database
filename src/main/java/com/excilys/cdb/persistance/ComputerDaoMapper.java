@@ -44,7 +44,12 @@ public class ComputerDaoMapper {
         if (companyId != null) {
         	company = new Company(companyId, companyName);
         }
-        Computer computer = new Computer.ComputerBuilder(computerId, computerName, introductionDate, discontinuedDate, company).build();
+        Computer computer = new Computer.ComputerBuilder().withId(companyId)
+        		.withName(computerName)
+        		.withIntroductionDate(introductionDate)
+        		.withDiscontinueDate(discontinuedDate)
+        		.withManufacturer(company)
+        		.build();
         return computer;
 	}
 

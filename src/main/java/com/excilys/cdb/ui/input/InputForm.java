@@ -30,8 +30,11 @@ public class InputForm {
 			company = new Company(companyId, null);
 		}
 		
-		Computer newComputer = new Computer.ComputerBuilder(computerName, computerIntroductionDate,
-					computerDiscontinueDate, company).build();
+		Computer newComputer = new Computer.ComputerBuilder().withName(computerName)
+				.withIntroductionDate(computerIntroductionDate)
+				.withDiscontinueDate(computerDiscontinueDate)
+				.withManufacturer(company)
+				.build();
 		return newComputer;
 	}
 }

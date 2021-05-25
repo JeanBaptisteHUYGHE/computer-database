@@ -163,47 +163,37 @@ public class Computer {
 
 	public static class ComputerBuilder {
 		private Integer id = null;
-		private String name;
+		private String name = null;
 		private LocalDate introductionDate = null;
 		private LocalDate discontinueDate = null;
 		private Company manufacturer = null;
 		
-		public ComputerBuilder(String name) {
-			this.name = name;
-		}
-		
-		public ComputerBuilder(Integer id, String name) {
+		public ComputerBuilder withId(Integer id) {
 			this.id = id;
-			this.name = name;
+			return this;
 		}
-		
-		public ComputerBuilder(Integer id, String name, LocalDate introductionDate, LocalDate discontinueDate) {
-			this.id = id;
+
+		public ComputerBuilder withName(String name) {
 			this.name = name;
-			this.introductionDate = introductionDate;
-			this.discontinueDate = discontinueDate;
+			return this;
 		}
-		
-		public ComputerBuilder(String name, LocalDate introductionDate, LocalDate discontinueDate, Company manufacturer) {
-			this.name = name;
+
+		public ComputerBuilder withIntroductionDate(LocalDate introductionDate) {
 			this.introductionDate = introductionDate;
+			return this;
+		}
+
+		public ComputerBuilder withDiscontinueDate(LocalDate discontinueDate) {
 			this.discontinueDate = discontinueDate;
+			return this;
+		}
+
+		public ComputerBuilder withManufacturer(Company manufacturer) {
 			this.manufacturer = manufacturer;
+			return this;
 		}
-		
-		public ComputerBuilder(Integer id, String name, LocalDate introductionDate, LocalDate discontinueDate, Company manufacturer) {
-			this.id = id;
-			this.name = name;
-			this.introductionDate = introductionDate;
-			this.discontinueDate = discontinueDate;
-			this.manufacturer = manufacturer;
-		}
-		
-		/**
-		 * Return the builded computer.
-		 * @return the computer
-		 */
-		public Computer build() {
+
+		public Computer build() throws IllegalArgumentException {
 			Computer computer = new Computer(name);
 			computer.setId(id);
 			computer.setIntroductionDate(introductionDate);
@@ -212,5 +202,4 @@ public class Computer {
 			return computer;
 		}
 	}
-	
 }
