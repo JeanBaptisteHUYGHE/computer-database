@@ -73,7 +73,7 @@
 					<tr>
 						<td class="editMode"><input type="checkbox" name="cb"
 							class="cb" value="0"></td>
-						<td><a href="editComputer" onclick="">${ computer.name }</a></td>
+						<td><a href="editComputer?id=${ computer.id }" onclick="">${ computer.name }</a></td>
 						<td>${ computer.introductionDate }</td>
 						<td>${ computer.discontinueDate }</td>
 						<td>${ computer.companyName }</td>
@@ -88,24 +88,40 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
-				</a></li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-				</a></li>
+				<%-- Display previous link --%>
+				<c:if test = "${page.pageIndex gt 0}">
+				<li>
+					<a href="?page=${ page.pageIndex - 1 }" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+					</a>
+				</li>
+				</c:if>
+				<%-- Pages menu --%>
+				<c:forEach var="pageIndex" begin="0" end="${ page.pageMax }">
+					<li class="${ pageIndex eq page.pageIndex ? 'active' : '' }">
+						<a href="?page=${ pageIndex }">${ pageIndex + 1 }</a>
+					</li>
+				</c:forEach>
+				<%-- Display next link --%>
+				<c:if test = "${page.pageIndex lt page.pageMax}">
+				<li>
+					<a href="?page=${ page.pageIndex + 1 }" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+				</c:if>
 			</ul>
+
+			<div class="d-flex btn-group btn-group-sm pull-right" role="group">
+				<form>
+					<button type="button" class="btn btn-default">10</button>
+					<button type="button" class="btn btn-default">50</button>
+					<button type="button" class="btn btn-default">100</button>
+				</form>
+			</div>
 		</div>
 
-		<div class="btn-group btn-group-sm pull-right" role="group">
-			<button type="button" class="btn btn-default">10</button>
-			<button type="button" class="btn btn-default">50</button>
-			<button type="button" class="btn btn-default">100</button>
-		</div>
+
 
 	</footer>
 	<script src="static/js/jquery.min.js"></script>

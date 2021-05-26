@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.dto.ComputerDto;
+import com.excilys.cdb.model.Page;
+import com.excilys.cdb.model.Page.PageBuilder;
 import com.excilys.cdb.service.ComputerDtoService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -26,6 +28,7 @@ public class DashboardServlet extends HttpServlet {
 	
 	private ComputerDtoService computerDtoService;
 	private ComputerService computerService;
+	private Page page;
 	private Logger logger;
 	
 	public DashboardServlet() {
@@ -36,11 +39,22 @@ public class DashboardServlet extends HttpServlet {
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
+		String strRequestedPage = request.getParameter("page");
+		Integer requestedPage = page.MINIMUM_PAGE_INDEX;
+		try {
+			requestedPage = Integer.valueOf(strRequestedPage);
+		}
+		catch (NumberFormatException e) { }
 		List<ComputerDto> computersDtoList;
 		Integer computersCount;
+		PageBuilder pageBuilder = new PageBuilder();
 		try {
-			computersDtoList = computerDtoService.getComputersListPage(1, 10);
 			computersCount = computerService.getComputerCount();
+			pageBuilder.withElementsCount(computersCount);
+			pageBuilder.withPageIndex(requestedPage);
+			page = pageBuilder.build();
+			logger.info(page.toString());
+			computersDtoList = computerDtoService.getComputersListPage(page.getPageIndex(), page.getPageSize());
 		} catch (SQLException e) {
 			computersDtoList = new ArrayList<ComputerDto>();
 			computersCount = -1;
@@ -48,6 +62,7 @@ public class DashboardServlet extends HttpServlet {
 		}
 		request.setAttribute("computersList", computersDtoList);
 		request.setAttribute("computersCount", computersCount);
+		request.setAttribute("page", page);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp").forward(request, response);
 	}
 }
