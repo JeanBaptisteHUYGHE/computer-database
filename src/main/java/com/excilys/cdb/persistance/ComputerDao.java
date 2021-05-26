@@ -44,7 +44,7 @@ public class ComputerDao {
 	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
 		logger.debug("getComputersListPage({}, {})", pageIndex, pageSize);
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+		final String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
 				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 				+ "ORDER BY computer.id "
 				+ "LIMIT ? OFFSET ?";
@@ -72,7 +72,7 @@ public class ComputerDao {
 		logger.debug("getComputer({})", computer);
 
 		Connection dbConnection = Database.getConnection();
-		String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+		final String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
 				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 				+ "WHERE computer.id = ?";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
@@ -96,7 +96,7 @@ public class ComputerDao {
 	public void updateComputer(Computer computer) throws IllegalArgumentException, SQLException {
 		logger.debug("updateComputer({})", computer);
 		Connection dbConnection = Database.getConnection();
-		String request = "UPDATE computer "
+		final String request = "UPDATE computer "
 				+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
 				+ "WHERE id = ?";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
@@ -131,7 +131,7 @@ public class ComputerDao {
 	public void addComputer(Computer computer) throws SQLException {
 		logger.debug("addComputer({})", computer);
 		Connection dbConnection = Database.getConnection();
-		String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
+		final String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
 		preparedStatement.setString(1, computer.getName());
 		if (!computer.getIntroductionDate().isPresent()) {
@@ -169,12 +169,30 @@ public class ComputerDao {
 	public void deleteComputer(Computer computer) throws IllegalArgumentException, SQLException {
 		logger.debug("deleteComputer({})", computer);
 		Connection dbConnection = Database.getConnection();
-		String request = "DELETE FROM computer WHERE id = ?";
+		final String request = "DELETE FROM computer WHERE id = ?";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
 		Integer id = computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id is null"));
 		preparedStatement.setInt(1, id);
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
 		dbConnection.close();
+	}
+	
+	/**
+	 * Return the computers count
+	 * @return the computer number
+	 * @throws SQLException
+	 */
+	public Integer getComputersCount() throws SQLException {
+		logger.debug("getComputersCount()");
+		Connection dbConnection = Database.getConnection();
+		final String request = "SELECT count(id) FROM computer";
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		Integer computersCount = new ComputerDaoMapper().getComputersCount(resultSet);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
+		return computersCount;
 	}
 }

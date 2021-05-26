@@ -111,4 +111,16 @@ public class ComputerService {
 			throw e;
 		}
 	}
+	
+	public Integer getComputerCount() throws SQLException {
+		logger.debug("getComputerCount()");
+		Integer computersCount;
+		try {
+			computersCount = ComputerDao.getInstance().getComputersCount();
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw e;
+		}
+		return computersCount;
+	}
 }

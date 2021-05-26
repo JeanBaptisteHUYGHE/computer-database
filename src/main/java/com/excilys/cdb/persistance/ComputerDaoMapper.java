@@ -82,4 +82,15 @@ public class ComputerDaoMapper {
 		}
         return readComputerLine(resultSet);
 	}
+
+	/**
+	 * Return the computers count
+	 * @param resultSet the resultSet
+	 * @return the computers number
+	 * @throws SQLException
+	 */
+	public Integer getComputersCount(ResultSet resultSet) throws SQLException {
+		resultSet.next();
+		return resultSet.getInt(1);
+	}
 }
