@@ -3,7 +3,6 @@ package com.excilys.cdb.service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ public class ComputerDtoService {
 	}
 	
 	private ComputerDtoService() {
+		super();
 		logger = LoggerFactory.getLogger(ComputerDtoService.class);
 	}
 

@@ -117,6 +117,8 @@ class CompanyDaoTest {
 			Connection connection = Database.getConnection();
 			Statement statement = connection.createStatement();
 			statement.executeUpdate("INSERT INTO company(id, name) values (4, 'MyCompany')");
+			statement.close();
+			connection.close();
 		} catch (SQLException e) {
 			fail("SQLException in initialization: " + e + " in " + e.getStackTrace());
 		}
