@@ -54,10 +54,26 @@ public class CompanyService {
 	}
 
 	/**
+	 * Return a list of companies.
+	 * @return the companies list
+	 * @throws SQLException
+	 */
+	public List<Company> getCompaniesList() throws SQLException {
+		logger.debug("getCompaniesList()");
+		List<Company> companiesList = null;
+		try {
+			companiesList = CompanyDao.getInstance().getCompaniesList();
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw e;
+		}
+		return companiesList;
+	}
+	/**
 	 * Return a list of companies by page.
 	 * @param pageIndex page index
 	 * @param pageSize page size
-	 * @return the computer list
+	 * @return the companies list
 	 * @throws SQLException
 	 */
 	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
@@ -65,9 +81,6 @@ public class CompanyService {
 		List<Company> companiesList = null;
 		try {
 			companiesList = CompanyDao.getInstance().getCompaniesListPage(pageIndex, pageSize);
-		} catch (NoSuchElementException e) {
-			logger.info("{} in {}", e, e.getStackTrace());
-			throw e;
 		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw e;

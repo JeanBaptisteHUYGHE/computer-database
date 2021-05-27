@@ -40,7 +40,7 @@ public class DashboardServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
 		String strRequestedPage = request.getParameter("page");
-		Integer requestedPage = page.MINIMUM_PAGE_INDEX;
+		Integer requestedPage = Page.MINIMUM_PAGE_INDEX;
 		try {
 			requestedPage = Integer.valueOf(strRequestedPage);
 		}

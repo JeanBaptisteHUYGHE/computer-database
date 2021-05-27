@@ -144,7 +144,7 @@ public class ComputerDao {
 		} else {
 			preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
 		}
-		if (!computer.getManufacturer().isPresent()) {
+		if (!computer.getManufacturer().isPresent() || computer.getManufacturer().get().getId() == null ) {
 			preparedStatement.setNull(4, 0);
 		} else {
 			preparedStatement.setInt(4, computer.getManufacturer().get().getId());

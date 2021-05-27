@@ -33,6 +33,24 @@ public class CompanyDao {
 	}
 	
 	/**
+	 * Return the companies list from the database.
+	 * @return the companies list page
+	 * @throws SQLException
+	 */
+	public List<Company> getCompaniesList() throws SQLException {
+		logger.debug("getCompaniesList()");
+		Connection dbConnection = Database.getConnection();
+		String request = "SELECT id, name FROM company ORDER BY name";
+		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		List<Company> companiesList = new CompanyDaoMapper().getCompaniesList(resultSet);
+		resultSet.close();
+		preparedStatement.close();
+		dbConnection.close();
+		return companiesList;
+	}
+	
+	/**
 	 * Return the companies list from the database in the page range.
 	 * @param pageIndex the page index
 	 * @param pageSize the page size
@@ -44,7 +62,7 @@ public class CompanyDao {
 		Connection dbConnection = Database.getConnection();
 		String request = "SELECT id, name "
 				+ "FROM company "
-				+ "ORDER BY id "
+				+ "ORDER BY name "
 				+ "LIMIT ? OFFSET ?";
 		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
 		preparedStatement.setInt(1, pageSize);

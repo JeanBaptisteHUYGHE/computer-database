@@ -24,7 +24,6 @@ public class ComputerDtoService {
 	}
 	
 	private ComputerDtoService() {
-		super();
 		logger = LoggerFactory.getLogger(ComputerDtoService.class);
 	}
 
