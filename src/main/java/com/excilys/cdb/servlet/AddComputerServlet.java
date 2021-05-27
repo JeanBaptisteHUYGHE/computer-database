@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.controller.AddComputerController;
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.ComputerDto.ComputerDtoBuilder;
@@ -27,18 +28,21 @@ import com.excilys.cdb.service.ComputerService;
 public class AddComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8762274583542611999L;
+	
+	private AddComputerController addComputerController;
 	private Logger logger;
 	
 	// private CompanyDtoService companyDtoService;
 	
 	public AddComputerServlet() {
 		logger = LoggerFactory.getLogger(AddComputerServlet.class);
+		addComputerController = new AddComputerController();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
 		try {
-			List<CompanyDto> companiesList = CompanyDtoService.getInstance().getCompaniesDtoList();
+			List<CompanyDto> companiesList = addComputerController.getCompaniesDtoList();
 			request.setAttribute("companiesList", companiesList);
 		} catch (SQLException e) {
 			logger.error("Can't get companies list: {} in {}", e, e.getStackTrace());
@@ -53,10 +57,7 @@ public class AddComputerServlet extends HttpServlet {
 		String errorMessage = null;
 		
 		try {
-			ComputerDtoMapper computerDtoMapper = ComputerDtoMapper.getInstance();
-			Computer computer = computerDtoMapper.getComputer(computerDto);
-			ComputerService computerService = ComputerService.getInstance();
-			computerService.addComputer(computer);
+			addComputerController.addComputer(computerDto);
 			response.sendRedirect("dashboard");
 		} catch (IllegalArgumentException e) {
 			logger.info("Computer not add in POST method, invalid argument: {} in {}", e, e.getStackTrace());
