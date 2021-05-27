@@ -25,7 +25,11 @@ public class CompanyDto {
 		this.name = name;
 	}
 	
-	public class CompanyDtoBuilder {
+	public String toString() {
+		return String.format("<CompanyDto; id: %s, name:%s>", id, name);
+	}
+	
+	public static class CompanyDtoBuilder {
 		
 		private String id;
 		private String name;

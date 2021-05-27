@@ -1,6 +1,8 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 public class Computer {
@@ -31,7 +33,7 @@ public class Computer {
 	}
 
 	public void setName(String name) throws IllegalArgumentException {
-		if (name == null) {
+		if (name == null || name.length() == 0) {
 			throw new IllegalArgumentException("Computer name can't be null.");
 		}
 		this.name = name;
@@ -182,9 +184,29 @@ public class Computer {
 			this.introductionDate = introductionDate;
 			return this;
 		}
+		
+		public ComputerBuilder withIntroductionDate(String introductionDate) throws DateTimeParseException {
+			if (introductionDate == null || introductionDate.length() == 0) {
+				this.introductionDate = null;
+			} else {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+				this.introductionDate = LocalDate.parse(introductionDate, formatter);
+			}
+			return this;
+		}
 
 		public ComputerBuilder withDiscontinueDate(LocalDate discontinueDate) {
 			this.discontinueDate = discontinueDate;
+			return this;
+		}
+		
+		public ComputerBuilder withDiscontinueDate(String discontinueDate) throws DateTimeParseException {
+			if (discontinueDate == null || discontinueDate.length() == 0) {
+				this.discontinueDate = null;
+			} else {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+				this.discontinueDate = LocalDate.parse(discontinueDate, formatter);
+			}
 			return this;
 		}
 

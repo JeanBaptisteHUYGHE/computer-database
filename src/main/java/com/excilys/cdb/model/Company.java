@@ -74,7 +74,26 @@ public class Company {
 		return true;
 	}
 	
-	
+	public static class CompanyBuilder {
+		private Integer id = null;
+		private String name = null;
+		
+		public CompanyBuilder withId(Integer id) {
+			this.id = id;
+			return this;
+		}
+		
+		public CompanyBuilder withName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		public Company build() {
+			Company company = new Company(name);
+			company.setId(id);
+			return company;
+		}
+	}
 
 	
 }
