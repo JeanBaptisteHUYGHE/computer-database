@@ -1,8 +1,7 @@
 package com.excilys.cdb.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,13 +13,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.controller.AddComputerController;
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.ComputerDto.ComputerDtoBuilder;
-import com.excilys.cdb.dto.ComputerDtoMapper;
+import com.excilys.cdb.dto.mapper.CompanyDtoMapper;
+import com.excilys.cdb.dto.mapper.ComputerDtoMapper;
+import com.excilys.cdb.dto.validator.ComputerDtoValidator;
+import com.excilys.cdb.exception.dao.DatabaseConnectionException;
+import com.excilys.cdb.exception.dto.InvalidComputerException;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.CompanyDtoService;
+import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 
@@ -29,24 +32,31 @@ public class AddComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8762274583542611999L;
 	
-	private AddComputerController addComputerController;
+	private CompanyService companyService;
+	private CompanyDtoMapper companyDtoMapper;
+	private ComputerDtoMapper computerDtoMapper;
+	private ComputerDtoValidator computerDtoValidator;
+	private ComputerService computerService;
 	private Logger logger;
 	
 	// private CompanyDtoService companyDtoService;
 	
 	public AddComputerServlet() {
 		logger = LoggerFactory.getLogger(AddComputerServlet.class);
-		addComputerController = new AddComputerController();
+		companyService = CompanyService.getInstance();
+		companyDtoMapper = CompanyDtoMapper.getInstance();
+		computerDtoMapper = ComputerDtoMapper.getInstance();
+		computerDtoValidator = ComputerDtoValidator.getInstance();
+		computerService = ComputerService.getInstance();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
-		try {
-			List<CompanyDto> companiesList = addComputerController.getCompaniesDtoList();
-			request.setAttribute("companiesList", companiesList);
-		} catch (SQLException e) {
-			logger.error("Can't get companies list: {} in {}", e, e.getStackTrace());
-		}
+		List<String> errorsList = getErrorsList(request.getAttribute("errorsList"));
+		List<CompanyDto> companiesDtoList = getCompaniesDto(errorsList);
+
+		request.setAttribute("errorsList", errorsList);
+		request.setAttribute("companiesList", companiesDtoList);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp").forward(request, response);
 	}
 	
@@ -54,27 +64,49 @@ public class AddComputerServlet extends HttpServlet {
 		logger.debug("doPost(...)");
 		ComputerDto computerDto = getComputerDtoAttributFromPost(request);
 		
-		String errorMessage = null;
+		List<String> errorsList = new ArrayList<String>(0);
 		
 		try {
-			addComputerController.addComputer(computerDto);
+			computerDtoValidator.validate(computerDto);
+			addComputerDto(computerDto);
 			response.sendRedirect("dashboard");
-		} catch (IllegalArgumentException e) {
-			logger.info("Computer not add in POST method, invalid argument: {} in {}", e, e.getStackTrace());
-			errorMessage = "Computer name can't be empty and precedence between dates need to be valid.";
-			request.setAttribute("errorMessage", errorMessage);
+		} catch (InvalidComputerException e) {
+			errorsList.add(e.getMessage());
+			request.setAttribute("errorsList", errorsList);
 			doGet(request, response);
-		} catch (DateTimeParseException e) {
-			logger.info("Computer not add in POST method, invalid date format: {} in {}", e, e.getStackTrace());
-			errorMessage = "Invalid date format";
-			request.setAttribute("errorMessage", errorMessage);
-			doGet(request, response);
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			errorMessage = "Error with the database";
-			request.setAttribute("errorMessage", errorMessage);
+		} catch (DatabaseConnectionException e) {
+			errorsList.add("Cannot add this computer. " + e.getMessage());
+			request.setAttribute("errorsList", errorsList);
 			doGet(request, response);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> getErrorsList(Object errorsListObject) {
+		logger.info("ici: " + errorsListObject.toString());
+		List<String> errorsList = null;
+		try {
+			errorsList = (List<String>) errorsListObject;
+		} catch (ClassCastException e) { }
+		
+		if (errorsList == null) {
+			errorsList = new ArrayList<String>(0);
+		}
+		return errorsList;
+	}
+	
+	private List<CompanyDto> getCompaniesDto(List<String> errorsList) {
+		List<CompanyDto> companiesDtoList;
+		
+		try {
+			List<Company> companiesList;
+			companiesList = companyService.getCompaniesList();
+			companiesDtoList = companyDtoMapper.fromCompaniesListToCompaniesDtoList(companiesList);
+		} catch (DatabaseConnectionException e) {
+			companiesDtoList = new ArrayList<CompanyDto>(0);
+			errorsList.add("Cannot get companies list. " + e.getMessage());
+		}
+		return companiesDtoList;
 	}
 	
 	/**
@@ -96,6 +128,11 @@ public class AddComputerServlet extends HttpServlet {
 		ComputerDto computerDto = computerDtoBuilder.build();
 		logger.debug("ComputerDto readed: {}", computerDto.toString());
 		return computerDto;
+	}
+	
+	private void addComputerDto(ComputerDto computerDto) throws DatabaseConnectionException {
+		Computer computer = computerDtoMapper.fromComputerDtoToComputer(computerDto);
+		computerService.addComputer(computer);
 	}
 }
 

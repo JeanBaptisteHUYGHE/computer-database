@@ -5,12 +5,32 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.cdb.exception.dao.ComputerNotFoundException;
+import com.excilys.cdb.exception.dao.DaoMapperException;
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.model.Company.CompanyBuilder;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.Computer.ComputerBuilder;
 
 public class ComputerDaoMapper {
+	
+	private static ComputerDaoMapper computerDaoMapper;
+	private Logger logger;
+	
+	public static ComputerDaoMapper getInstance() {
+		if (computerDaoMapper == null) {
+			computerDaoMapper = new ComputerDaoMapper();
+		}
+		return computerDaoMapper;
+	}
+	
+	private ComputerDaoMapper() {
+		logger = LoggerFactory.getLogger(ComputerDaoMapper.class);
+	}
 	
 	/**
 	 * Return the computer read from a result set.
@@ -19,78 +39,108 @@ public class ComputerDaoMapper {
 	 * @throws SQLException
 	 */
 	private Computer readComputerLine(ResultSet resultSet) throws SQLException {
-		Integer computerId = resultSet.getInt("id");
-		String computerName = resultSet.getString("name");
+		ComputerBuilder computerBuilder = new ComputerBuilder();
+		
+		computerBuilder.withId(resultSet.getInt("id"));
+		computerBuilder.withName(resultSet.getString("name"));
+		
         LocalDate introductionDate = null;
         try {
         	introductionDate = resultSet.getDate("introduced").toLocalDate();
         } catch (NullPointerException e) { }
+        computerBuilder.withIntroductionDate(introductionDate);
+        
         LocalDate discontinuedDate = null;
         try {
         	discontinuedDate = resultSet.getDate("discontinued").toLocalDate();
         } catch (NullPointerException e) { }
-        Integer companyId = null;
+        computerBuilder.withDiscontinueDate(discontinuedDate);
+        
+        computerBuilder.withCompany(readCompanyPartOfComputerLine(resultSet));
+
+        return computerBuilder.build();
+	}
+	
+	/**
+	 * Return the company read on the part of a computer result set
+	 * @param resultSet
+	 * @return
+	 * @throws SQLException
+	 */
+	private Company readCompanyPartOfComputerLine(ResultSet resultSet) throws SQLException {
+		Integer companyId = null;
         try {
         	companyId = resultSet.getInt("company_id");
 			if (companyId == 0) {
         		companyId = null;
         	}
         } catch (NullPointerException e) { }
+        
         String companyName = null;
         try {
         	companyName = resultSet.getString("company_name");
         } catch (NullPointerException e) { }
-        Company company = null;
-        if (companyId != null) {
-        	company = new Company(companyId, companyName);
+        
+        if (companyId == null && companyName == null) {
+        	return null;
+        } else {
+        	return new CompanyBuilder().withId(companyId).withName(companyName).build();
         }
-        Computer computer = new Computer.ComputerBuilder()
-        		.withId(computerId)
-        		.withName(computerName)
-        		.withIntroductionDate(introductionDate)
-        		.withDiscontinueDate(discontinuedDate)
-        		.withManufacturer(company)
-        		.build();
-        return computer;
 	}
 
 	/**
 	 * Return the computers list.
 	 * @param resultSet the resultSet from the SQL request (DAO file)
 	 * @return computers list
-	 * @throws SQLException
+	 * @throws DaoMapperException
 	 */
-	public List<Computer> getComputersList(ResultSet resultSet) throws SQLException {
-		ArrayList<Computer> computersList = new ArrayList<Computer>();
-		while (resultSet.next()) {
-            computersList.add(readComputerLine(resultSet));
+	public List<Computer> fromResultSetToComputersList(ResultSet resultSet) throws DaoMapperException {
+		try {
+			ArrayList<Computer> computersList = new ArrayList<Computer>();
+			while (resultSet.next()) {
+	            computersList.add(readComputerLine(resultSet));
+			}
+	        return computersList;
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DaoMapperException();
 		}
-        return computersList;
 	}
 	
 	/**
 	 * Return the computer.
 	 * @param resultSet the resultSet from the SQL request (DAO file)
 	 * @return the computer 
-	 * @throws SQLException
-	 * @throws NoSuchElementException
+	 * @throws ComputerNotFoundException
+	 * @throws DaoMapperException
 	 */
-	public Computer getComputer(ResultSet resultSet) throws NoSuchElementException, SQLException {
-		resultSet.next();
-		if (resultSet.getRow() == 0) {
-			throw new NoSuchElementException("Computer not found");
+	public Computer getComputer(ResultSet resultSet) throws ComputerNotFoundException, DaoMapperException {
+		try {
+			resultSet.next();
+			if (resultSet.getRow() == 0) {
+				throw new ComputerNotFoundException();
+			}
+	        return readComputerLine(resultSet);
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DaoMapperException();
 		}
-        return readComputerLine(resultSet);
 	}
 
 	/**
 	 * Return the computers count
 	 * @param resultSet the resultSet
 	 * @return the computers number
-	 * @throws SQLException
+	 * @throws DaoMapperException 
 	 */
-	public Integer getComputersCount(ResultSet resultSet) throws SQLException {
-		resultSet.next();
-		return resultSet.getInt(1);
+	public Integer getComputersCount(ResultSet resultSet) throws DaoMapperException {
+		try {
+			resultSet.next();
+			return resultSet.getInt(1);
+
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DaoMapperException();
+		}
 	}
 }

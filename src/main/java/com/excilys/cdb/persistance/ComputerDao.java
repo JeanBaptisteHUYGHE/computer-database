@@ -7,17 +7,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.exception.dao.ComputerNotFoundException;
+import com.excilys.cdb.exception.dao.DaoMapperException;
+import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.Page;
 
 public class ComputerDao {
 	
 	private static ComputerDao instance = null;
 	private Logger logger;
+	
+	private static final String REQUEST_GET_COMPUTERS_LIST_BY_PAGE = 
+			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "ORDER BY computer.id "
+			+ "LIMIT ? OFFSET ?";
+	private static final String REQUEST_GET_COMPUTER_BY_ID =
+			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "WHERE computer.id = ?";
+	private static final String REQUEST_UPDATE_COMPUTER_BY_ID =
+			"UPDATE computer "
+			+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
+			+ "WHERE id = ?";
+	private static final String REQUEST_ADD_COMPUTER =
+			"INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
+	private static final String REQUEST_DELETE_COMPUTER_BY_ID =
+			"DELETE FROM computer WHERE id = ?";
+	private static final String REQUEST_GET_COMPUTERS_COUNT =
+			"SELECT count(id) FROM computer";
 	
 	/**
 	 * Return the computer Dao instance (singleton).
@@ -36,146 +59,177 @@ public class ComputerDao {
 
 	/**
 	 * Return the computers list from the database in the page range.
-	 * @param pageIndex the page index
-	 * @param pageSize the page size
+	 * @param page the page
 	 * @return the computer list page
 	 * @throws SQLException
 	 */
-	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
-		logger.debug("getComputersListPage({}, {})", pageIndex, pageSize);
-		Connection dbConnection = Database.getConnection();
-		final String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
-				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-				+ "ORDER BY computer.id "
-				+ "LIMIT ? OFFSET ?";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		preparedStatement.setInt(1, pageSize);
-		preparedStatement.setInt(2, pageSize * pageIndex);
-		ResultSet resultSet = preparedStatement.executeQuery();
-		List<Computer> computersList = new ComputerDaoMapper().getComputersList(resultSet);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
-		return computersList;
+	public List<Computer> getComputersListPage(Page page) throws DatabaseConnectionException {
+		logger.debug("getComputersListPage({})", page);
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_LIST_BY_PAGE);
+			preparedStatement.setInt(1, page.getSize());
+			preparedStatement.setInt(2, page.getSize() * page.getIndex());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			List<Computer> computersList = ComputerDaoMapper.getInstance().fromResultSetToComputersList(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return computersList;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
+		}
 	}
 
 	/**
 	 * Return the computer from the database.
 	 * 
-	 * @param computer the computer
+	 * @param id the computer id
 	 * @return the computer
-	 * @throws IllegalArgumentException
-	 * @throws NoSuchElementException
-	 * @throws SQLException
+	 * @throws ComputerNotFoundException
+	 * @throws DatabaseConnectionException 
 	 */
-	public Computer getComputer(Computer computer) throws IllegalArgumentException, NoSuchElementException, SQLException {
-		logger.debug("getComputer({})", computer);
+	public Computer getComputerById(Integer id) throws ComputerNotFoundException, DatabaseConnectionException {
+		logger.debug("getComputerById({})", id);
 
-		Connection dbConnection = Database.getConnection();
-		final String request = "SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
-				+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-				+ "WHERE computer.id = ?";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		Integer id = computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id null"));
-		preparedStatement.setInt(1, id);
-		ResultSet resultSet = preparedStatement.executeQuery();
-		Computer gettedComputer = new ComputerDaoMapper().getComputer(resultSet);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
-		return gettedComputer;
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTER_BY_ID);
+			preparedStatement.setInt(1, id);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			Computer gettedComputer = ComputerDaoMapper.getInstance().getComputer(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return gettedComputer;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
+		}
 	}
 
 	/**
 	 * Update the computer in the database.
 	 * 
 	 * @param computer the computer
-	 * @throws IllegalArgumentException
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException 
 	 */
-	public void updateComputer(Computer computer) throws IllegalArgumentException, SQLException {
+	public void updateComputer(Computer computer) throws DatabaseConnectionException {
 		logger.debug("updateComputer({})", computer);
-		Connection dbConnection = Database.getConnection();
-		final String request = "UPDATE computer "
-				+ "SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
-				+ "WHERE id = ?";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		preparedStatement.setString(1, computer.getName());
-		if (!computer.getIntroductionDate().isPresent()) {
-			preparedStatement.setNull(2, 0);
-		} else {
-			preparedStatement.setDate(2, Date.valueOf(computer.getIntroductionDate().get()));
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_UPDATE_COMPUTER_BY_ID);
+			
+			preparedStatement.setString(1, computer.getName());
+			
+			if (!computer.getIntroductionDate().isPresent()) {
+				preparedStatement.setNull(2, 0);
+			} else {
+				preparedStatement.setDate(2, Date.valueOf(computer.getIntroductionDate().get()));
+			}
+			
+			if (!computer.getDiscontinueDate().isPresent()) {
+				preparedStatement.setNull(3, 0);
+			} else {
+				preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
+			}
+			
+			if (!computer.getCompany().isPresent()) {
+				preparedStatement.setNull(4, 0);
+			} else {
+				preparedStatement.setInt(4, computer.getCompany().get().getId());
+			}
+			
+			preparedStatement.setInt(5, computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id is null")));
+			
+			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			dbConnection.close();
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
 		}
-		if (!computer.getDiscontinueDate().isPresent()) {
-			preparedStatement.setNull(3, 0);
-		} else {
-			preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
-		}
-		if (!computer.getManufacturer().isPresent()) {
-			preparedStatement.setNull(4, 0);
-		} else {
-			preparedStatement.setInt(4, computer.getManufacturer().get().getId());
-		}
-		preparedStatement.setInt(5, computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id is null")));
-		preparedStatement.executeUpdate();
-		preparedStatement.close();
-		dbConnection.close();
 	}
 
 	/**
 	 * Add a new computer in the database.
 	 * 
 	 * @param computer the computer to add
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException 
 	 */
-	public void addComputer(Computer computer) throws SQLException {
+	public void addComputer(Computer computer) throws DatabaseConnectionException {
 		logger.debug("addComputer({})", computer);
-		Connection dbConnection = Database.getConnection();
-		final String request = "INSERT INTO computer (name, introduced, discontinued, company_id) " + "VALUES (?, ?, ?, ?)";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request, Statement.RETURN_GENERATED_KEYS);
-		preparedStatement.setString(1, computer.getName());
-		if (!computer.getIntroductionDate().isPresent()) {
-			preparedStatement.setNull(2, 0);
-		} else {
-			preparedStatement.setDate(2, Date.valueOf(computer.getIntroductionDate().get()));
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_ADD_COMPUTER, Statement.RETURN_GENERATED_KEYS);
+			
+			preparedStatement.setString(1, computer.getName());
+			
+			if (!computer.getIntroductionDate().isPresent()) {
+				preparedStatement.setNull(2, 0);
+			} else {
+				preparedStatement.setDate(2, Date.valueOf(computer.getIntroductionDate().get()));
+			}
+			
+			if (!computer.getDiscontinueDate().isPresent()) {
+				preparedStatement.setNull(3, 0);
+			} else {
+				preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
+			}
+			
+			if (!computer.getCompany().isPresent() || computer.getCompany().get().getId() == null ) {
+				preparedStatement.setNull(4, 0);
+			} else {
+				preparedStatement.setInt(4, computer.getCompany().get().getId());
+			}
+			
+			preparedStatement.executeUpdate();
+			
+			ResultSet resultSet = preparedStatement.getGeneratedKeys();
+			resultSet.next();
+			int newId = resultSet.getInt(1);
+			computer.setId(newId);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
 		}
-		if (!computer.getDiscontinueDate().isPresent()) {
-			preparedStatement.setNull(3, 0);
-		} else {
-			preparedStatement.setDate(3, Date.valueOf(computer.getDiscontinueDate().get()));
-		}
-		if (!computer.getManufacturer().isPresent() || computer.getManufacturer().get().getId() == null ) {
-			preparedStatement.setNull(4, 0);
-		} else {
-			preparedStatement.setInt(4, computer.getManufacturer().get().getId());
-		}
-		preparedStatement.executeUpdate();
-		ResultSet resultSet = preparedStatement.getGeneratedKeys();
-		resultSet.next();
-		int newId = resultSet.getInt(1);
-		computer.setId(newId);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
 	}
 
 	/**
 	 * Delete a computer in the database.
 	 * 
-	 * @param computer the computer to remove
-	 * @throws IllegalArgumentException
-	 * @throws SQLException
+	 * @param id the computer id to remove
+	 * @throws DatabaseConnectionException 
 	 */
-	public void deleteComputer(Computer computer) throws IllegalArgumentException, SQLException {
-		logger.debug("deleteComputer({})", computer);
-		Connection dbConnection = Database.getConnection();
-		final String request = "DELETE FROM computer WHERE id = ?";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		Integer id = computer.getId().orElseThrow(() -> new IllegalArgumentException("Computer id is null"));
-		preparedStatement.setInt(1, id);
-		preparedStatement.executeUpdate();
-		preparedStatement.close();
-		dbConnection.close();
+	public void deleteComputerById(Integer id) throws DatabaseConnectionException {
+		logger.debug("deleteComputerById({})", id);
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_DELETE_COMPUTER_BY_ID);
+			
+			preparedStatement.setInt(1, id);
+			
+			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			dbConnection.close();
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		}
 	}
 	
 	/**
@@ -183,16 +237,24 @@ public class ComputerDao {
 	 * @return the computer number
 	 * @throws SQLException
 	 */
-	public Integer getComputersCount() throws SQLException {
+	public Integer getComputersCount() throws DatabaseConnectionException {
 		logger.debug("getComputersCount()");
-		Connection dbConnection = Database.getConnection();
-		final String request = "SELECT count(id) FROM computer";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		ResultSet resultSet = preparedStatement.executeQuery();
-		Integer computersCount = new ComputerDaoMapper().getComputersCount(resultSet);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
-		return computersCount;
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_COUNT);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			Integer computersCount = ComputerDaoMapper.getInstance().getComputersCount(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return computersCount;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
+		}
 	}
 }

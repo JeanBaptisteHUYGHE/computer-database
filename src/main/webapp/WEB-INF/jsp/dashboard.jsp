@@ -39,6 +39,21 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="container">
+			<%-- Errors messages --%>
+           	<c:if test="${ not empty errorsList }">
+           	<p></p>
+           	<div class="form-group alert alert-danger">
+           		<ul>
+           		<c:forEach items="${ errorsList }" var="errorMessage">
+                   	<li>${ errorMessage }</li>
+                   </c:forEach>
+           		</ul>
+                   ${ errorMessage }
+               </div>
+           	</c:if>
+		</div>
 
 		<form id="deleteForm" action="#" method="POST">
 			<input type="hidden" name="selection" value="">
@@ -89,23 +104,25 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<%-- Display previous link --%>
-				<c:if test = "${page.pageIndex gt 0}">
+				<c:if test = "${page.index > 0}">
 				<li>
-					<a href="?page=${ page.pageIndex - 1 }" aria-label="Previous">
+					<a href="?page=${ page.index - 1 }" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
 				</c:if>
 				<%-- Pages menu --%>
-				<c:forEach var="pageIndex" begin="0" end="${ page.pageMax }">
-					<li class="${ pageIndex eq page.pageIndex ? 'active' : '' }">
+				<c:forEach var="pageIndex" begin="${ page.index - 3 >= 0 ? page.index - 3: 0 }" end="${ page.index + 3 }">
+					<c:if test = "${pageIndex >= 0 and pageIndex <= page.maxIndex }">
+					<li class="${ pageIndex == page.index ? 'active' : '' }">
 						<a href="?page=${ pageIndex }">${ pageIndex + 1 }</a>
 					</li>
+					</c:if>
 				</c:forEach>
 				<%-- Display next link --%>
-				<c:if test = "${page.pageIndex lt page.pageMax}">
+				<c:if test = "${page.index < page.maxIndex}">
 				<li>
-					<a href="?page=${ page.pageIndex + 1 }" aria-label="Next">
+					<a href="?page=${ page.index + 1 }" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
 					</a>
 				</li>

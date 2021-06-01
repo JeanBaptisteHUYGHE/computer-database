@@ -2,18 +2,16 @@ package com.excilys.cdb.service;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.excilys.cdb.exception.dao.ComputerNotFoundException;
+import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.ComputerDao;
 
 public class ComputerService {
 	
 	private static ComputerService computerService = null;
-	private Logger logger;
 	
 	public static ComputerService getInstance() {
 		if (computerService == null) {
@@ -22,105 +20,69 @@ public class ComputerService {
 		return computerService;
 	}
 	
-	private ComputerService() {
-		logger = LoggerFactory.getLogger(ComputerService.class);
-	}
+	private ComputerService() { }
 
 	/**
-	 * Return a list of computer by page.
-	 * @param pageIndex page index
-	 * @param pageSize page size
-	 * @return the computer list
-	 * @throws SQLException
+	 * Return the computers list of the asked page.
+	 * @param page the page
+	 * @return the computers list
+	 * @throws DatabaseConnectionException
 	 */
-	public List<Computer> getComputersListPage(int pageIndex, int pageSize) throws SQLException {
-		logger.debug("getComputersListPage({}, {})", pageIndex, pageSize);
+	public List<Computer> getComputersListPage(Page page) throws DatabaseConnectionException {
 		List<Computer> computersList = null;
-		try {
-			computersList = ComputerDao.getInstance().getComputersListPage(pageIndex, pageSize);
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+		computersList = ComputerDao.getInstance().getComputersListPage(page);
 		return computersList;
 	}
 
 	/**
-	 * Return desire computer.
-	 * @param computerSrc the computer (just is id is checked)
-	 * @return the correspondent computer in database
-	 * @throws SQLException 
-	 * @throws NoSuchElementException 
+	 * Get a computer by is id.
+	 * @param id the computer id
+	 * @return the computer
+	 * @throws ComputerNotFoundException if the correspondent computer isn't found
+	 * @throws DatabaseConnectionException
 	 */
-	public Computer getComputer(Computer computerSrc) throws NoSuchElementException, SQLException {
-		logger.debug("getComputer({})", computerSrc);
-		Computer gettedComputer = null;
-		try {
-			gettedComputer = ComputerDao.getInstance().getComputer(computerSrc);
-		} catch (NoSuchElementException e) {
-			logger.info("{} in {}", e, e.getStackTrace());
-			throw e;
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
-		return gettedComputer;
+	public Computer getComputerById(Integer id) throws ComputerNotFoundException, DatabaseConnectionException {
+		Computer computer = null;
+		computer = ComputerDao.getInstance().getComputerById(id);
+		return computer;
 	}
 
 	/**
-	 * Add a new computer.
-	 * @param newComputer the computer
-	 * @throws SQLException
+	 * Add a new computer in the database.
+	 * @param newComputer the computer to add
+	 * @throws DatabaseConnectionException
 	 */
-	public void addComputer(Computer newComputer) throws SQLException {
-		logger.debug("addComputer({})", newComputer);
-		try {
-			ComputerDao.getInstance().addComputer(newComputer);
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+	public void addComputer(Computer newComputer) throws DatabaseConnectionException {
+		ComputerDao.getInstance().addComputer(newComputer);
 	}
 
 	/**
 	 * Update a computer.
 	 * @param computer the computer
+	 * @throws DatabaseConnectionException 
 	 * @throws SQLException
 	 */
-	public void updateComputer(Computer computer) throws SQLException {
-		logger.debug("updateComputer({})", computer);
-		try {
-			ComputerDao.getInstance().updateComputer(computer);
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+	public void updateComputer(Computer computer) throws DatabaseConnectionException {
+		ComputerDao.getInstance().updateComputer(computer);
 	}
 
 	/**
 	 * Delete a computer.
-	 * @param computer
-	 * @throws SQLException
+	 * @param id the computer id
+	 * @throws DatabaseConnectionException 
 	 */
-	public void deleteComputer(Computer computer) throws SQLException {
-		logger.debug("deleteComputer({})", computer);
-		try {
-			ComputerDao.getInstance().deleteComputer(computer);
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+	public void deleteComputer(Integer id) throws DatabaseConnectionException {
+		ComputerDao.getInstance().deleteComputerById(id);
 	}
 	
-	public Integer getComputerCount() throws SQLException {
-		logger.debug("getComputerCount()");
+	/**
+	 * Return the total number of computers
+	 * @return
+	 * @throws DatabaseConnectionException
+	 */
+	public Integer getComputerCount() throws DatabaseConnectionException {
 		Integer computersCount;
-		try {
-			computersCount = ComputerDao.getInstance().getComputersCount();
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+		computersCount = ComputerDao.getInstance().getComputersCount();
 		return computersCount;
 	}
 }

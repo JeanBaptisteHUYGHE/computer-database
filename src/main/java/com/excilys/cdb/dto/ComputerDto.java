@@ -1,10 +1,5 @@
 package com.excilys.cdb.dto;
 
-import java.time.LocalDate;
-
-import com.excilys.cdb.model.Company;
-import com.excilys.cdb.model.Computer;
-
 public class ComputerDto {
 
 	private String id = null;
@@ -106,19 +101,6 @@ public class ComputerDto {
 		
 		public ComputerDtoBuilder withCompanyId(String companyId) {
 			this.companyId = companyId;
-			return this;
-		}
-		
-		public ComputerDtoBuilder withComputer(Computer computer) {
-			id = computer.getId().orElse(null).toString();
-			name = computer.getName();
-			LocalDate tmpIntroductionDate = computer.getIntroductionDate().orElse(null);
-			introductionDate = tmpIntroductionDate != null ? tmpIntroductionDate.toString() : "";
-			LocalDate tmpDiscontinueDate = computer.getDiscontinueDate().orElse(null);
-			discontinueDate = tmpDiscontinueDate != null ? tmpDiscontinueDate.toString() : "";
-			Company company = computer.getManufacturer().orElse(null);
-			companyName = (company != null && company.getName() != null) ? company.getName() : "";
-			companyId = (company != null && company.getId() != null) ? company.getId().toString() : "";
 			return this;
 		}
 		

@@ -25,9 +25,14 @@
                     <h1>Add Computer</h1>
                     <form action="addComputer" method="POST">
                         <fieldset>
-                        	<%-- Error message --%>
-                        	<c:if test="${ not empty errorMessage }">
+                        	<%-- Errors messages --%>
+                        	<c:if test="${ not empty errorsList }">
                         	<div class="form-group alert alert-danger">
+                        		<ul>
+                        		<c:forEach items="${ errorsList }" var="errorMessage">
+                                	<li>${ errorMessage }</li>
+                                </c:forEach>
+                        		</ul>
                                 ${ errorMessage }
                             </div>
                         	</c:if>

@@ -1,30 +1,24 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 public class Computer {
 
-	private Integer id = null;
+	private Integer id;
 	private String name;
-	private LocalDate introductionDate = null;
-	private LocalDate discontinueDate = null;
-	private Company manufacturer = null;
+	private LocalDate introductionDate;
+	private LocalDate discontinueDate;
+	private Company company;
 	
-	private Computer(String name) throws IllegalArgumentException {
-		this.setName(name);
+	private Computer()  {
 	}
 
 	public Optional<Integer> getId() {
 		return Optional.ofNullable(id);
 	}
 
-	public void setId(Integer id) throws IllegalArgumentException {
-		if (id != null && id < 0) {
-			throw new IllegalArgumentException("Computer id must be positive");
-		}
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -32,25 +26,8 @@ public class Computer {
 		return name;
 	}
 
-	public void setName(String name) throws IllegalArgumentException {
-		if (name == null || name.length() == 0) {
-			throw new IllegalArgumentException("Computer name can't be null.");
-		}
+	public void setName(String name) {
 		this.name = name;
-	}
-	
-	/**
-	 * Return if the date is valid (=if it can be set in a SQL "timestamp" type).
-	 * @param localDate
-	 * @return if the date is valid
-	 */
-	private static boolean isValidDate(LocalDate localDate) {
-		if (localDate == null) {
-			return true;
-		}
-		LocalDate minDate = LocalDate.of(1970, 1, 1);
-		LocalDate maxDate = LocalDate.of(2038, 1, 19);
-		return (localDate.isAfter(minDate) && localDate.isBefore(maxDate));
 	}
 
 	public Optional<LocalDate> getIntroductionDate() {
@@ -58,12 +35,6 @@ public class Computer {
 	}
 
 	public void setIntroductionDate(LocalDate introductionDate) {
-		if (introductionDate != null && discontinueDate != null && introductionDate.isAfter(discontinueDate)) {
-			throw new IllegalArgumentException("Invalid introduction date, introduction date must be before discontinueD date.");
-		}
-		if (!isValidDate(introductionDate)) {
-			throw new IllegalArgumentException("Invalid introduction date: date too extrem");
-		}
 		this.introductionDate = introductionDate;
 	}
 
@@ -71,27 +42,21 @@ public class Computer {
 		return Optional.ofNullable(discontinueDate);
 	}
 
-	public void setDiscontinueDate(LocalDate discontinueDate) throws IllegalArgumentException {
-		if (discontinueDate != null && introductionDate != null && discontinueDate.isBefore(introductionDate)) {
-			throw new IllegalArgumentException("Invalid discontinue date, discontinue date must be after introduction date.");
-		}
-		if (!isValidDate(discontinueDate)) {
-			throw new IllegalArgumentException("Invalid discontinue date: date too extrem");
-		}
+	public void setDiscontinueDate(LocalDate discontinueDate) {
 		this.discontinueDate = discontinueDate;
 	}
 
-	public Optional<Company> getManufacturer() {
-		return Optional.ofNullable(manufacturer);
+	public Optional<Company> getCompany() {
+		return Optional.ofNullable(company);
 	}
 
-	public void setManufacturer(Company manufacturer) {
-		this.manufacturer = manufacturer;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 	
 	public String toString() {
-		return String.format("<Computer n°%s: %s, introduction date: %s, discontinue date: %s, manufacturer: %s>",
-				this.id, this.name, this.introductionDate, this.discontinueDate, this.manufacturer);
+		return String.format("<Computer n°%s: %s, introduction date: %s, discontinue date: %s, company: %s>",
+				this.id, this.name, this.introductionDate, this.discontinueDate, this.company);
 	}
 	
 	@Override
@@ -101,7 +66,7 @@ public class Computer {
 		result = prime * result + ((discontinueDate == null) ? 0 : discontinueDate.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((introductionDate == null) ? 0 : introductionDate.hashCode());
-		result = prime * result + ((manufacturer == null) ? 0 : manufacturer.hashCode());
+		result = prime * result + ((company == null) ? 0 : company.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -142,12 +107,12 @@ public class Computer {
 				return false;
 			}
 		}
-		if (manufacturer == null) {
-			if (other.manufacturer != null) {
+		if (company == null) {
+			if (other.company != null) {
 				return false;
 			}
 		} else {
-			if (!manufacturer.equals(other.manufacturer)) {
+			if (!company.equals(other.company)) {
 				return false;
 			}
 		}
@@ -168,7 +133,7 @@ public class Computer {
 		private String name = null;
 		private LocalDate introductionDate = null;
 		private LocalDate discontinueDate = null;
-		private Company manufacturer = null;
+		private Company company = null;
 		
 		public ComputerBuilder withId(Integer id) {
 			this.id = id;
@@ -184,43 +149,24 @@ public class Computer {
 			this.introductionDate = introductionDate;
 			return this;
 		}
-		
-		public ComputerBuilder withIntroductionDate(String introductionDate) throws DateTimeParseException {
-			if (introductionDate == null || introductionDate.length() == 0) {
-				this.introductionDate = null;
-			} else {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
-				this.introductionDate = LocalDate.parse(introductionDate, formatter);
-			}
-			return this;
-		}
 
 		public ComputerBuilder withDiscontinueDate(LocalDate discontinueDate) {
 			this.discontinueDate = discontinueDate;
 			return this;
 		}
-		
-		public ComputerBuilder withDiscontinueDate(String discontinueDate) throws DateTimeParseException {
-			if (discontinueDate == null || discontinueDate.length() == 0) {
-				this.discontinueDate = null;
-			} else {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
-				this.discontinueDate = LocalDate.parse(discontinueDate, formatter);
-			}
-			return this;
-		}
 
-		public ComputerBuilder withManufacturer(Company manufacturer) {
-			this.manufacturer = manufacturer;
+		public ComputerBuilder withCompany(Company manufacturer) {
+			this.company = manufacturer;
 			return this;
 		}
 
 		public Computer build() throws IllegalArgumentException {
-			Computer computer = new Computer(name);
+			Computer computer = new Computer();
 			computer.setId(id);
+			computer.setName(name);
 			computer.setIntroductionDate(introductionDate);
 			computer.setDiscontinueDate(discontinueDate);
-			computer.setManufacturer(manufacturer);
+			computer.setCompany(company);
 			return computer;
 		}
 	}

@@ -4,7 +4,6 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,57 +15,57 @@ public class Page {
 	
 	private static Logger logger = LoggerFactory.getLogger(Page.class);
 	
-	private Integer pageIndex;
-	private Integer pageMax;
-	private Integer pageSize;
+	private Integer index;
+	private Integer maxIndex;
+	private Integer size;
 	
 	private Page() {
-		pageIndex = MINIMUM_PAGE_INDEX;
-		pageMax = null;
+		index = MINIMUM_PAGE_INDEX;
+		maxIndex = null;
 	}
 	
 	/**
 	 * Switch to the first page
 	 */
 	public void first() {
-		pageIndex = MINIMUM_PAGE_INDEX;
+		index = MINIMUM_PAGE_INDEX;
 	}
 
 	/**
 	 * Switch to the next page.
 	 */
 	public void next() {
-		pageIndex = min(pageIndex + 1, pageMax);
+		index = min(index + 1, maxIndex);
 	}
 	
 	/**
 	 * Switch to the previous page.
 	 */
 	public void previous() {
-		pageIndex = max(MINIMUM_PAGE_INDEX, pageIndex - 1);
+		index = max(MINIMUM_PAGE_INDEX, index - 1);
 	}
 	
 	/**
 	 * Switch to the last page
 	 */
 	public void last() {
-		pageIndex = pageMax;
+		index = maxIndex;
 	}
 
-	public Integer getPageIndex() {
-		return pageIndex;
+	public Integer getIndex() {
+		return index;
 	}
 
-	public Integer getPageMax() {
-		return pageMax;
+	public Integer getMaxIndex() {
+		return maxIndex;
 	}
 	
-	public Integer getPageSize() {
-		return pageSize;
+	public Integer getSize() {
+		return size;
 	}
 	
 	public String toString() {
-		return String.format("<Page %s/%s with %s element by page>", pageIndex, pageMax, pageSize);
+		return String.format("<Page %s/%s with %s element by page>", index, maxIndex, size);
 	}
 	
 	public static class PageBuilder {
@@ -84,7 +83,7 @@ public class Page {
 			return this;
 		}
 		
-		public PageBuilder withPageSize(Integer pageSize) {
+		public PageBuilder withSize(Integer pageSize) {
 			if (elementsCount == null || elementsCount < 0) {
 				logger.error("Page size can't be null or negative");
 				throw new IllegalArgumentException("Page size can't be null or negative");
@@ -93,7 +92,7 @@ public class Page {
 			return this;
 		}
 		
-		public PageBuilder withPageIndex(Integer pageIndex) {
+		public PageBuilder withIndex(Integer pageIndex) {
 			if (pageIndex == null || pageIndex < 0) {
 				this.pageIndex = MINIMUM_PAGE_INDEX;
 			}
@@ -106,9 +105,9 @@ public class Page {
 		public Page build() {
 			Integer pageMax = (int) ceil(((double) elementsCount) / pageSize) - 1;;
 			Page page = new Page();
-			page.pageSize = pageSize;
-			page.pageMax = pageMax;
-			page.pageIndex = min(pageIndex, page.pageMax);
+			page.size = pageSize;
+			page.maxIndex = pageMax;
+			page.index = min(pageIndex, page.maxIndex);
 			
 			return page;
 		}

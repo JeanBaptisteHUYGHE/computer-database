@@ -1,19 +1,16 @@
 package com.excilys.cdb.service;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.excilys.cdb.exception.dao.CompanyNotFoundException;
+import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.CompanyDao;
 
 public class CompanyService {
 	
 	private static CompanyService companyService = null;
-	private Logger logger;
 
 	
 	/**
@@ -27,64 +24,40 @@ public class CompanyService {
 		return companyService;
 	}
 	
-	private CompanyService() {
-		logger = LoggerFactory.getLogger(CompanyService.class);
-	}
+	private CompanyService() { }
 
 	/**
 	 * Return the company.
 	 * @param company the company
 	 * @return the company
-	 * @throws NoSuchElementException
-	 * @throws SQLException
+	 * @throws CompanyNotFoundException 
+	 * @throws DatabaseConnectionException 
 	 */
-	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
-		logger.debug("getCompany({})", company);
+	public Company getCompanyById(Integer id) throws CompanyNotFoundException, DatabaseConnectionException {
 		Company gettedCompany = null;
-		try {
-			gettedCompany = CompanyDao.getInstance().getCompany(company);
-		} catch (NoSuchElementException e) {
-			logger.info("{} in {}", e, e.getStackTrace());
-			throw e;
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+		gettedCompany = CompanyDao.getInstance().getCompanyById(id);
 		return gettedCompany;
 	}
 
 	/**
 	 * Return a list of companies.
 	 * @return the companies list
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException 
 	 */
-	public List<Company> getCompaniesList() throws SQLException {
-		logger.debug("getCompaniesList()");
+	public List<Company> getCompaniesList() throws DatabaseConnectionException {
 		List<Company> companiesList = null;
-		try {
-			companiesList = CompanyDao.getInstance().getCompaniesList();
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+		companiesList = CompanyDao.getInstance().getCompaniesList();
 		return companiesList;
 	}
 	/**
 	 * Return a list of companies by page.
-	 * @param pageIndex page index
-	 * @param pageSize page size
+	 * @param page the page
 	 * @return the companies list
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException 
 	 */
-	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
-		logger.debug("getCompaniesListPage({}, {})", pageIndex, pageSize);
+	public List<Company> getCompaniesListPage(Page page) throws DatabaseConnectionException {
 		List<Company> companiesList = null;
-		try {
-			companiesList = CompanyDao.getInstance().getCompaniesListPage(pageIndex, pageSize);
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());
-			throw e;
-		}
+		companiesList = CompanyDao.getInstance().getCompaniesListPage(page);
 		return companiesList;
 	}
 }

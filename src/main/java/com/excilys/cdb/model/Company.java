@@ -4,16 +4,8 @@ public class Company {
 	
 	private Integer id;
 	private String name;
-	
-	public Company(String name) {
-		this.id = null;
-		this.name = name;
-	}
-	
-	public Company(Integer id, String name) {
-		this.id = id;
-		this.name = name;
-	}
+
+	private Company() { }
 
 	public Integer getId() {
 		return id;
@@ -89,7 +81,8 @@ public class Company {
 		}
 		
 		public Company build() {
-			Company company = new Company(name);
+			Company company = new Company();
+			company.setName(name);
 			company.setId(id);
 			return company;
 		}

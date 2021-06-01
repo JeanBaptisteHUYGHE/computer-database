@@ -5,17 +5,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.exception.dao.CompanyNotFoundException;
+import com.excilys.cdb.exception.dao.DaoMapperException;
+import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.model.Page;
 
 public class CompanyDao {
 	
 	private static CompanyDao instance = null;
 	private Logger logger;
+	
+	private static final String REQUEST_GET_ALL_COMPANIES = "SELECT id, name FROM company ORDER BY name";
+	private static final String REQUEST_GET_ALL_COMPANIES_FOR_PAGE = "SELECT id, name FROM company ORDER BY name LIMIT ? OFFSET ?";
+	private static final String REQUEST_GET_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id = ?";
+
 	
 	/**
 	 * Return the company Dao instance (singleton).
@@ -35,67 +43,91 @@ public class CompanyDao {
 	/**
 	 * Return the companies list from the database.
 	 * @return the companies list page
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException 
 	 */
-	public List<Company> getCompaniesList() throws SQLException {
+	public List<Company> getCompaniesList() throws DatabaseConnectionException {
 		logger.debug("getCompaniesList()");
-		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name FROM company ORDER BY name";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		ResultSet resultSet = preparedStatement.executeQuery();
-		List<Company> companiesList = new CompanyDaoMapper().getCompaniesList(resultSet);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
-		return companiesList;
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_ALL_COMPANIES);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			List<Company> companiesList;
+			try {
+				companiesList = CompanyDaoMapper.getInstance().fromResultSetToCompaniesList(resultSet);
+			} catch (DaoMapperException e) {
+				throw new DatabaseConnectionException();
+			}
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return companiesList;
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		}
+		
+		
 	}
 	
 	/**
 	 * Return the companies list from the database in the page range.
-	 * @param pageIndex the page index
-	 * @param pageSize the page size
+	 * @param page the page
 	 * @return the companies list page
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException
 	 */
-	public List<Company> getCompaniesListPage(int pageIndex, int pageSize) throws SQLException {
-		logger.debug("getCompaniesListPage({}, {})", pageIndex, pageSize);
-		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name "
-				+ "FROM company "
-				+ "ORDER BY name "
-				+ "LIMIT ? OFFSET ?";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		preparedStatement.setInt(1, pageSize);
-		preparedStatement.setInt(2, pageSize * pageIndex);
-		ResultSet resultSet = preparedStatement.executeQuery();
-		List<Company> companiesList = new CompanyDaoMapper().getCompaniesList(resultSet);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
-		return companiesList;
+	public List<Company> getCompaniesListPage(Page page) throws DatabaseConnectionException {
+		logger.debug("getCompaniesListPage({})", page);
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_ALL_COMPANIES_FOR_PAGE);
+			preparedStatement.setInt(1, page.getSize());
+			preparedStatement.setInt(2, page.getSize() * page.getIndex());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			List<Company> companiesList;
+			try {
+				companiesList = CompanyDaoMapper.getInstance().fromResultSetToCompaniesList(resultSet);
+			} catch (DaoMapperException e) {
+				throw new DatabaseConnectionException();
+			}
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return companiesList;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		}
 	}
 	
 	/**
 	 * Return the company from the database.
 	 * @param company the company (just the id is used)
 	 * @return the company
-	 * @throws NoSuchElementException
-	 * @throws SQLException
+	 * @throws CompanyNotFoundException
+	 * @throws DatabaseConnectionException
 	 */
-	public Company getCompany(Company company) throws NoSuchElementException, SQLException {
-		if (company == null || company.getId() == null) {
-			throw new NoSuchElementException("Company asked is null");
+	public Company getCompanyById(Integer companyId) throws CompanyNotFoundException, DatabaseConnectionException {
+		logger.debug("getCompanyById({})", companyId);
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPANY_BY_ID);
+			preparedStatement.setInt(1, companyId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			Company gettedCompany = CompanyDaoMapper.getInstance().fromResultSetToCompany(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return gettedCompany;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
 		}
-		logger.debug("getCompany({})", company);
-		Connection dbConnection = Database.getConnection();
-		String request = "SELECT id, name FROM company WHERE id = ?";
-		PreparedStatement preparedStatement = dbConnection.prepareStatement(request);
-		preparedStatement.setInt(1, company.getId());
-		ResultSet resultSet = preparedStatement.executeQuery();
-		Company gettedCompany = new CompanyDaoMapper().getCompany(resultSet);
-		resultSet.close();
-		preparedStatement.close();
-		dbConnection.close();
-		return gettedCompany;
 	}
 }
