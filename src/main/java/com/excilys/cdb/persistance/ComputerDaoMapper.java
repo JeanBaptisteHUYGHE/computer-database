@@ -114,7 +114,7 @@ public class ComputerDaoMapper {
 	 * @throws ComputerNotFoundException
 	 * @throws DaoMapperException
 	 */
-	public Computer getComputer(ResultSet resultSet) throws ComputerNotFoundException, DaoMapperException {
+	public Computer fromResultSetToComputer(ResultSet resultSet) throws ComputerNotFoundException, DaoMapperException {
 		try {
 			resultSet.next();
 			if (resultSet.getRow() == 0) {

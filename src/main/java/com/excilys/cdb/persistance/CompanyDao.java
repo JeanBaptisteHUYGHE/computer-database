@@ -17,12 +17,15 @@ import com.excilys.cdb.model.Page;
 
 public class CompanyDao {
 	
-	private static CompanyDao instance = null;
+	private static CompanyDao instance;
+	private CompanyDaoMapper companyDaoMapper;
 	private Logger logger;
 	
 	private static final String REQUEST_GET_ALL_COMPANIES = "SELECT id, name FROM company ORDER BY name";
 	private static final String REQUEST_GET_ALL_COMPANIES_FOR_PAGE = "SELECT id, name FROM company ORDER BY name LIMIT ? OFFSET ?";
 	private static final String REQUEST_GET_COMPANY_BY_ID = "SELECT id, name FROM company WHERE id = ?";
+	private static final String REQUEST_GET_COMPANIES_COUNT = "SELECT count(id) FROM company";
+	
 
 	
 	/**
@@ -37,6 +40,7 @@ public class CompanyDao {
 	}
 	
 	private CompanyDao() {
+		companyDaoMapper = CompanyDaoMapper.getInstance();
 		logger = LoggerFactory.getLogger(CompanyDao.class);
 	}
 	
@@ -53,7 +57,7 @@ public class CompanyDao {
 			
 			List<Company> companiesList;
 			try {
-				companiesList = CompanyDaoMapper.getInstance().fromResultSetToCompaniesList(resultSet);
+				companiesList = companyDaoMapper.fromResultSetToCompaniesList(resultSet);
 			} catch (DaoMapperException e) {
 				throw new DatabaseConnectionException();
 			}
@@ -86,7 +90,7 @@ public class CompanyDao {
 			
 			List<Company> companiesList;
 			try {
-				companiesList = CompanyDaoMapper.getInstance().fromResultSetToCompaniesList(resultSet);
+				companiesList = companyDaoMapper.fromResultSetToCompaniesList(resultSet);
 			} catch (DaoMapperException e) {
 				throw new DatabaseConnectionException();
 			}
@@ -116,12 +120,38 @@ public class CompanyDao {
 			preparedStatement.setInt(1, companyId);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
-			Company gettedCompany = CompanyDaoMapper.getInstance().fromResultSetToCompany(resultSet);
+			Company gettedCompany = companyDaoMapper.fromResultSetToCompany(resultSet);
 			
 			resultSet.close();
 			preparedStatement.close();
 			dbConnection.close();
 			return gettedCompany;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
+		}
+	}
+	
+	/**
+	 * Return the companies count
+	 * @return the companies number
+	 * @throws DatabaseConnectionException
+	 */
+	public Integer getCompaniesCount() throws DatabaseConnectionException {
+		logger.debug("getCompaniesCount()");
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPANIES_COUNT);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			Integer companiesCount = companyDaoMapper.fromResultSetToComputersCount(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return companiesCount;
 			
 		} catch (SQLException e) {
 			logger.error("{} in {}", e, e.getStackTrace());

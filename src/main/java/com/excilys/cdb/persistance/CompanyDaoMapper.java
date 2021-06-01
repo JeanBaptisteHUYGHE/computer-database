@@ -83,4 +83,21 @@ public class CompanyDaoMapper {
 			throw new DaoMapperException();
 		}
 	}
+	
+	/**
+	 * Return the companies count
+	 * @param resultSet the resultSet
+	 * @return the companies number
+	 * @throws DaoMapperException 
+	 */
+	public Integer fromResultSetToComputersCount(ResultSet resultSet) throws DaoMapperException {
+		try {
+			resultSet.next();
+			return resultSet.getInt(1);
+
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DaoMapperException();
+		}
+	}
 }

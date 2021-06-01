@@ -11,6 +11,7 @@ import com.excilys.cdb.persistance.CompanyDao;
 public class CompanyService {
 	
 	private static CompanyService companyService = null;
+	private CompanyDao companyDao;
 
 	
 	/**
@@ -24,7 +25,9 @@ public class CompanyService {
 		return companyService;
 	}
 	
-	private CompanyService() { }
+	private CompanyService() {
+		companyDao = CompanyDao.getInstance();
+	}
 
 	/**
 	 * Return the company.
@@ -35,7 +38,7 @@ public class CompanyService {
 	 */
 	public Company getCompanyById(Integer id) throws CompanyNotFoundException, DatabaseConnectionException {
 		Company gettedCompany = null;
-		gettedCompany = CompanyDao.getInstance().getCompanyById(id);
+		gettedCompany = companyDao.getCompanyById(id);
 		return gettedCompany;
 	}
 
@@ -46,7 +49,7 @@ public class CompanyService {
 	 */
 	public List<Company> getCompaniesList() throws DatabaseConnectionException {
 		List<Company> companiesList = null;
-		companiesList = CompanyDao.getInstance().getCompaniesList();
+		companiesList = companyDao.getCompaniesList();
 		return companiesList;
 	}
 	/**
@@ -57,7 +60,18 @@ public class CompanyService {
 	 */
 	public List<Company> getCompaniesListPage(Page page) throws DatabaseConnectionException {
 		List<Company> companiesList = null;
-		companiesList = CompanyDao.getInstance().getCompaniesListPage(page);
+		companiesList = companyDao.getCompaniesListPage(page);
 		return companiesList;
+	}
+	
+	/**
+	 * Return the total number of companies
+	 * @return companies count
+	 * @throws DatabaseConnectionException
+	 */
+	public Integer getCompaniesCount() throws DatabaseConnectionException {
+		Integer companiesCount;
+		companiesCount = companyDao.getCompaniesCount();
+		return companiesCount;
 	}
 }

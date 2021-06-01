@@ -19,7 +19,8 @@ import com.excilys.cdb.model.Page;
 
 public class ComputerDao {
 	
-	private static ComputerDao instance = null;
+	private static ComputerDao instance;
+	private ComputerDaoMapper computerDaoMapper;
 	private Logger logger;
 	
 	private static final String REQUEST_GET_COMPUTERS_LIST_BY_PAGE = 
@@ -54,6 +55,7 @@ public class ComputerDao {
 	}
 	
 	private ComputerDao() {
+		computerDaoMapper = ComputerDaoMapper.getInstance();
 		logger = LoggerFactory.getLogger(ComputerDao.class);
 	}
 
@@ -71,7 +73,7 @@ public class ComputerDao {
 			preparedStatement.setInt(2, page.getSize() * page.getIndex());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
-			List<Computer> computersList = ComputerDaoMapper.getInstance().fromResultSetToComputersList(resultSet);
+			List<Computer> computersList = computerDaoMapper.fromResultSetToComputersList(resultSet);
 			
 			resultSet.close();
 			preparedStatement.close();
@@ -102,7 +104,7 @@ public class ComputerDao {
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
-			Computer gettedComputer = ComputerDaoMapper.getInstance().getComputer(resultSet);
+			Computer gettedComputer = computerDaoMapper.fromResultSetToComputer(resultSet);
 			
 			resultSet.close();
 			preparedStatement.close();
@@ -234,8 +236,8 @@ public class ComputerDao {
 	
 	/**
 	 * Return the computers count
-	 * @return the computer number
-	 * @throws SQLException
+	 * @return the computers number
+	 * @throws DatabaseConnectionException
 	 */
 	public Integer getComputersCount() throws DatabaseConnectionException {
 		logger.debug("getComputersCount()");
@@ -243,7 +245,7 @@ public class ComputerDao {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_COUNT);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
-			Integer computersCount = ComputerDaoMapper.getInstance().getComputersCount(resultSet);
+			Integer computersCount = computerDaoMapper.getComputersCount(resultSet);
 			
 			resultSet.close();
 			preparedStatement.close();

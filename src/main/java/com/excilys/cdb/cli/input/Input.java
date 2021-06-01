@@ -1,8 +1,5 @@
-package com.excilys.cdb.ui.input;
+package com.excilys.cdb.cli.input;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -48,6 +45,14 @@ public class Input {
 		Scanner scanner = getScanner();
 		String input = scanner.nextLine();
 		return input;
+	}
+	
+	public static String readStringOrNull() {
+		String string = readString();
+		if (string.isBlank()) {
+			return null;
+		}
+		return string;
 	}
 	
 	/**
@@ -128,40 +133,15 @@ public class Input {
 	
 	/**
 	 * Read a date write by user.
-	 * @return the localDate or null
+	 * @return the string of the local date or null
 	 * @throws InputMismatchException
 	 */
-	public static LocalDate readLocalDate() throws InputMismatchException {
-		System.out.println("(format YYYY/MM/DD or \"null\")");
+	public static String readLocalDateOrNull() throws InputMismatchException {
+		System.out.println("(format YYYY/MM/DD or let empty");
 		String input = readString();
-		if (input.equals("null")) {
+		if (input.isBlank()) {
 			return null;
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
-		LocalDate localDate;
-		try {
-			localDate = LocalDate.parse(input, formatter);
-		} catch (DateTimeParseException e) {
-			throw new InputMismatchException();
-		}
-		return localDate;
-	}
-	
-	/**
-	 * Return a valid local date write by user.
-	 * @return the localDate or null
-	 */
-	public static LocalDate readValidLocalDate() {
-		boolean isValid = false;
-		LocalDate localDate = null;
-		while (!isValid) {
-			try {
-				localDate = readLocalDate();
-				isValid = true;
-			} catch (InputMismatchException e) {
-				System.out.println("Invalid date, please retry");
-			}
-		}
-		return localDate;
+		return input;
 	}
 }

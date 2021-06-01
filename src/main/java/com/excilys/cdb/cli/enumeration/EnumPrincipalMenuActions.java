@@ -1,6 +1,6 @@
-package com.excilys.cdb.ui.menu;
+package com.excilys.cdb.cli.enumeration;
 
-import java.util.NoSuchElementException;
+import com.excilys.cdb.exception.cli.InvalidActionChoiceException;
 
 public enum EnumPrincipalMenuActions {
 	LIST_ALL_COMPUTERS(1, "List all computers"),
@@ -25,14 +25,14 @@ public enum EnumPrincipalMenuActions {
 	 * Return the enumeration for this action.
 	 * @param actionId
 	 * @return the correspondent enumeration value or an exception
-	 * @throws NoSuchElementException
+	 * @throws InvalidActionChoiceException
 	 */
-	public static EnumPrincipalMenuActions getAction(int actionId) throws NoSuchElementException {
+	public static EnumPrincipalMenuActions getAction(int actionId) throws InvalidActionChoiceException {
 		for (EnumPrincipalMenuActions myEnum : EnumPrincipalMenuActions.values()) {
 			if (myEnum.value == actionId) {
 				return myEnum;
 			}
 		}
-		throw new NoSuchElementException();
+		throw new InvalidActionChoiceException();
 	}
 }

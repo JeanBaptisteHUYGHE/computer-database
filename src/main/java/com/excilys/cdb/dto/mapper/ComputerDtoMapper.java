@@ -64,29 +64,19 @@ public class ComputerDtoMapper {
 		
 		if (computer.getId().isPresent()) {
 			computerDtoBuilder.withId(computer.getId().get().toString());
-		} else {
-			computerDtoBuilder.withId("");
-
 		}
 		computerDtoBuilder.withName(computer.getName());
 		if (computer.getIntroductionDate().isPresent()) {
 			computerDtoBuilder.withIntroductionDate(computer.getIntroductionDate().get().toString());
-		} else {
-			computerDtoBuilder.withIntroductionDate("");
 		}
 		
 		if (computer.getDiscontinueDate().isPresent()) {
 			computerDtoBuilder.withDiscontinueDate(computer.getDiscontinueDate().get().toString());
-		} else {
-			computerDtoBuilder.withDiscontinueDate("");
 		}
 		
 		if (computer.getCompany().isPresent()) {
 			computerDtoBuilder.withCompanyId(computer.getCompany().get().getId().toString());
 			computerDtoBuilder.withCompanyName(computer.getCompany().get().getName());
-		} else {
-			computerDtoBuilder.withCompanyId("");
-			computerDtoBuilder.withCompanyName("");
 		}
 		
 		return computerDtoBuilder.build();

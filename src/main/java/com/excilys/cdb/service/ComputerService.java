@@ -1,6 +1,5 @@
 package com.excilys.cdb.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.excilys.cdb.exception.dao.ComputerNotFoundException;
@@ -12,6 +11,7 @@ import com.excilys.cdb.persistance.ComputerDao;
 public class ComputerService {
 	
 	private static ComputerService computerService = null;
+	private ComputerDao computerDao;
 	
 	public static ComputerService getInstance() {
 		if (computerService == null) {
@@ -20,7 +20,9 @@ public class ComputerService {
 		return computerService;
 	}
 	
-	private ComputerService() { }
+	private ComputerService() {
+		computerDao = ComputerDao.getInstance();
+	}
 
 	/**
 	 * Return the computers list of the asked page.
@@ -30,7 +32,7 @@ public class ComputerService {
 	 */
 	public List<Computer> getComputersListPage(Page page) throws DatabaseConnectionException {
 		List<Computer> computersList = null;
-		computersList = ComputerDao.getInstance().getComputersListPage(page);
+		computersList = computerDao.getComputersListPage(page);
 		return computersList;
 	}
 
@@ -43,7 +45,7 @@ public class ComputerService {
 	 */
 	public Computer getComputerById(Integer id) throws ComputerNotFoundException, DatabaseConnectionException {
 		Computer computer = null;
-		computer = ComputerDao.getInstance().getComputerById(id);
+		computer = computerDao.getComputerById(id);
 		return computer;
 	}
 
@@ -53,17 +55,17 @@ public class ComputerService {
 	 * @throws DatabaseConnectionException
 	 */
 	public void addComputer(Computer newComputer) throws DatabaseConnectionException {
-		ComputerDao.getInstance().addComputer(newComputer);
+		computerDao.addComputer(newComputer);
 	}
 
 	/**
 	 * Update a computer.
 	 * @param computer the computer
 	 * @throws DatabaseConnectionException 
-	 * @throws SQLException
+	 * @throws DatabaseConnectionException
 	 */
 	public void updateComputer(Computer computer) throws DatabaseConnectionException {
-		ComputerDao.getInstance().updateComputer(computer);
+		computerDao.updateComputer(computer);
 	}
 
 	/**
@@ -72,17 +74,17 @@ public class ComputerService {
 	 * @throws DatabaseConnectionException 
 	 */
 	public void deleteComputer(Integer id) throws DatabaseConnectionException {
-		ComputerDao.getInstance().deleteComputerById(id);
+		computerDao.deleteComputerById(id);
 	}
 	
 	/**
 	 * Return the total number of computers
-	 * @return
+	 * @return the computers count
 	 * @throws DatabaseConnectionException
 	 */
 	public Integer getComputerCount() throws DatabaseConnectionException {
 		Integer computersCount;
-		computersCount = ComputerDao.getInstance().getComputersCount();
+		computersCount = computerDao.getComputersCount();
 		return computersCount;
 	}
 }
