@@ -83,7 +83,6 @@ public class AddComputerServlet extends HttpServlet {
 	
 	@SuppressWarnings("unchecked")
 	private List<String> getErrorsList(Object errorsListObject) {
-		logger.info("ici: " + errorsListObject.toString());
 		List<String> errorsList = null;
 		try {
 			errorsList = (List<String>) errorsListObject;
