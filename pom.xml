@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.excilys.cdb</groupId>
+	<artifactId>cdb</artifactId>
+	<version>0.1</version>
+
+	<name>CDB</name>
+	<description>Computer Database</description>
+	<url>https://github.com/JeanBaptisteHUYGHE/computer-database</url>
+
+	<packaging>war</packaging>
+
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.25</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+		<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-engine</artifactId>
+		    <version>5.7.2</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <version>1.4.200</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+			<scope>compile</scope><!-- <scope>test</scope> -->
+		</dependency>
+				
+		<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>jstl</artifactId>
+		    <version>1.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>4.0.1</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+		        <plugin>
+		          <artifactId>maven-clean-plugin</artifactId>
+		          <version>3.1.0</version>
+		        </plugin>
+		        
+		        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+		        <plugin>
+		          <artifactId>maven-resources-plugin</artifactId>
+		          <version>3.2.0</version>
+		        </plugin>
+		        
+		        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+		        <plugin>
+		          <artifactId>maven-compiler-plugin</artifactId>
+		          <version>3.8.1</version>
+		        </plugin>
+	
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+		        <plugin>
+		          <artifactId>maven-jar-plugin</artifactId>
+		          <version>3.2.0</version>
+		        </plugin>
+		        
+		        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-install-plugin -->
+		        <plugin>
+		          <artifactId>maven-install-plugin</artifactId>
+		          <version>3.0.0-M1</version>
+		        </plugin>
+		        
+		        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+		        <plugin>
+		          <artifactId>maven-deploy-plugin</artifactId>
+		          <version>3.0.0-M1</version>
+		        </plugin>
+		        
+		        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-site-plugin -->
+		        <plugin>
+		          <artifactId>maven-site-plugin</artifactId>
+		          <version>3.9.1</version>
+		        </plugin>
+		        
+		        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-project-info-reports-plugin -->
+		        <plugin>
+		          <artifactId>maven-project-info-reports-plugin</artifactId>
+		          <version>3.1.2</version>
+		        </plugin>
+	        
+				<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.0.0</version>
+					<configuration>
+						<mainClass>com.excilys.cdb.Main</mainClass>
+					</configuration>
+					<!-- Manage H2 database -->
+					<executions>
+						<execution>
+							<!-- start server before integration tests -->
+							<id>start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>java</goal>
+							</goals>
+							<configuration>
+								<mainClass>com.foo.StartServer</mainClass>
+							</configuration>
+						</execution>
+						<execution>
+							<!-- stop server after integration tests -->
+							<id>stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>java</goal>
+							</goals>
+							<configuration>
+								<mainClass>com.foo.StopServer</mainClass>
+							</configuration>
+						</execution>
+					   </executions>
+				</plugin>
+					
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>3.0.0-M5</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.junit.jupiter</groupId>
+							<artifactId>junit-jupiter-engine</artifactId>
+							<version>5.3.2</version>
+						</dependency>
+		            </dependencies>
+		        </plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.2</version>						
+				<configuration>
+					<configLocation>config/checkstyle/checkstyle.xml</configLocation>
+					<suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>
