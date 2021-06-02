@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,97 +22,111 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.model.Page;
 
-/**
- * @author excilys
- *
- */
 class CompanyDaoTest {
 	
 	private static CompanyDao companyDao;
+	private static Connection connection;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 		companyDao = CompanyDao.getInstance();
 		assertNotNull(companyDao);
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 		companyDao = null;
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@BeforeEach
 	void setUp() throws Exception {
+		connection = DatabaseConnection.getInstance();
 	}
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@AfterEach
 	void tearDown() throws Exception {
-		Connection connection = Database.getConnection();
 		Statement statement = connection.createStatement();
 		statement.executeUpdate("DELETE FROM company");
+		connection.close();
 	}
 
-	/**
-	 * Test method for {@link com.excilys.cdb.persistance.CompanyDao#getInstance()}.
-	 */
 	@Test
-	void testGetInstance() {
-		CompanyDao companyDao2 = CompanyDao.getInstance();
-		assertSame(companyDao, companyDao2);
+	void testGetInstanceShlouldNotBeNull() {
+		assertNotNull(CompanyDao.getInstance());
 	}
-
-	/**
-	 * Test method for {@link com.excilys.cdb.persistance.CompanyDao#getCompaniesListPage(int, int)}.
-	 */
+	
+	@Test
+	void testGetInstanceShouldGetSameObject() {
+		assertSame(CompanyDao.getInstance(), CompanyDao.getInstance());
+	}
+	
+	@Test
+	void testCountZeroCompany() {
+		try {
+			assertEquals(companyDao.getCompaniesCount(), 0);
+		} catch (DatabaseConnectionException e) {
+			fail(e.toString() + " in " + e.getStackTrace());
+		}
+	}
+	
+	@Test
+	void testCountOneCompany() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.execute("INSERT INTO COMPANY (id, name) VALUES (1, 'My Company')");
+			assertEquals(companyDao.getCompaniesCount(), 1);
+		} catch (SQLException | DatabaseConnectionException e) {
+			fail(e.toString() + " in " + e.getStackTrace());
+		}
+	}
+	
+	@Test
+	void testCountTwoCompany() {
+		try {
+			Statement statement = connection.createStatement();
+			statement.execute("INSERT INTO COMPANY (id, name) VALUES (1, 'My Company'), (2, 'My second company')");
+			assertEquals(companyDao.getCompaniesCount(), 2);
+		} catch (SQLException | DatabaseConnectionException e) {
+			fail(e.toString() + " in " + e.getStackTrace());
+		}
+	}
+	
 	@Test
 	void testGetCompaniesListPage() {
-		List<Company> companiesList = null;
+		Page mockedPage = mock(Page.class);
+		when(mockedPage.getIndex()).thenReturn(0);
+		when(mockedPage.getSize()).thenReturn(10);
+		
 		try {
-			companiesList = companyDao.getCompaniesListPage(1, 10);
-		} catch (SQLException e) {
+			List<Company> companiesList = companyDao.getCompaniesListPage(mockedPage);
+			assertNotNull(companiesList);
+			assertEquals(companiesList.size(), 0);
+		} catch (DatabaseConnectionException e) {
 			fail("Cannot get companies list");
 		}
-		assertNotNull(companiesList);
 	}
 
-	/**
-	 * Test method for {@link com.excilys.cdb.persistance.CompanyDao#getCompany(com.excilys.cdb.model.Company)}.
-	 */
+	/*
 	@Test
 	void testGetCompanyNull() {
 		assertThrows(NoSuchElementException.class, () -> {
 			companyDao.getCompany(new Company(null, null));
 		});
 	}
-	
-	/**
-	 * Test method for {@link com.excilys.cdb.persistance.CompanyDao#getCompany(com.excilys.cdb.model.Company)}.
-	 */
+
 	@Test
 	void testGetCompanyNotFound() {
 		assertThrows(NoSuchElementException.class, () -> {
 			companyDao.getCompany(new Company(-1, null));
 		});
 	}
-	
-	/**
-	 * Test method for {@link com.excilys.cdb.persistance.CompanyDao#getCompany(com.excilys.cdb.model.Company)}.
-	 */
+
 	@Test
 	void testGetCompanySuccess() {
 		try {
@@ -131,6 +147,6 @@ class CompanyDaoTest {
 			fail(e + " in " + e.getStackTrace());
 		}
 		assertEquals(expectedCompany, gettedCompany);
-	}
+	}*/
 
 }
