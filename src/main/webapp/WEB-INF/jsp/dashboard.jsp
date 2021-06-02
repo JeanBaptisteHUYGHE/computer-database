@@ -27,7 +27,8 @@
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
+							class="form-control" placeholder="Search name" value="${ search }"/>
+						<input
 							type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
@@ -106,12 +107,12 @@
 				<%-- Display previous link --%>
 				<c:if test = "${page.index > 0}">
 				<li>
-					<a href="?page=0" aria-label="First">
+					<a href="?page=0&search=${ search }" aria-label="First">
 						<span aria-hidden="true">&laquo;&laquo;</span>
 					</a>
 				</li>
 				<li>
-					<a href="?page=${ page.index - 1 }" aria-label="Previous">
+					<a href="?page=${ page.index - 1 }&search=${ search }" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
@@ -120,19 +121,19 @@
 				<c:forEach var="pageIndex" begin="${ page.index - 3 >= 0 ? page.index - 3: 0 }" end="${ page.index + 3 }">
 					<c:if test = "${pageIndex >= 0 and pageIndex <= page.maxIndex }">
 					<li class="${ pageIndex == page.index ? 'active' : '' }">
-						<a href="?page=${ pageIndex }">${ pageIndex + 1 }</a>
+						<a href="?page=${ pageIndex }&search=${ search }">${ pageIndex + 1 }</a>
 					</li>
 					</c:if>
 				</c:forEach>
 				<%-- Display next link --%>
 				<c:if test = "${page.index < page.maxIndex}">
 				<li>
-					<a href="?page=${ page.index + 1 }" aria-label="Next">
+					<a href="?page=${ page.index + 1 }&search=${ search }" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
 					</a>
 				</li>
 				<li>
-					<a href="?page=${ page.maxIndex }" aria-label="Last">
+					<a href="?page=${ page.maxIndex }&search=${ search }" aria-label="Last">
 						<span aria-hidden="true">&raquo;&raquo;</span>
 					</a>
 				</li>

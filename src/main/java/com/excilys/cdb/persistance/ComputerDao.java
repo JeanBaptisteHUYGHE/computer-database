@@ -28,6 +28,12 @@ public class ComputerDao {
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
 			+ "ORDER BY computer.id "
 			+ "LIMIT ? OFFSET ?";
+	private static final String REQUEST_GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH = 
+			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "WHERE computer.name LIKE ? or company.name LIKE ? "
+			+ "ORDER BY computer.id "
+			+ "LIMIT ? OFFSET ?";
 	private static final String REQUEST_GET_COMPUTER_BY_ID =
 			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
 			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
@@ -42,6 +48,11 @@ public class ComputerDao {
 			"DELETE FROM computer WHERE id = ?";
 	private static final String REQUEST_GET_COMPUTERS_COUNT =
 			"SELECT count(id) FROM computer";
+	private static final String REQUEST_GET_COMPUTERS_COUNT_FOR_SEARCH =
+			"SELECT count(computer.id) "
+			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
+			+ "WHERE computer.name LIKE ? or company.name LIKE ? "
+			+ "ORDER BY computer.id";
 	
 	/**
 	 * Return the computer Dao instance (singleton).
@@ -71,6 +82,39 @@ public class ComputerDao {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_LIST_BY_PAGE);
 			preparedStatement.setInt(1, page.getSize());
 			preparedStatement.setInt(2, page.getSize() * page.getIndex());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			List<Computer> computersList = computerDaoMapper.fromResultSetToComputersList(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return computersList;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
+		}
+	}
+	
+	/**
+	 * Return the computers list from the database in the page range and for a user search.
+	 * @param search the user search
+	 * @param page the page
+	 * @return the computer list page
+	 * @throws SQLException
+	 */
+	public List<Computer> getComputersListPageForSearch(String search, Page page) throws DatabaseConnectionException {
+		logger.debug("getComputersListPageForSearch({}, {})", search, page);
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH);
+			String searchExpression = "%" + search + "%";
+			preparedStatement.setString(1, searchExpression);
+			preparedStatement.setString(2, searchExpression);
+			preparedStatement.setInt(3, page.getSize());
+			preparedStatement.setInt(4, page.getSize() * page.getIndex());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			List<Computer> computersList = computerDaoMapper.fromResultSetToComputersList(resultSet);
@@ -243,6 +287,36 @@ public class ComputerDao {
 		logger.debug("getComputersCount()");
 		try (Connection dbConnection = DatabaseConnection.getInstance()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_COUNT);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			Integer computersCount = computerDaoMapper.getComputersCount(resultSet);
+			
+			resultSet.close();
+			preparedStatement.close();
+			dbConnection.close();
+			return computersCount;
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		} catch (DaoMapperException e) {
+			throw new DatabaseConnectionException();
+		}
+	}
+	
+	/**
+	 * Return the computers count for a search
+	 * @param search the search
+	 * @return the computers number
+	 * @throws DatabaseConnectionException
+	 */
+	public Integer getComputersCountForSearch(String search) throws DatabaseConnectionException {
+		logger.debug("getComputersCountForSearch()");
+		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(REQUEST_GET_COMPUTERS_COUNT_FOR_SEARCH);
+			String searchExpression = "%" + search + "%";
+			preparedStatement.setString(1, searchExpression);
+			preparedStatement.setString(2, searchExpression);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			Integer computersCount = computerDaoMapper.getComputersCount(resultSet);

@@ -12,6 +12,7 @@ public class Page {
 
 	public static final int DEFAULT_PAGE_SIZE = 50;
 	public static final int MINIMUM_PAGE_INDEX = 0;
+	private static final int MAX_INDEX_IF_PAGE_IS_EMPTY = -1;
 	
 	private static Logger logger = LoggerFactory.getLogger(Page.class);
 	
@@ -50,6 +51,14 @@ public class Page {
 	 */
 	public void last() {
 		index = maxIndex;
+	}
+	
+	/**
+	 * Return if the page is empty = not result on the page
+	 * @return if the page is empty
+	 */
+	public boolean isEmpty() {
+		return maxIndex == MAX_INDEX_IF_PAGE_IS_EMPTY;
 	}
 
 	public Integer getIndex() {

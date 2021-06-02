@@ -1,5 +1,6 @@
 package com.excilys.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
@@ -59,8 +60,10 @@ public class CompanyService {
 	 * @throws DatabaseConnectionException 
 	 */
 	public List<Company> getCompaniesListPage(Page page) throws DatabaseConnectionException {
-		List<Company> companiesList = null;
-		companiesList = companyDao.getCompaniesListPage(page);
+		if (page.isEmpty()) {
+			return new ArrayList<Company>(0);
+		}
+		List<Company> companiesList = companyDao.getCompaniesListPage(page);
 		return companiesList;
 	}
 	

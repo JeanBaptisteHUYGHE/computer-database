@@ -90,7 +90,7 @@ public class PrincipalMenuController {
 	 */
 	private void listAllComputers() {
 		try {
-			Integer computersCount = computerService.getComputerCount();
+			Integer computersCount = computerService.getComputersCount();
 			PageBuilder pageBuilder = new PageBuilder();
 			pageBuilder.withElementsCount(computersCount);
 			Page page = pageBuilder.build();

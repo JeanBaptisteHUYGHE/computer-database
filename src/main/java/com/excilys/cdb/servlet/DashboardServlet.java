@@ -39,13 +39,15 @@ public class DashboardServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
 		List<String> errorsList = getErrorsList(request.getAttribute("errorsList"));
+		String search = getUserSearch(request.getParameter("search"));
 		Integer requestedPage = getRequestedPage(request.getParameter("page"));
-		Integer computersCount = getComputersCount(errorsList);
+		Integer computersCount = getComputersCountForSearch(search, errorsList);
 		Page page = getPage(requestedPage, computersCount);
-		List<ComputerDto> computersDtoList = getComputersDtoList(page, errorsList);
+		List<ComputerDto> computersDtoList = getComputersDtoListForSearch(search, page, errorsList);
 				
 		request.setAttribute("errorsList", errorsList);
 		request.setAttribute("computersList", computersDtoList);
+		request.setAttribute("search", search);
 		request.setAttribute("computersCount", computersCount);
 		request.setAttribute("page", page);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp").forward(request, response);
@@ -73,6 +75,13 @@ public class DashboardServlet extends HttpServlet {
 		doGet(request, response);
 	}
 	
+	private String getUserSearch(String search) {
+		if (search == null) {
+			return "";
+		}
+		return search;
+	}
+	
 	private Integer getRequestedPage(String strRequestedPage) {
 		Integer requestedPage = Page.MINIMUM_PAGE_INDEX;
 		try {
@@ -81,10 +90,10 @@ public class DashboardServlet extends HttpServlet {
 		return requestedPage;
 	}
 	
-	private Integer getComputersCount(List<String> errorsList) {
+	private Integer getComputersCountForSearch(String search, List<String> errorsList) {
 		Integer computersCount = DEFAULT_COMPUTERS_COUNT;
 		try {
-			computersCount = computerService.getComputerCount();
+			computersCount = computerService.getComputersCountForSearch(search);
 		} catch (DatabaseConnectionException e) {
 			errorsList.add("Error while getting the computers count. " + e.getMessage());
 		}
@@ -100,10 +109,10 @@ public class DashboardServlet extends HttpServlet {
 		return page;
 	}
 	
-	private List<ComputerDto> getComputersDtoList(Page page, List<String> errorsList) {
+	private List<ComputerDto> getComputersDtoListForSearch(String search, Page page, List<String> errorsList) {
 		List<ComputerDto> computersDtoList;
 		try {
-			List<Computer> computersList = computerService.getComputersListPage(page);
+			List<Computer> computersList = computerService.getComputersListPageForSearch(search, page);
 			computersDtoList = ComputerDtoMapper.getInstance().fromComputersListToComputersDtoList(computersList);
 
 		} catch (DatabaseConnectionException e) {
