@@ -38,19 +38,39 @@ public class DashboardServlet extends HttpServlet {
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
-		List<String> errorsList = new ArrayList<String>(0);
+		List<String> errorsList = getErrorsList(request.getAttribute("errorsList"));
 		Integer requestedPage = getRequestedPage(request.getParameter("page"));
 		Integer computersCount = getComputersCount(errorsList);
 		Page page = getPage(requestedPage, computersCount);
 		List<ComputerDto> computersDtoList = getComputersDtoList(page, errorsList);
-		
-		
-		
+				
 		request.setAttribute("errorsList", errorsList);
 		request.setAttribute("computersList", computersDtoList);
 		request.setAttribute("computersCount", computersCount);
 		request.setAttribute("page", page);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp").forward(request, response);
+	}
+	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("doPost(...)");
+		List<String> errorsList = new ArrayList<String>(0);
+		String selection = request.getParameter("selection");
+		
+		try {
+			if (selection != null) {
+				String [] stringsIds = selection.split(",");
+				for (String stringId : stringsIds) {
+					try {
+						Integer id = Integer.valueOf(stringId);
+						computerService.deleteComputer(id);
+					} catch (NumberFormatException e) { }
+				}
+			}
+		} catch (DatabaseConnectionException e) {
+			errorsList.add("Computer(s) cannot be delete. " + e.getMessage());
+		}
+		request.setAttribute("errorsList", errorsList);
+		doGet(request, response);
 	}
 	
 	private Integer getRequestedPage(String strRequestedPage) {
@@ -91,6 +111,19 @@ public class DashboardServlet extends HttpServlet {
 			errorsList.add("Error while getting the computers list. " + e.getMessage());
 		}
 		return computersDtoList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> getErrorsList(Object errorsListObject) {
+		List<String> errorsList = null;
+		try {
+			errorsList = (List<String>) errorsListObject;
+		} catch (ClassCastException e) { }
+		
+		if (errorsList == null) {
+			errorsList = new ArrayList<String>(0);
+		}
+		return errorsList;
 	}
 }
 

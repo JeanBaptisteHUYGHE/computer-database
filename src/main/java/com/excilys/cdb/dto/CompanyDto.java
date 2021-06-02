@@ -1,7 +1,5 @@
 package com.excilys.cdb.dto;
 
-import com.excilys.cdb.model.Company;
-
 public class CompanyDto {
 
 	private String id;

@@ -87,7 +87,7 @@
 					<c:forEach items="${ computersList }" var="computer">
 					<tr>
 						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
+							class="cb" value="${ computer.id }"></td>
 						<td><a href="editComputer?id=${ computer.id }" onclick="">${ computer.name }</a></td>
 						<td>${ computer.introductionDate }</td>
 						<td>${ computer.discontinueDate }</td>
@@ -105,6 +105,11 @@
 			<ul class="pagination">
 				<%-- Display previous link --%>
 				<c:if test = "${page.index > 0}">
+				<li>
+					<a href="?page=0" aria-label="First">
+						<span aria-hidden="true">&laquo;&laquo;</span>
+					</a>
+				</li>
 				<li>
 					<a href="?page=${ page.index - 1 }" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
@@ -124,6 +129,11 @@
 				<li>
 					<a href="?page=${ page.index + 1 }" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+				<li>
+					<a href="?page=${ page.maxIndex }" aria-label="Last">
+						<span aria-hidden="true">&raquo;&raquo;</span>
 					</a>
 				</li>
 				</c:if>
