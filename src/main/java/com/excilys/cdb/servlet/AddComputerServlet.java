@@ -53,7 +53,7 @@ public class AddComputerServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
 		List<String> errorsList = getErrorsList(request.getAttribute("errorsList"));
-		List<CompanyDto> companiesDtoList = getCompaniesDto(errorsList);
+		List<CompanyDto> companiesDtoList = getCompaniesDtoList(errorsList);
 
 		request.setAttribute("errorsList", errorsList);
 		request.setAttribute("companiesList", companiesDtoList);
@@ -94,7 +94,7 @@ public class AddComputerServlet extends HttpServlet {
 		return errorsList;
 	}
 	
-	private List<CompanyDto> getCompaniesDto(List<String> errorsList) {
+	private List<CompanyDto> getCompaniesDtoList(List<String> errorsList) {
 		List<CompanyDto> companiesDtoList;
 		
 		try {
@@ -114,16 +114,11 @@ public class AddComputerServlet extends HttpServlet {
 	 * @return the computerDto
 	 */
 	private ComputerDto getComputerDtoAttributFromPost(HttpServletRequest request) {
-		String computerName = request.getParameter("computerName");
-		String introductionDate = request.getParameter("introductionDate");
-		String discontinueDate = request.getParameter("discontinueDate");
-		String companyId = request.getParameter("companyId");
-		
-		ComputerDtoBuilder computerDtoBuilder = new ComputerDtoBuilder();
-		computerDtoBuilder.withName(computerName);
-		computerDtoBuilder.withIntroductionDate(introductionDate.replace('-', '/'));
-		computerDtoBuilder.withDiscontinueDate(discontinueDate.replace('-', '/'));
-		computerDtoBuilder.withCompanyId(companyId);
+		ComputerDtoBuilder computerDtoBuilder = new ComputerDtoBuilder()
+			.withName(request.getParameter("computerName"))
+			.withIntroductionDate(request.getParameter("introductionDate").replace('-', '/'))
+			.withDiscontinueDate(request.getParameter("discontinueDate").replace('-', '/'))
+			.withCompanyId(request.getParameter("companyId"));
 		ComputerDto computerDto = computerDtoBuilder.build();
 		logger.debug("ComputerDto readed: {}", computerDto.toString());
 		return computerDto;

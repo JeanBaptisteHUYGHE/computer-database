@@ -35,18 +35,20 @@ public class CompanyDto {
 		private String name;
 				
 		public CompanyDtoBuilder withId(String id) {
-			this.id = id;
+			if (id != null && id.isBlank()) {
+				this.id = null;
+			} else {
+				this.id = id;
+			}
 			return this;
 		}
 		
 		public CompanyDtoBuilder withName(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		public CompanyDtoBuilder withCompany(Company company) {
-			id = company.getId().toString();
-			name = company.getName();
+			if (name != null && name.isBlank()) {
+				this.name = null;
+			} else {
+				this.name = name;
+			}
 			return this;
 		}
 		
