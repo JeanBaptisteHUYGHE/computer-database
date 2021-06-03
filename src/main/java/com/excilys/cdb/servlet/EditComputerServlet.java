@@ -29,7 +29,7 @@ import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 
-@WebServlet( name = "EditComputerServlet", urlPatterns = "/editComputer")
+@WebServlet(name = "EditComputerServlet", urlPatterns = "/editComputer")
 public class EditComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 2713830462205183398L;
@@ -67,7 +67,7 @@ public class EditComputerServlet extends HttpServlet {
 		
 		request.setAttribute("errorsList", errorsList);
 		request.setAttribute("companiesDtoList", companiesDtoList);
-		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/editComputer.jsp").forward( request, response );
+		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/editComputer.jsp").forward(request, response);
 	}
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -131,7 +131,7 @@ public class EditComputerServlet extends HttpServlet {
 	}
 	
 	/**
-	 * Get / read the computer dto from the addComputer form attributs
+	 * Get / read the computer dto from the addComputer form attributes.
 	 * @param request the user request
 	 * @return the computerDto
 	 */

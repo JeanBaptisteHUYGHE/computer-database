@@ -62,7 +62,7 @@ public class DashboardServlet extends HttpServlet {
 		
 		try {
 			if (selection != null) {
-				String [] stringsIds = selection.split(",");
+				String[] stringsIds = selection.split(",");
 				for (String stringId : stringsIds) {
 					try {
 						Integer id = Integer.valueOf(stringId);

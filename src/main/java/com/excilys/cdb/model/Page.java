@@ -26,7 +26,7 @@ public class Page {
 	}
 	
 	/**
-	 * Switch to the first page
+	 * Switch to the first page.
 	 */
 	public void first() {
 		index = MINIMUM_PAGE_INDEX;
@@ -47,14 +47,14 @@ public class Page {
 	}
 	
 	/**
-	 * Switch to the last page
+	 * Switch to the last page.
 	 */
 	public void last() {
 		index = maxIndex;
 	}
 	
 	/**
-	 * Return if the page is empty = not result on the page
+	 * Return if the page is empty = not result on the page.
 	 * @return if the page is empty
 	 */
 	public boolean isEmpty() {
@@ -97,6 +97,7 @@ public class Page {
 				logger.error("Page size can't be null or negative");
 				throw new IllegalArgumentException("Page size can't be null or negative");
 			}
+			
 			this.pageSize = pageSize;
 			return this;
 		}
@@ -104,15 +105,15 @@ public class Page {
 		public PageBuilder withIndex(Integer pageIndex) {
 			if (pageIndex == null || pageIndex < 0) {
 				this.pageIndex = MINIMUM_PAGE_INDEX;
-			}
-			else {
+				
+			} else {
 				this.pageIndex = pageIndex;
 			}
 			return this;
 		}
 		
 		public Page build() {
-			Integer pageMax = (int) ceil(((double) elementsCount) / pageSize) - 1;;
+			Integer pageMax = (int) ceil(((double) elementsCount) / pageSize) - 1;
 			Page page = new Page();
 			page.size = pageSize;
 			page.maxIndex = pageMax;

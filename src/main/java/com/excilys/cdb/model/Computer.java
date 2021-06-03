@@ -129,11 +129,11 @@ public class Computer {
 	}
 
 	public static class ComputerBuilder {
-		private Integer id = null;
-		private String name = null;
-		private LocalDate introductionDate = null;
-		private LocalDate discontinueDate = null;
-		private Company company = null;
+		private Integer id;
+		private String name;
+		private LocalDate introductionDate;
+		private LocalDate discontinueDate;
+		private Company company;
 		
 		public ComputerBuilder withId(Integer id) {
 			this.id = id;

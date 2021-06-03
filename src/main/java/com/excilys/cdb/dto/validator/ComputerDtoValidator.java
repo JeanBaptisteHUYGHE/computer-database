@@ -40,8 +40,8 @@ public class ComputerDtoValidator {
 				if (integerId < 0) {
 					throw new InvalidComputerIdException("Invalid computer id, it must be positive or null");
 				}
-			}
-			catch (NumberFormatException e) {
+				
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid computer id, it must be a number");
 			}
 		}
@@ -50,8 +50,8 @@ public class ComputerDtoValidator {
 	private void validateName(String name) throws InvalidComputerNameException {
 		if (name == null) {
 			throw new InvalidComputerNameException("Invalid computer name, it can't be null");
-		}
-		else {
+			
+		} else {
 			if (name.length() == 0) {
 				throw new InvalidComputerNameException("Invalid computer name, it can't be empty");
 			}
@@ -66,8 +66,8 @@ public class ComputerDtoValidator {
 				if (!isValidDate(localDateIntroductionDate)) {
 					throw new InvalidComputerIntroductionDateException("Invalid computer introduction date, date too extrem");
 				}
-			}
-			catch (DateTimeParseException e) {
+				
+			} catch (DateTimeParseException e) {
 				throw new InvalidComputerIntroductionDateException("Invalid computer introduction date, it have an invalid format");
 			}
 		}
@@ -81,8 +81,8 @@ public class ComputerDtoValidator {
 				if (!isValidDate(localDateDiscontinueDate)) {
 					throw new InvalidComputerDiscontinueDateException("Invalid computer discontinue date, date too extrem");
 				}
-			}
-			catch (DateTimeParseException e) {
+				
+			} catch (DateTimeParseException e) {
 				throw new InvalidComputerDiscontinueDateException("Invalid computer discontinue date, it have an invalid format");
 			}
 		}

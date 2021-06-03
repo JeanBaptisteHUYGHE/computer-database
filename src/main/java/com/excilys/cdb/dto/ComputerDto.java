@@ -2,12 +2,12 @@ package com.excilys.cdb.dto;
 
 public class ComputerDto {
 
-	private String id = null;
-	private String name = null;
-	private String introductionDate = null;
-	private String discontinueDate = null;
-	private String companyName = null;
-	private String companyId = null;
+	private String id;
+	private String name;
+	private String introductionDate;
+	private String discontinueDate;
+	private String companyName;
+	private String companyId;
 	
 	private ComputerDto() { }
 

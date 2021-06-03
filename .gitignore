@@ -13,6 +13,7 @@ local.properties
 # Eclipse
 .classpath
 .project
+.checkstyle
 
 # Maven
 log/

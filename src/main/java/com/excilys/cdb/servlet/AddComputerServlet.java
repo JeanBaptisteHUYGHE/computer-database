@@ -27,7 +27,7 @@ import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 
-@WebServlet( name = "AddComputerServlet", urlPatterns = "/addComputer")
+@WebServlet(name = "AddComputerServlet", urlPatterns = "/addComputer")
 public class AddComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8762274583542611999L;
@@ -109,7 +109,7 @@ public class AddComputerServlet extends HttpServlet {
 	}
 	
 	/**
-	 * Get / read the computer dto from the addComputer form attributs
+	 * Get / read the computer dto from the addComputer form attributes.
 	 * @param request the user request
 	 * @return the computerDto
 	 */

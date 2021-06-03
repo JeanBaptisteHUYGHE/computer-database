@@ -11,7 +11,7 @@ import com.excilys.cdb.persistance.ComputerDao;
 
 public class ComputerService {
 	
-	private static ComputerService computerService = null;
+	private static ComputerService computerService;
 	private ComputerDao computerDao;
 	
 	public static ComputerService getInstance() {
@@ -96,7 +96,7 @@ public class ComputerService {
 	}
 	
 	/**
-	 * Return the total number of computers
+	 * Return the total number of computers.
 	 * @return the computers count
 	 * @throws DatabaseConnectionException
 	 */
@@ -107,7 +107,7 @@ public class ComputerService {
 	}
 	
 	/**
-	 * Return the total number of computers for a search
+	 * Return the total number of computers for a search.
 	 * @param search the search
 	 * @return the computers count
 	 * @throws DatabaseConnectionException

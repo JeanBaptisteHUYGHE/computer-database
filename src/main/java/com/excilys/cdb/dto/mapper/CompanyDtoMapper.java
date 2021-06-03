@@ -13,7 +13,7 @@ import com.excilys.cdb.model.Company.CompanyBuilder;
 
 public class CompanyDtoMapper {
 	
-private static CompanyDtoMapper companyDtoMapper = null;
+private static CompanyDtoMapper companyDtoMapper;
 	
 	public static CompanyDtoMapper getInstance() {
 		if (companyDtoMapper == null) {

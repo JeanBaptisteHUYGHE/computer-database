@@ -143,7 +143,7 @@ public class PrincipalMenuController {
 			principalMenuView.drawMessage("Operation canceled. " + e.getMessage());
 			
 		} catch (DatabaseConnectionException e) {
-			principalMenuView.drawError("Operation canceled. " + e.getMessage());e.printStackTrace();
+			principalMenuView.drawError("Operation canceled. " + e.getMessage());
 		}
 	}
 }
