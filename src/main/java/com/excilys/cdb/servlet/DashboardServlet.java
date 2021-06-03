@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +42,9 @@ public class DashboardServlet extends HttpServlet {
 		List<String> errorsList = getErrorsList(request.getAttribute("errorsList"));
 		String search = getUserSearch(request.getParameter("search"));
 		Integer requestedPage = getRequestedPage(request.getParameter("page"));
+		Integer requestedPageSize = getRequestedPageSize(request.getParameter("pageSize"), request.getSession());
 		Integer computersCount = getComputersCountForSearch(search, errorsList);
-		Page page = getPage(requestedPage, computersCount);
+		Page page = getPage(requestedPage, computersCount, requestedPageSize);
 		List<ComputerDto> computersDtoList = getComputersDtoListForSearch(search, page, errorsList);
 				
 		request.setAttribute("errorsList", errorsList);
@@ -90,6 +92,21 @@ public class DashboardServlet extends HttpServlet {
 		return requestedPage;
 	}
 	
+	private Integer getRequestedPageSize(String strRequestedPageSize, HttpSession session) {
+		Integer pageSize;
+		Integer userPageSize = (Integer) session.getAttribute("userPageSize");
+		if (userPageSize == null) {
+			pageSize = Page.DEFAULT_PAGE_SIZE;
+		} else {
+			pageSize = userPageSize;
+		}
+		try {
+			pageSize = Integer.valueOf(strRequestedPageSize);	
+		} catch (NumberFormatException e) { }
+		session.setAttribute("userPageSize", pageSize);
+		return pageSize;
+	}
+	
 	private Integer getComputersCountForSearch(String search, List<String> errorsList) {
 		Integer computersCount = DEFAULT_COMPUTERS_COUNT;
 		try {
@@ -100,10 +117,11 @@ public class DashboardServlet extends HttpServlet {
 		return computersCount;
 	}
 	
-	private Page getPage(Integer requestedPage, Integer computersCount) {
-		PageBuilder pageBuilder = new PageBuilder();
-		pageBuilder.withElementsCount(computersCount);
-		pageBuilder.withIndex(requestedPage);
+	private Page getPage(Integer requestedPage, Integer computersCount, Integer requestedPageSize) {
+		PageBuilder pageBuilder = new PageBuilder()
+				.withElementsCount(computersCount)
+				.withIndex(requestedPage)
+				.withSize(requestedPageSize);
 		Page page = pageBuilder.build();
 		logger.info(page.toString());
 		return page;
