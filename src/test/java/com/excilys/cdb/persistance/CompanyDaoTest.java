@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.excilys.cdb.exception.dao.CompanyNotFoundException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Page;
@@ -112,13 +113,14 @@ class CompanyDaoTest {
 		}
 	}
 
-	/*
+	
 	@Test
-	void testGetCompanyNull() {
-		assertThrows(NoSuchElementException.class, () -> {
-			companyDao.getCompany(new Company(null, null));
+	void testGetCompanySouldThrowCompanyNotFoundException() {
+		assertThrows(CompanyNotFoundException.class, () -> {
+			companyDao.getCompanyById(-1);
 		});
 	}
+	/*
 
 	@Test
 	void testGetCompanyNotFound() {

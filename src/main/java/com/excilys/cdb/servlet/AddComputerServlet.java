@@ -56,7 +56,7 @@ public class AddComputerServlet extends HttpServlet {
 		List<CompanyDto> companiesDtoList = getCompaniesDtoList(errorsList);
 
 		request.setAttribute("errorsList", errorsList);
-		request.setAttribute("companiesList", companiesDtoList);
+		request.setAttribute("companiesDtoList", companiesDtoList);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/addComputer.jsp").forward(request, response);
 	}
 	
