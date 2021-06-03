@@ -1,4 +1,4 @@
-package com.excilys.cdb.persistance;
+package com.excilys.cdb.persistance.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,9 +62,9 @@ public class ComputerDaoMapper {
 	}
 	
 	/**
-	 * Return the company read on the part of a computer result set
+	 * Return the company read on the part of a computer result set.
 	 * @param resultSet
-	 * @return
+	 * @return the company
 	 * @throws SQLException
 	 */
 	private Company readCompanyPartOfComputerLine(ResultSet resultSet) throws SQLException {
@@ -128,7 +128,7 @@ public class ComputerDaoMapper {
 	}
 
 	/**
-	 * Return the computers count
+	 * Return the computers count.
 	 * @param resultSet the resultSet
 	 * @return the computers number
 	 * @throws DaoMapperException 

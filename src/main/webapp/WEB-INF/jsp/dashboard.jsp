@@ -15,7 +15,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
+			<a class="navbar-brand" href="dashboard">Application - Computer Database</a>
 		</div>
 	</header>
 
@@ -27,15 +27,15 @@
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
+							class="form-control" placeholder="Search name" value="${ search }"/>
+						<input
 							type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="addComputer">Add
-						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+					<a class="btn btn-success" id="addComputer" href="addComputer">Add Computer</a>
+					<a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
 			</div>
 		</div>
@@ -66,13 +66,14 @@
 						<!-- Variable declarations for passing labels as parameters -->
 						<!-- Table header for Computer Name -->
 
-						<th class="editMode" style="width: 60px; height: 22px;"><input
-							type="checkbox" id="selectall" /> <span
-							style="vertical-align: top;"> - <a href="#"
-								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
-									class="fa fa-trash-o fa-lg"></i>
+						<th class="editMode" style="width: 60px; height: 22px;">
+							<input type="checkbox" id="selectall" />
+							<span style="vertical-align: top;"> - 
+							<a href="#" id="deleteSelected" onclick="$.fn.deleteSelected();">
+								<i class="fa fa-trash-o fa-lg"></i>
 							</a>
-						</span></th>
+							</span>
+						</th>
 						<th>Computer name</th>
 						<th>Introduced date</th>
 						<!-- Table header for Discontinued Date -->
@@ -87,8 +88,13 @@
 					<c:forEach items="${ computersList }" var="computer">
 					<tr>
 						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer?id=${ computer.id }" onclick="">${ computer.name }</a></td>
+							class="cb" value="${ computer.id }"></td>
+						<td>
+							<c:url value="/editComputer" var="editComputerLink" scope="request">
+								<c:param name="id" value="${ computer.id }"/>
+							</c:url>
+							<a href="${ editComputerLink }" onclick="">${ computer.name }</a>
+						</td>
 						<td>${ computer.introductionDate }</td>
 						<td>${ computer.discontinueDate }</td>
 						<td>${ computer.companyName }</td>
@@ -102,39 +108,78 @@
 
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
+			<!-- Pagination -->
 			<ul class="pagination">
-				<%-- Display previous link --%>
+				<%-- Display first page link --%>
 				<c:if test = "${page.index > 0}">
 				<li>
-					<a href="?page=${ page.index - 1 }" aria-label="Previous">
+					<c:url value="" var="dashboardLink" scope="request">
+						<c:param name="page" value="0"/>
+						<c:param name="search" value="${ search }"/>
+					</c:url>
+					<a href="${ dashboardLink }" aria-label="First">
+						<span aria-hidden="true">&laquo;&laquo;</span>
+					</a>
+				</li>
+				<%-- Display previous page link --%>
+				<li>
+					<c:url value="" var="dashboardLink" scope="request">
+						<c:param name="page" value="${ page.index - 1 }"/>
+						<c:param name="search" value="${ search }"/>
+					</c:url>
+					<a href="${ dashboardLink }" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 					</a>
 				</li>
 				</c:if>
-				<%-- Pages menu --%>
+				<%-- Pages numbers menu --%>
 				<c:forEach var="pageIndex" begin="${ page.index - 3 >= 0 ? page.index - 3: 0 }" end="${ page.index + 3 }">
 					<c:if test = "${pageIndex >= 0 and pageIndex <= page.maxIndex }">
 					<li class="${ pageIndex == page.index ? 'active' : '' }">
-						<a href="?page=${ pageIndex }">${ pageIndex + 1 }</a>
+						<c:url value="" var="dashboardLink" scope="request">
+							<c:param name="page" value="${ pageIndex }"/>
+							<c:param name="search" value="${ search }"/>
+						</c:url>
+						<a href="${ dashboardLink }">${ pageIndex + 1 }</a>
 					</li>
 					</c:if>
 				</c:forEach>
-				<%-- Display next link --%>
+				<%-- Display next page link --%>
 				<c:if test = "${page.index < page.maxIndex}">
 				<li>
-					<a href="?page=${ page.index + 1 }" aria-label="Next">
+					<c:url value="" var="dashboardLink" scope="request">
+						<c:param name="page" value="${ page.index + 1 }"/>
+						<c:param name="search" value="${ search }"/>
+					</c:url>
+					<a href="${ dashboardLink }" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+				<%-- Display last page link --%>
+				<li>
+					<c:url value="" var="dashboardLink" scope="request">
+						<c:param name="page" value="${ page.maxIndex }"/>
+						<c:param name="search" value="${ search }"/>
+					</c:url>
+					<a href="${ dashboardLink }" aria-label="Last">
+						<span aria-hidden="true">&raquo;&raquo;</span>
 					</a>
 				</li>
 				</c:if>
 			</ul>
 
-			<div class="d-flex btn-group btn-group-sm pull-right" role="group">
-				<form>
-					<button type="button" class="btn btn-default">10</button>
-					<button type="button" class="btn btn-default">50</button>
-					<button type="button" class="btn btn-default">100</button>
-				</form>
+			<!-- Page size -->
+			<div class="d-flex pagination pull-right" role="group">
+				<c:forEach var="pageSize" items="10,50,100">
+				<c:url value="" var="dashboardLink" scope="request">
+					<c:param name="pageSize" value="${ pageSize }"/>
+					<c:param name="page" value="${ page.index }"/>
+					<c:param name="search" value="${ search }"/>
+				</c:url>
+				<a href="${ dashboardLink }" class="btn btn-default ${ pageSize == page.size ? 'active' : '' }">
+					${ pageSize }
+				</a>
+				</c:forEach>
 			</div>
 		</div>
 

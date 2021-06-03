@@ -14,7 +14,7 @@ import com.excilys.cdb.model.Computer.ComputerBuilder;
 
 public class ComputerDtoMapper {
 	
-	private static ComputerDtoMapper computerDtoMapper = null;
+	private static ComputerDtoMapper computerDtoMapper;
 	
 	public static ComputerDtoMapper getInstance() {
 		if (computerDtoMapper == null) {

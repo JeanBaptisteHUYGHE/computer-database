@@ -90,7 +90,7 @@ public class PrincipalMenuController {
 	 */
 	private void listAllComputers() {
 		try {
-			Integer computersCount = computerService.getComputerCount();
+			Integer computersCount = computerService.getComputersCount();
 			PageBuilder pageBuilder = new PageBuilder();
 			pageBuilder.withElementsCount(computersCount);
 			Page page = pageBuilder.build();
@@ -143,7 +143,7 @@ public class PrincipalMenuController {
 			principalMenuView.drawMessage("Operation canceled. " + e.getMessage());
 			
 		} catch (DatabaseConnectionException e) {
-			principalMenuView.drawError("Operation canceled. " + e.getMessage());e.printStackTrace();
+			principalMenuView.drawError("Operation canceled. " + e.getMessage());
 		}
 	}
 }

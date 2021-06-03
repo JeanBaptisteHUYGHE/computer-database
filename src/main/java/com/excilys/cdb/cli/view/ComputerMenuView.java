@@ -7,6 +7,7 @@ public class ComputerMenuView extends MenuView {
 
 	/**
 	 * Draw the menu interface.
+	 * @param computerDto the computerDto to draw
 	 */
 	public void drawInterface(ComputerDto computerDto) {
 		System.out.println("\n======================");
@@ -20,6 +21,7 @@ public class ComputerMenuView extends MenuView {
 	
 	/**
 	 * Draw computer representation.
+	 * @param computerDto the computerDto to draw
 	 */
 	private void drawComputer(ComputerDto computerDto) {
 		System.out.println("Selected Computer:"

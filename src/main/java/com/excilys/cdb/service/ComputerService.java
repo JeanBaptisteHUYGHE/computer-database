@@ -1,5 +1,6 @@
 package com.excilys.cdb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.excilys.cdb.exception.dao.ComputerNotFoundException;
@@ -10,7 +11,7 @@ import com.excilys.cdb.persistance.ComputerDao;
 
 public class ComputerService {
 	
-	private static ComputerService computerService = null;
+	private static ComputerService computerService;
 	private ComputerDao computerDao;
 	
 	public static ComputerService getInstance() {
@@ -31,8 +32,25 @@ public class ComputerService {
 	 * @throws DatabaseConnectionException
 	 */
 	public List<Computer> getComputersListPage(Page page) throws DatabaseConnectionException {
-		List<Computer> computersList = null;
-		computersList = computerDao.getComputersListPage(page);
+		if (page.isEmpty()) {
+			return new ArrayList<Computer>(0);
+		}
+		List<Computer> computersList = computerDao.getComputersListPage(page);
+		return computersList;
+	}
+	
+	/**
+	 * Return the computers list of the asked page for an user search.
+	 * @param search the user search
+	 * @param page the page
+	 * @return the computers list
+	 * @throws DatabaseConnectionException
+	 */
+	public List<Computer> getComputersListPageForSearch(String search, Page page) throws DatabaseConnectionException {
+		if (page.isEmpty()) {
+			return new ArrayList<Computer>(0);
+		}
+		List<Computer> computersList = computerDao.getComputersListPageForSearch(search, page);
 		return computersList;
 	}
 
@@ -78,13 +96,25 @@ public class ComputerService {
 	}
 	
 	/**
-	 * Return the total number of computers
+	 * Return the total number of computers.
 	 * @return the computers count
 	 * @throws DatabaseConnectionException
 	 */
-	public Integer getComputerCount() throws DatabaseConnectionException {
+	public Integer getComputersCount() throws DatabaseConnectionException {
 		Integer computersCount;
 		computersCount = computerDao.getComputersCount();
+		return computersCount;
+	}
+	
+	/**
+	 * Return the total number of computers for a search.
+	 * @param search the search
+	 * @return the computers count
+	 * @throws DatabaseConnectionException
+	 */
+	public Integer getComputersCountForSearch(String search) throws DatabaseConnectionException {
+		Integer computersCount;
+		computersCount = computerDao.getComputersCountForSearch(search);
 		return computersCount;
 	}
 }

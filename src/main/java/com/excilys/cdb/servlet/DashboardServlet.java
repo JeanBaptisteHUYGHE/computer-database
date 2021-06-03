@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +39,49 @@ public class DashboardServlet extends HttpServlet {
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.debug("doGet(...)");
-		List<String> errorsList = new ArrayList<String>(0);
+		List<String> errorsList = getErrorsList(request.getAttribute("errorsList"));
+		String search = getUserSearch(request.getParameter("search"));
 		Integer requestedPage = getRequestedPage(request.getParameter("page"));
-		Integer computersCount = getComputersCount(errorsList);
-		Page page = getPage(requestedPage, computersCount);
-		List<ComputerDto> computersDtoList = getComputersDtoList(page, errorsList);
-		
-		
-		
+		Integer requestedPageSize = getRequestedPageSize(request.getParameter("pageSize"), request.getSession());
+		Integer computersCount = getComputersCountForSearch(search, errorsList);
+		Page page = getPage(requestedPage, computersCount, requestedPageSize);
+		List<ComputerDto> computersDtoList = getComputersDtoListForSearch(search, page, errorsList);
+				
 		request.setAttribute("errorsList", errorsList);
 		request.setAttribute("computersList", computersDtoList);
+		request.setAttribute("search", search);
 		request.setAttribute("computersCount", computersCount);
 		request.setAttribute("page", page);
 		this.getServletContext().getRequestDispatcher("/WEB-INF/jsp/dashboard.jsp").forward(request, response);
+	}
+	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("doPost(...)");
+		List<String> errorsList = new ArrayList<String>(0);
+		String selection = request.getParameter("selection");
+		
+		try {
+			if (selection != null) {
+				String[] stringsIds = selection.split(",");
+				for (String stringId : stringsIds) {
+					try {
+						Integer id = Integer.valueOf(stringId);
+						computerService.deleteComputer(id);
+					} catch (NumberFormatException e) { }
+				}
+			}
+		} catch (DatabaseConnectionException e) {
+			errorsList.add("Computer(s) cannot be delete. " + e.getMessage());
+		}
+		request.setAttribute("errorsList", errorsList);
+		doGet(request, response);
+	}
+	
+	private String getUserSearch(String search) {
+		if (search == null) {
+			return "";
+		}
+		return search;
 	}
 	
 	private Integer getRequestedPage(String strRequestedPage) {
@@ -61,29 +92,45 @@ public class DashboardServlet extends HttpServlet {
 		return requestedPage;
 	}
 	
-	private Integer getComputersCount(List<String> errorsList) {
+	private Integer getRequestedPageSize(String strRequestedPageSize, HttpSession session) {
+		Integer pageSize;
+		Integer userPageSize = (Integer) session.getAttribute("userPageSize");
+		if (userPageSize == null) {
+			pageSize = Page.DEFAULT_PAGE_SIZE;
+		} else {
+			pageSize = userPageSize;
+		}
+		try {
+			pageSize = Integer.valueOf(strRequestedPageSize);	
+		} catch (NumberFormatException e) { }
+		session.setAttribute("userPageSize", pageSize);
+		return pageSize;
+	}
+	
+	private Integer getComputersCountForSearch(String search, List<String> errorsList) {
 		Integer computersCount = DEFAULT_COMPUTERS_COUNT;
 		try {
-			computersCount = computerService.getComputerCount();
+			computersCount = computerService.getComputersCountForSearch(search);
 		} catch (DatabaseConnectionException e) {
 			errorsList.add("Error while getting the computers count. " + e.getMessage());
 		}
 		return computersCount;
 	}
 	
-	private Page getPage(Integer requestedPage, Integer computersCount) {
-		PageBuilder pageBuilder = new PageBuilder();
-		pageBuilder.withElementsCount(computersCount);
-		pageBuilder.withIndex(requestedPage);
+	private Page getPage(Integer requestedPage, Integer computersCount, Integer requestedPageSize) {
+		PageBuilder pageBuilder = new PageBuilder()
+				.withElementsCount(computersCount)
+				.withIndex(requestedPage)
+				.withSize(requestedPageSize);
 		Page page = pageBuilder.build();
 		logger.info(page.toString());
 		return page;
 	}
 	
-	private List<ComputerDto> getComputersDtoList(Page page, List<String> errorsList) {
+	private List<ComputerDto> getComputersDtoListForSearch(String search, Page page, List<String> errorsList) {
 		List<ComputerDto> computersDtoList;
 		try {
-			List<Computer> computersList = computerService.getComputersListPage(page);
+			List<Computer> computersList = computerService.getComputersListPageForSearch(search, page);
 			computersDtoList = ComputerDtoMapper.getInstance().fromComputersListToComputersDtoList(computersList);
 
 		} catch (DatabaseConnectionException e) {
@@ -91,6 +138,19 @@ public class DashboardServlet extends HttpServlet {
 			errorsList.add("Error while getting the computers list. " + e.getMessage());
 		}
 		return computersDtoList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> getErrorsList(Object errorsListObject) {
+		List<String> errorsList = null;
+		try {
+			errorsList = (List<String>) errorsListObject;
+		} catch (ClassCastException e) { }
+		
+		if (errorsList == null) {
+			errorsList = new ArrayList<String>(0);
+		}
+		return errorsList;
 	}
 }
 

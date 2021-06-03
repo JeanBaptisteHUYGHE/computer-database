@@ -67,8 +67,8 @@ public class Company {
 	}
 	
 	public static class CompanyBuilder {
-		private Integer id = null;
-		private String name = null;
+		private Integer id;
+		private String name;
 		
 		public CompanyBuilder withId(Integer id) {
 			this.id = id;

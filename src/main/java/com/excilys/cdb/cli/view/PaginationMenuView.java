@@ -22,6 +22,7 @@ public class PaginationMenuView extends MenuView {
 	
 	/**
 	 * Draw the current page of computer list.
+	 * @param computersDtoList the computersDto list to draw
 	 */
 	public void drawComputersDtoPage(List<ComputerDto> computersDtoList) {
 		System.out.println("ID\tNAME                                                      \t"

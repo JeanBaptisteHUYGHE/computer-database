@@ -2,12 +2,12 @@ package com.excilys.cdb.dto;
 
 public class ComputerDto {
 
-	private String id = null;
-	private String name = null;
-	private String introductionDate = null;
-	private String discontinueDate = null;
-	private String companyName = null;
-	private String companyId = null;
+	private String id;
+	private String name;
+	private String introductionDate;
+	private String discontinueDate;
+	private String companyName;
+	private String companyId;
 	
 	private ComputerDto() { }
 
@@ -75,32 +75,56 @@ public class ComputerDto {
 		private String companyId;
 				
 		public ComputerDtoBuilder withId(String id) {
-			this.id = id;
+			if (id != null && id.isBlank()) {
+				this.id = null;
+			} else {
+				this.id = id;
+			}
 			return this;
 		}
 		
 		public ComputerDtoBuilder withName(String name) {
-			this.name = name;
+			if (name != null && name.isBlank()) {
+				this.name = null;
+			} else {
+				this.name = name;
+			}
 			return this;
 		}
 		
 		public ComputerDtoBuilder withIntroductionDate(String introductionDate) {
-			this.introductionDate = introductionDate;
+			if (introductionDate != null && introductionDate.isBlank()) {
+				this.introductionDate = null;
+			} else {
+				this.introductionDate = introductionDate;
+			}
 			return this;
 		}
 		
 		public ComputerDtoBuilder withDiscontinueDate(String discontinueDate) {
-			this.discontinueDate = discontinueDate;
+			if (discontinueDate != null && discontinueDate.isBlank()) {
+				this.discontinueDate = null;
+			} else {
+				this.discontinueDate = discontinueDate;
+			}
 			return this;
 		}
 		
 		public ComputerDtoBuilder withCompanyName(String companyName) {
-			this.companyName = companyName;
+			if (companyName != null && companyName.isBlank()) {
+				this.companyName = null;
+			} else {
+				this.companyName = companyName;
+			}
 			return this;
 		}
 		
 		public ComputerDtoBuilder withCompanyId(String companyId) {
-			this.companyId = companyId;
+			if (companyId != null && companyId.isBlank()) {
+				this.companyId = null;
+			} else {
+				this.companyId = companyId;
+			}
 			return this;
 		}
 		
