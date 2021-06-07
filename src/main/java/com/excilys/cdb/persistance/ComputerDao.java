@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.exception.dao.ComputerNotFoundException;
 import com.excilys.cdb.exception.dao.DaoMapperException;
@@ -19,26 +21,16 @@ import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.enumeration.ComputerRequestEnum;
 import com.excilys.cdb.persistance.mapper.ComputerDaoMapper;
 
+@Repository
 public class ComputerDao {
 	
-	private static ComputerDao instance;
+	@Autowired
+	private DatabaseConnection databaseConnection;
+	@Autowired
 	private ComputerDaoMapper computerDaoMapper;
 	private Logger logger;
 	
-	
-	/**
-	 * Return the computer Dao instance (singleton).
-	 * @return the computer Dao instance
-	 */
-	public static ComputerDao getInstance() {
-		if (instance == null) {
-			instance = new ComputerDao();
-		}
-		return instance;
-	}
-	
 	private ComputerDao() {
-		computerDaoMapper = ComputerDaoMapper.getInstance();
 		logger = LoggerFactory.getLogger(ComputerDao.class);
 	}
 
@@ -50,7 +42,7 @@ public class ComputerDao {
 	 */
 	public List<Computer> getComputersListPage(Page page) throws DatabaseConnectionException {
 		logger.debug("getComputersListPage({})", page);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.GET_COMPUTERS_LIST_BY_PAGE.get());
 			preparedStatement.setInt(1, page.getSize());
 			preparedStatement.setInt(2, page.getSize() * page.getIndex());
@@ -80,7 +72,7 @@ public class ComputerDao {
 	 */
 	public List<Computer> getComputersListPageForSearch(String search, Page page) throws DatabaseConnectionException {
 		logger.debug("getComputersListPageForSearch({}, {})", search, page);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH.get());
 			String searchExpression = "%" + search + "%";
 			preparedStatement.setString(1, searchExpression);
@@ -115,7 +107,7 @@ public class ComputerDao {
 	public Computer getComputerById(Integer id) throws ComputerNotFoundException, DatabaseConnectionException {
 		logger.debug("getComputerById({})", id);
 
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.GET_COMPUTER_BY_ID.get());
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -143,7 +135,7 @@ public class ComputerDao {
 	 */
 	public void updateComputer(Computer computer) throws DatabaseConnectionException {
 		logger.debug("updateComputer({})", computer);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.UPDATE_COMPUTER_BY_ID.get());
 			
 			preparedStatement.setString(1, computer.getName());
@@ -187,7 +179,7 @@ public class ComputerDao {
 	 */
 	public void addComputer(Computer computer) throws DatabaseConnectionException {
 		logger.debug("addComputer({})", computer);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.ADD_COMPUTER.get(), Statement.RETURN_GENERATED_KEYS);
 			
 			preparedStatement.setString(1, computer.getName());
@@ -235,7 +227,7 @@ public class ComputerDao {
 	 */
 	public void deleteComputerById(Integer id) throws DatabaseConnectionException {
 		logger.debug("deleteComputerById({})", id);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.DELETE_COMPUTER_BY_ID.get());
 			
 			preparedStatement.setInt(1, id);
@@ -257,7 +249,7 @@ public class ComputerDao {
 	 */
 	public Integer getComputersCount() throws DatabaseConnectionException {
 		logger.debug("getComputersCount()");
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.GET_COMPUTERS_COUNT.get());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
@@ -284,7 +276,7 @@ public class ComputerDao {
 	 */
 	public Integer getComputersCountForSearch(String search) throws DatabaseConnectionException {
 		logger.debug("getComputersCountForSearch()");
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.GET_COMPUTERS_COUNT_FOR_SEARCH.get());
 			String searchExpression = "%" + search + "%";
 			preparedStatement.setString(1, searchExpression);

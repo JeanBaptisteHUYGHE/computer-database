@@ -4,24 +4,17 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.CompanyDto.CompanyDtoBuilder;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Company.CompanyBuilder;
 
-
+@Component
 public class CompanyDtoMapper {
-	
-private static CompanyDtoMapper companyDtoMapper;
-	
-	public static CompanyDtoMapper getInstance() {
-		if (companyDtoMapper == null) {
-			companyDtoMapper = new CompanyDtoMapper();
-		}
-		return companyDtoMapper;
-	}
-	
+		
 	private CompanyDtoMapper() { }
 	
 	public CompanyDto fromComputerDtoToCompanyDto(ComputerDto computerDto) {

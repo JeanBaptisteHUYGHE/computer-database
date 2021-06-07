@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.mapper.ComputerDtoMapper;
@@ -29,11 +30,13 @@ public class DashboardServlet extends HttpServlet {
 	private static final long serialVersionUID = -4389678413225540694L;
 	private static final int DEFAULT_COMPUTERS_COUNT = 0;
 	
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
+	private ComputerDtoMapper computerDtoMapper;
 	private Logger logger;
 	
 	public DashboardServlet() {
-		computerService = ComputerService.getInstance();
 		logger = LoggerFactory.getLogger(DashboardServlet.class);
 	}
 	
@@ -131,7 +134,7 @@ public class DashboardServlet extends HttpServlet {
 		List<ComputerDto> computersDtoList;
 		try {
 			List<Computer> computersList = computerService.getComputersListPageForSearch(search, page);
-			computersDtoList = ComputerDtoMapper.getInstance().fromComputersListToComputersDtoList(computersList);
+			computersDtoList = computerDtoMapper.fromComputersListToComputersDtoList(computersList);
 
 		} catch (DatabaseConnectionException e) {
 			computersDtoList = new ArrayList<ComputerDto>();

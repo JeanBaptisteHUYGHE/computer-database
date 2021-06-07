@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
 import com.excilys.cdb.exception.dao.DaoMapperException;
@@ -17,26 +19,16 @@ import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.enumeration.CompanyRequestEnum;
 import com.excilys.cdb.persistance.mapper.CompanyDaoMapper;
 
+@Repository
 public class CompanyDao {
 	
-	private static CompanyDao instance;
+	@Autowired
+	private DatabaseConnection databaseConnection;
+	@Autowired
 	private CompanyDaoMapper companyDaoMapper;
 	private Logger logger;
-		
-	
-	/**
-	 * Return the company Dao instance (singleton).
-	 * @return the company Dao instance
-	 */
-	public static CompanyDao getInstance() {
-		if (instance == null) {
-			instance = new CompanyDao();
-		}
-		return instance;
-	}
 	
 	private CompanyDao() {
-		companyDaoMapper = CompanyDaoMapper.getInstance();
 		logger = LoggerFactory.getLogger(CompanyDao.class);
 	}
 	
@@ -47,7 +39,7 @@ public class CompanyDao {
 	 */
 	public List<Company> getCompaniesList() throws DatabaseConnectionException {
 		logger.debug("getCompaniesList()");
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_ALL_COMPANIES.get());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
@@ -76,7 +68,7 @@ public class CompanyDao {
 	 */
 	public List<Company> getCompaniesListPage(Page page) throws DatabaseConnectionException {
 		logger.debug("getCompaniesListPage({})", page);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_ALL_COMPANIES_FOR_PAGE.get());
 			preparedStatement.setInt(1, page.getSize());
 			preparedStatement.setInt(2, page.getSize() * page.getIndex());
@@ -109,7 +101,7 @@ public class CompanyDao {
 	 */
 	public Company getCompanyById(Integer companyId) throws CompanyNotFoundException, DatabaseConnectionException {
 		logger.debug("getCompanyById({})", companyId);
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_COMPANY_BY_ID.get());
 			preparedStatement.setInt(1, companyId);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -136,7 +128,7 @@ public class CompanyDao {
 	 */
 	public Integer getCompaniesCount() throws DatabaseConnectionException {
 		logger.debug("getCompaniesCount()");
-		try (Connection dbConnection = DatabaseConnection.getInstance()) {
+		try (Connection dbConnection = databaseConnection.getConnection()) {
 			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_COMPANIES_COUNT.get());
 			ResultSet resultSet = preparedStatement.executeQuery();
 			

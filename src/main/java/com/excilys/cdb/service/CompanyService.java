@@ -3,32 +3,23 @@ package com.excilys.cdb.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.CompanyDao;
 
+@Service
 public class CompanyService {
 	
-	private static CompanyService companyService;
+	@Autowired
 	private CompanyDao companyDao;
 
 	
-	/**
-	 * Return the company service instance.
-	 * @return the company service
-	 */
-	public static CompanyService getInstance() {
-		if (companyService == null) {
-			companyService = new CompanyService();
-		}
-		return companyService;
-	}
-	
-	private CompanyService() {
-		companyDao = CompanyDao.getInstance();
-	}
+	private CompanyService() { }
 
 	/**
 	 * Return the company with this id.

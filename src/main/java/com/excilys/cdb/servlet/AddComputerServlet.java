@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.cdb.dto.CompanyDto;
 import com.excilys.cdb.dto.ComputerDto;
@@ -32,10 +33,15 @@ public class AddComputerServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8762274583542611999L;
 	
+	@Autowired
 	private CompanyService companyService;
+	@Autowired
 	private CompanyDtoMapper companyDtoMapper;
+	@Autowired
 	private ComputerDtoMapper computerDtoMapper;
+	@Autowired
 	private ComputerDtoValidator computerDtoValidator;
+	@Autowired
 	private ComputerService computerService;
 	private Logger logger;
 	
@@ -43,11 +49,6 @@ public class AddComputerServlet extends HttpServlet {
 	
 	public AddComputerServlet() {
 		logger = LoggerFactory.getLogger(AddComputerServlet.class);
-		companyService = CompanyService.getInstance();
-		companyDtoMapper = CompanyDtoMapper.getInstance();
-		computerDtoMapper = ComputerDtoMapper.getInstance();
-		computerDtoValidator = ComputerDtoValidator.getInstance();
-		computerService = ComputerService.getInstance();
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

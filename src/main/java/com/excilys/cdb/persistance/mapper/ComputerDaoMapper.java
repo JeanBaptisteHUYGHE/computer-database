@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.exception.dao.ComputerNotFoundException;
 import com.excilys.cdb.exception.dao.DaoMapperException;
@@ -16,17 +17,10 @@ import com.excilys.cdb.model.Company.CompanyBuilder;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Computer.ComputerBuilder;
 
+@Component
 public class ComputerDaoMapper {
 	
-	private static ComputerDaoMapper computerDaoMapper;
 	private Logger logger;
-	
-	public static ComputerDaoMapper getInstance() {
-		if (computerDaoMapper == null) {
-			computerDaoMapper = new ComputerDaoMapper();
-		}
-		return computerDaoMapper;
-	}
 	
 	private ComputerDaoMapper() {
 		logger = LoggerFactory.getLogger(ComputerDaoMapper.class);
