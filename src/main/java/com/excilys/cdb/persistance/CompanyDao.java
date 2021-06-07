@@ -156,8 +156,9 @@ public class CompanyDao {
 	 */
 	public void deleteCompanyById(Integer companyId) throws DatabaseConnectionException {
 		logger.debug("deleteCompanyById()");
-		try (Connection dbConnection = databaseConnection.getConnection()) {
-			
+		Connection dbConnection = null;
+		try {
+			dbConnection = databaseConnection.getConnection();
 			dbConnection.setAutoCommit(false);
 			
 			computerDao.deleteComputersByCompanyId(companyId, dbConnection);
@@ -173,7 +174,16 @@ public class CompanyDao {
 			dbConnection.close();
 			
 		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());			
+			logger.error("{} in {}", e, e.getStackTrace());	
+			try {
+				if (dbConnection.isValid(0)) {
+					dbConnection.rollback();
+					dbConnection.setAutoCommit(true);
+					dbConnection.close();
+				}
+			} catch (SQLException e2) {
+				logger.error("{} in {}", e2, e2.getStackTrace());	
+			}
 			throw new DatabaseConnectionException();
 		}
 	}
