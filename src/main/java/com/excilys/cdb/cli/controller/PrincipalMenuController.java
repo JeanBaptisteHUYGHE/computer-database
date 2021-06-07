@@ -83,6 +83,9 @@ public class PrincipalMenuController {
 					case ADD_NEW_COMPUTER:
 						addNewComputer();
 						break;
+					case DELETE_COMPANY:
+						deleteCompany();
+						break;
 					case EXIT:
 						isRunning = false;
 						System.out.println("Bye");
@@ -156,5 +159,22 @@ public class PrincipalMenuController {
 		} catch (DatabaseConnectionException e) {
 			principalMenuView.drawError("Operation canceled. " + e.getMessage());
 		}
+	}
+	
+	private void deleteCompany() {
+		principalMenuView.drawMessage("Company id ? (number or nothing)");
+		String stringId = Input.readString();
+		try {
+			Integer companyId = Integer.valueOf(stringId);
+			companyService.deleteCompanyById(companyId);
+			principalMenuView.drawMessage("Operation succesfully deleted.");
+
+		} catch (NumberFormatException e) {
+			principalMenuView.drawMessage("Operation canceled. Invalid company id.");
+			
+		} catch (DatabaseConnectionException e) {
+			principalMenuView.drawError("Operation canceled. " + e.getMessage());
+		}
+
 	}
 }

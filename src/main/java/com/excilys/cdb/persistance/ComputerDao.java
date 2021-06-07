@@ -297,4 +297,25 @@ public class ComputerDao {
 			throw new DatabaseConnectionException();
 		}
 	}
+
+	/**
+	 * Delete a computers list by those company id (method call by CompanyDao.deleteCompanyById).
+	 * @param companyId the company id
+	 * @param dbConnection the database connection 
+	 * @throws DatabaseConnectionException
+	 */
+	public void deleteComputersByCompanyId(Integer companyId, Connection dbConnection) throws DatabaseConnectionException {
+		logger.debug("deleteComputersByCompanyId({}, {})", companyId, dbConnection);
+		try {
+			PreparedStatement preparedStatement = dbConnection.prepareStatement(ComputerRequestEnum.DELETE_COMPUTERS_BY_COMPANY_ID.get());
+			preparedStatement.setInt(1, companyId);
+			preparedStatement.executeUpdate();
+			
+			preparedStatement.close();
+			
+		} catch (SQLException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
+			throw new DatabaseConnectionException();
+		}
+	}
 }

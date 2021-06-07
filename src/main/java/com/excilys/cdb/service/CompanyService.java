@@ -68,4 +68,13 @@ public class CompanyService {
 		companiesCount = companyDao.getCompaniesCount();
 		return companiesCount;
 	}
+	
+	/**
+	 * Delete a company and all computer of this company.
+	 * @param companyId the company id
+	 * @throws DatabaseConnectionException
+	 */
+	public void deleteCompanyById(Integer companyId) throws DatabaseConnectionException {
+		companyDao.deleteCompanyById(companyId);
+	}
 }

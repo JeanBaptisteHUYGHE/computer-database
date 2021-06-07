@@ -7,6 +7,7 @@ public enum EnumPrincipalMenuActions {
 	LIST_ALL_COMPANIES(2, "List all companies"),
 	SELECT_COMPUTER(3, "Select a computer"),
 	ADD_NEW_COMPUTER(4, "Add a new computer"),
+	DELETE_COMPANY(5, "Delete a company"),
 	EXIT(9, "Exit");
 
 	private final int value;

@@ -20,7 +20,11 @@ public enum CompanyRequestEnum {
 	
 	GET_COMPANIES_COUNT(
 			"SELECT count(id) "
-			+ "FROM company");
+			+ "FROM company"),
+	
+	DELETE_COMPANY_BY_ID(
+			"DELETE FROM company "
+			+ "WHERE id = ?");
 	
 	private final String request;
 	
