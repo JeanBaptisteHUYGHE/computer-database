@@ -15,13 +15,15 @@
 		</encoder>
 	</appender>
 	
+	<logger name="com.zaxxer.hikari" level="WARN"/>
+	<logger name="org.springframework" level="INFO"/>
 
 	<!-- Uncomment for logging ALL HTTP request and responses -->
 	<!-- 	<logger name="io.gatling.http.ahc.AsyncHandlerActor" level="TRACE" /> -->
 	<!-- Uncomment for logging ONLY FAILED HTTP request and responses -->
 	<!-- 	<logger name="io.gatling.http.ahc.AsyncHandlerActor" level="DEBUG" /> -->
 
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE" />
 	</root>

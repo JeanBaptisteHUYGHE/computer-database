@@ -2,6 +2,7 @@ package com.excilys.cdb.cli.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 
 import com.excilys.cdb.cli.view.PaginationMenuView;
 import com.excilys.cdb.exception.cli.InvalidActionChoiceException;
@@ -10,6 +11,7 @@ import com.excilys.cdb.model.Page;
 import com.excilys.cdb.cli.enumeration.EnumPageMenuActions;
 import com.excilys.cdb.cli.input.Input;
 
+@Controller
 public abstract class PaginationMenuController {
 
 	private boolean isRunning;
@@ -17,14 +19,16 @@ public abstract class PaginationMenuController {
 	protected PaginationMenuView paginationMenuView;
 	protected Logger logger;
 	
-	public PaginationMenuController(Page page) {
+	public PaginationMenuController() {
 		isRunning = true;
-		this.page = page;
 		paginationMenuView = new PaginationMenuView();
 		logger = LoggerFactory.getLogger(PaginationMenuController.class);
 	}
 	
-	protected void start() {
+	protected void start(Page page) {
+		this.page = page;
+		isRunning = true;
+		
 		updateDisplay();
 		while (isRunning) {
 			paginationMenuView.drawInterface();

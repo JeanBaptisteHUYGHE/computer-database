@@ -5,7 +5,6 @@ package com.excilys.cdb.persistance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
@@ -15,14 +14,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
@@ -31,12 +29,14 @@ import com.excilys.cdb.model.Page;
 
 class CompanyDaoTest {
 	
+	@Autowired
+	DatabaseConnection databaseConnection;
+	@Autowired
 	private static CompanyDao companyDao;
 	private static Connection connection;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		companyDao = CompanyDao.getInstance();
 		assertNotNull(companyDao);
 	}
 
@@ -47,7 +47,7 @@ class CompanyDaoTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		connection = DatabaseConnection.getInstance();
+		connection = databaseConnection.getConnection();
 	}
 
 	@AfterEach
@@ -59,12 +59,7 @@ class CompanyDaoTest {
 
 	@Test
 	void testGetInstanceShlouldNotBeNull() {
-		assertNotNull(CompanyDao.getInstance());
-	}
-	
-	@Test
-	void testGetInstanceShouldGetSameObject() {
-		assertSame(CompanyDao.getInstance(), CompanyDao.getInstance());
+		assertNotNull(companyDao);
 	}
 	
 	@Test

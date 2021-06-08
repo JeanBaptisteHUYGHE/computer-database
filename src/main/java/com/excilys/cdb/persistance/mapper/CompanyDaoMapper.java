@@ -8,24 +8,17 @@ import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
 import com.excilys.cdb.exception.dao.DaoMapperException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Company.CompanyBuilder;
 
-
+@Component
 public class CompanyDaoMapper {
 	
-	private static CompanyDaoMapper companyDaoMapper;
 	private Logger logger;
-	
-	public static CompanyDaoMapper getInstance() {
-		if (companyDaoMapper == null) {
-			companyDaoMapper = new CompanyDaoMapper();
-		}
-		return companyDaoMapper;
-	}
 	
 	private CompanyDaoMapper() {
 		logger = LoggerFactory.getLogger(CompanyDaoMapper.class);

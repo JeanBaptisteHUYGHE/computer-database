@@ -4,6 +4,8 @@ import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import com.excilys.cdb.cli.enumeration.EnumComputerMenuActions;
 import com.excilys.cdb.cli.input.Input;
@@ -20,28 +22,28 @@ import com.excilys.cdb.exception.dto.InvalidComputerException;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
 
+@Controller
 public class ComputerMenuController {
 
 	private boolean isRunning;
 	private ComputerMenuView computerMenuView;
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
 	private ComputerDtoMapper computerDtoMapper;
+	@Autowired
 	private ComputerDtoValidator computerDtoValidator;
 	private Computer computer;
 	private Logger logger;
 	
-	public ComputerMenuController(Integer computerId) {
+	public ComputerMenuController() {
 		logger = LoggerFactory.getLogger(ComputerMenuController.class);
 		isRunning = true;
 		computerMenuView = new ComputerMenuView();
-		computerService = ComputerService.getInstance();
-		computerDtoMapper = ComputerDtoMapper.getInstance();
-		computerDtoValidator = ComputerDtoValidator.getInstance();
-		
-		initialization(computerId);
 	}
 	
-	private void initialization(Integer computerId) {
+	public void start(Integer computerId) {
+		isRunning = true;
 		try {			
 			while (isRunning) {
 				computer = computerService.getComputerById(computerId);
@@ -113,9 +115,6 @@ public class ComputerMenuController {
 			
 		} catch (ComputerNotFoundException | DatabaseConnectionException e) {
 			computerMenuView.drawError("Operation canceled. " + e.getMessage());
-		} catch (NoSuchElementException e) {
-			computerMenuView.drawError("Operation canceled: The computer don't have an id. Please contact your administrator");
-			logger.error("{} in {}", e, e.getStackTrace());
 		}
 	}
 	

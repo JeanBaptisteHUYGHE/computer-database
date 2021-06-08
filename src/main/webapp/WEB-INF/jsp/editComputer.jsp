@@ -45,7 +45,7 @@
                         	
 							<div class="form-group">
                                 <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name" value="${ computerDto.name }">
+                                <input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name" value="${ computerDto.name }" required>
                             </div>
                             <div class="form-group">
                                 <label for="introductionDate">Introduced date</label>

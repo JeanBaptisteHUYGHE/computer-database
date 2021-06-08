@@ -2,24 +2,23 @@ package com.excilys.cdb.cli.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.mapper.ComputerDtoMapper;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.model.Page;
 import com.excilys.cdb.service.ComputerService;
 
+@Controller
 public class ComputerPaginationMenuController extends PaginationMenuController {
 	
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
 	private ComputerDtoMapper computerDtoMapper;
 
-	public ComputerPaginationMenuController(Page page) {
-		super(page);
-		computerService = ComputerService.getInstance();
-		computerDtoMapper = ComputerDtoMapper.getInstance();
-		start();
-	}
 
 	@Override
 	protected void updateDisplay() {

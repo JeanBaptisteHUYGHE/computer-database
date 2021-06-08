@@ -2,6 +2,8 @@ package com.excilys.cdb.cli.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import com.excilys.cdb.exception.cli.InvalidActionChoiceException;
 import com.excilys.cdb.exception.cli.InvalidUserChoiceException;
@@ -20,27 +22,37 @@ import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.mapper.ComputerDtoMapper;
 import com.excilys.cdb.dto.validator.ComputerDtoValidator;
 
+@Controller
 public class PrincipalMenuController {
 	
 	private boolean isRunning;
 	private PrincipalMenuView principalMenuView;
+	@Autowired
 	private ComputerService computerService;
+	@Autowired
 	private CompanyService companyService;
+	@Autowired
 	private ComputerDtoMapper computerDtoMapper;
+	@Autowired
 	private ComputerDtoValidator computerDtoValidator;
+	@Autowired
+	private ComputerPaginationMenuController computerPaginationMenuController;
+	@Autowired
+	private CompanyPaginationMenuController companyPaginationMenuController;
+	@Autowired 
+	private ComputerMenuController computerMenuController;
 	private Logger logger;
 
 	public PrincipalMenuController() {
 		isRunning = true;
 		principalMenuView = new PrincipalMenuView();
-		computerService = ComputerService.getInstance();
-		companyService = CompanyService.getInstance();
-		computerDtoMapper = ComputerDtoMapper.getInstance();
-		computerDtoValidator = ComputerDtoValidator.getInstance();
-		logger = LoggerFactory.getLogger(PrincipalMenuController.class);
-		
-		logger.debug("new CLI");
-		
+		logger = LoggerFactory.getLogger(PrincipalMenuController.class);		
+	}
+	
+	public void start() {
+		isRunning = true;
+		logger.debug("start CLI");
+
 		while (isRunning) {
 			principalMenuView.drawInterface();
 			readUserChoice();
@@ -71,6 +83,9 @@ public class PrincipalMenuController {
 					case ADD_NEW_COMPUTER:
 						addNewComputer();
 						break;
+					case DELETE_COMPANY:
+						deleteCompany();
+						break;
 					case EXIT:
 						isRunning = false;
 						System.out.println("Bye");
@@ -94,7 +109,7 @@ public class PrincipalMenuController {
 			PageBuilder pageBuilder = new PageBuilder();
 			pageBuilder.withElementsCount(computersCount);
 			Page page = pageBuilder.build();
-			new ComputerPaginationMenuController(page);
+			computerPaginationMenuController.start(page);
 
 		} catch (DatabaseConnectionException e) {
 			principalMenuView.drawError("Error while getting the computers list. " + e.getMessage());
@@ -110,7 +125,7 @@ public class PrincipalMenuController {
 			PageBuilder pageBuilder = new PageBuilder();
 			pageBuilder.withElementsCount(companiesCount);
 			Page page = pageBuilder.build();
-			new CompanyPaginationMenuController(page);
+			companyPaginationMenuController.start(page);
 
 		} catch (DatabaseConnectionException e) {
 			principalMenuView.drawError("Error while getting the companies list. " + e.getMessage());
@@ -123,8 +138,7 @@ public class PrincipalMenuController {
 	private void selectComputer() {
 		principalMenuView.drawMessage("Computer id ?");
 		Integer computerId = Input.readValidInteger();
-		
-		new ComputerMenuController(computerId);
+		computerMenuController.start(computerId);
 	}
 	
 	/**
@@ -145,5 +159,22 @@ public class PrincipalMenuController {
 		} catch (DatabaseConnectionException e) {
 			principalMenuView.drawError("Operation canceled. " + e.getMessage());
 		}
+	}
+	
+	private void deleteCompany() {
+		principalMenuView.drawMessage("Company id ? (number or nothing)");
+		String stringId = Input.readString();
+		try {
+			Integer companyId = Integer.valueOf(stringId);
+			companyService.deleteCompanyById(companyId);
+			principalMenuView.drawMessage("Operation succesfully deleted.");
+
+		} catch (NumberFormatException e) {
+			principalMenuView.drawMessage("Operation canceled. Invalid company id.");
+			
+		} catch (DatabaseConnectionException e) {
+			principalMenuView.drawError("Operation canceled. " + e.getMessage());
+		}
+
 	}
 }

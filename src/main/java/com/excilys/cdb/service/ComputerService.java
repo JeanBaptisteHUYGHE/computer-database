@@ -3,27 +3,22 @@ package com.excilys.cdb.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.exception.dao.ComputerNotFoundException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.ComputerDao;
 
+@Service
 public class ComputerService {
 	
-	private static ComputerService computerService;
+	@Autowired
 	private ComputerDao computerDao;
 	
-	public static ComputerService getInstance() {
-		if (computerService == null) {
-			computerService = new ComputerService();
-		}
-		return computerService;
-	}
-	
-	private ComputerService() {
-		computerDao = ComputerDao.getInstance();
-	}
+	public ComputerService() { }
 
 	/**
 	 * Return the computers list of the asked page.

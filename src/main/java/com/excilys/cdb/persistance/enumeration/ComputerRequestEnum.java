@@ -33,6 +33,10 @@ public enum ComputerRequestEnum {
 			"DELETE FROM computer "
 			+ "WHERE id = ?"),
 	
+	DELETE_COMPUTERS_BY_COMPANY_ID(
+			"DELETE FROM computer "
+			+ "WHERE company_id = ?"),
+	
 	GET_COMPUTERS_COUNT(
 			"SELECT count(id) "
 			+ "FROM computer"),

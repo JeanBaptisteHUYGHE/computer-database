@@ -7,21 +7,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.dto.ComputerDto.ComputerDtoBuilder;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Computer.ComputerBuilder;
 
+@Component
 public class ComputerDtoMapper {
-	
-	private static ComputerDtoMapper computerDtoMapper;
-	
-	public static ComputerDtoMapper getInstance() {
-		if (computerDtoMapper == null) {
-			computerDtoMapper = new ComputerDtoMapper();
-		}
-		return computerDtoMapper;
-	}
 	
 	private ComputerDtoMapper() { }
 	

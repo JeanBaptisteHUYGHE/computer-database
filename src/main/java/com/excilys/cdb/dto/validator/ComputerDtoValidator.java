@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.dto.ComputerDto;
 import com.excilys.cdb.exception.dto.InvalidComputerDatesPrecedenceException;
 import com.excilys.cdb.exception.dto.InvalidComputerDiscontinueDateException;
@@ -12,18 +14,10 @@ import com.excilys.cdb.exception.dto.InvalidComputerIdException;
 import com.excilys.cdb.exception.dto.InvalidComputerIntroductionDateException;
 import com.excilys.cdb.exception.dto.InvalidComputerNameException;
 
+@Component
 public class ComputerDtoValidator {
-
-	private static ComputerDtoValidator computerDtoValidator;
 	
 	private ComputerDtoValidator() { }
-	
-	public static ComputerDtoValidator getInstance() {
-		if (computerDtoValidator == null) {
-			computerDtoValidator = new ComputerDtoValidator();
-		}
-		return computerDtoValidator;
-	}
 	
 	public void validate(ComputerDto computerDto) throws InvalidComputerException {
 		validateId(computerDto.getId());
