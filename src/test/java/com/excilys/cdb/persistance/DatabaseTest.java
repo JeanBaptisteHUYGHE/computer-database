@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +20,7 @@ import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 class DatabaseTest {
 	
 	@Autowired
-	private DatabaseConnection databaseConnection;
+	private DataSource dataSource;
 
 	/**
 	 * Test method for {@link com.excilys.cdb.persistance.Database#getConnection()}.
@@ -27,7 +29,7 @@ class DatabaseTest {
 	void testGetConnection() {
 		Connection connection = null;
 		try {
-			connection = databaseConnection.getConnection();
+			connection = dataSource.getConnection();
 		} catch (DatabaseConnectionException e) {
 			fail("Connection throw DatabaseConnectionException:" + e.getMessage());
 		}

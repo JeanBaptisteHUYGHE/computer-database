@@ -5,10 +5,11 @@ import ch.qos.logback.core.util.StatusPrinter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.cdb.cli.CommandLineInterface;
+import com.excilys.cdb.config.SpringWebConfig;
 
 
 public class Main {
@@ -22,15 +23,22 @@ public class Main {
 		Logger logger = LoggerFactory.getLogger(Main.class);
 		
 		try {
-			@SuppressWarnings("resource")
-			ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-			CommandLineInterface commandLineInterface = applicationContext.getBean(CommandLineInterface.class);
-			commandLineInterface.start();
+			runCli();
 			
 		} catch (Exception e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Run the Command line user interface.
+	 */
+	public static void runCli() {
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringWebConfig.class);
+		CommandLineInterface commandLineInterface = applicationContext.getBean(CommandLineInterface.class);
+		commandLineInterface.start();
+		((ConfigurableApplicationContext) applicationContext).close();
 	}
 
 	/**

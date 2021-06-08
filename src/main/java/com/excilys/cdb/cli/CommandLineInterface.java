@@ -11,7 +11,10 @@ public class CommandLineInterface {
 	@Autowired
 	PrincipalMenuController principalMenuController;
 	
-	public void start() {
+	public CommandLineInterface() {
+	}
+	
+	public void start() {		
 		principalMenuController.start();
 	}
 }
