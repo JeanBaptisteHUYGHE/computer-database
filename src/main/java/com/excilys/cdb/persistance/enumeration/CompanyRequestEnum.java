@@ -11,12 +11,12 @@ public enum CompanyRequestEnum {
 			"SELECT id, name "
 			+ "FROM company "
 			+ "ORDER BY name "
-			+ "LIMIT ? OFFSET ?"),
+			+ "LIMIT :pageSize OFFSET :offset"),
 	
 	GET_COMPANY_BY_ID(
 			"SELECT id, name "
 			+ "FROM company "
-			+ "WHERE id = ?"),
+			+ "WHERE id = :id"),
 	
 	GET_COMPANIES_COUNT(
 			"SELECT count(id) "
@@ -24,7 +24,7 @@ public enum CompanyRequestEnum {
 	
 	DELETE_COMPANY_BY_ID(
 			"DELETE FROM company "
-			+ "WHERE id = ?");
+			+ "WHERE id = :id");
 	
 	private final String request;
 	
