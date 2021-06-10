@@ -55,7 +55,7 @@ public class ComputerDtoValidator {
 	private void validateIntroductionDate(String introductionDate) throws InvalidComputerIntroductionDateException {
 		if (introductionDate != null) {
 			try {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
 				LocalDate localDateIntroductionDate = LocalDate.parse(introductionDate, formatter);
 				if (!isValidDate(localDateIntroductionDate)) {
 					throw new InvalidComputerIntroductionDateException("Invalid computer introduction date, date too extrem");
@@ -70,7 +70,7 @@ public class ComputerDtoValidator {
 	private void validateDiscontinueDate(String discontinueDate) throws InvalidComputerDiscontinueDateException {
 		if (discontinueDate != null) {
 			try {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
 				LocalDate localDateDiscontinueDate = LocalDate.parse(discontinueDate, formatter);
 				if (!isValidDate(localDateDiscontinueDate)) {
 					throw new InvalidComputerDiscontinueDateException("Invalid computer discontinue date, date too extrem");
@@ -84,7 +84,7 @@ public class ComputerDtoValidator {
 	
 	private void validateDatesPrecedence(String introductionDate, String discontinueDate) throws InvalidComputerDatesPrecedenceException {
 		if (introductionDate != null && discontinueDate != null) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
 			LocalDate localDateIntroductionDate = LocalDate.parse(introductionDate, formatter);
 			LocalDate localDateDiscontinueDate = LocalDate.parse(discontinueDate, formatter);
 			if (localDateDiscontinueDate.isBefore(localDateIntroductionDate)) {

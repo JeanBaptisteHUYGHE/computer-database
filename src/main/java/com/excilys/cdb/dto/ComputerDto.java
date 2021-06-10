@@ -16,7 +16,7 @@ public class ComputerDto {
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.id = formatAttribut(id);
 	}
 
 	public String getName() {
@@ -24,7 +24,7 @@ public class ComputerDto {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = formatAttribut(name);
 	}
 
 	public String getIntroductionDate() {
@@ -32,7 +32,7 @@ public class ComputerDto {
 	}
 
 	public void setIntroductionDate(String introductionDate) {
-		this.introductionDate = introductionDate;
+		this.introductionDate = formatAttribut(introductionDate);
 	}
 
 	public String getDiscontinueDate() {
@@ -40,7 +40,8 @@ public class ComputerDto {
 	}
 
 	public void setDiscontinueDate(String discontinueDate) {
-		this.discontinueDate = discontinueDate;
+		this.discontinueDate = formatAttribut(discontinueDate);
+		
 	}
 	
 	public String getCompanyName() {
@@ -48,7 +49,7 @@ public class ComputerDto {
 	}
 
 	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+		this.companyName = formatAttribut(companyName);
 	}
 
 	public String getCompanyId() {
@@ -56,12 +57,19 @@ public class ComputerDto {
 	}
 
 	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
+		this.companyId = formatAttribut(companyId);
 	}
 	
 	public String toString() {
 		return String.format("<ComputerDto; id: %s, name:%s, introductionDate: %s, discontinueDate: %s, companyName: %s, companyId: %s>",
 				id, name, introductionDate, discontinueDate, companyName, companyId);
+	}
+	
+	private static String formatAttribut(String attribut) {
+		if (attribut != null && attribut.isBlank()) {
+			return null;
+		}
+		return attribut;
 	}
 
 
@@ -75,56 +83,32 @@ public class ComputerDto {
 		private String companyId;
 				
 		public ComputerDtoBuilder withId(String id) {
-			if (id != null && id.isBlank()) {
-				this.id = null;
-			} else {
-				this.id = id;
-			}
+			this.id = formatAttribut(id);
 			return this;
 		}
 		
 		public ComputerDtoBuilder withName(String name) {
-			if (name != null && name.isBlank()) {
-				this.name = null;
-			} else {
-				this.name = name;
-			}
+			this.name = formatAttribut(name);
 			return this;
 		}
 		
 		public ComputerDtoBuilder withIntroductionDate(String introductionDate) {
-			if (introductionDate != null && introductionDate.isBlank()) {
-				this.introductionDate = null;
-			} else {
-				this.introductionDate = introductionDate;
-			}
+			this.introductionDate = formatAttribut(introductionDate);
 			return this;
 		}
 		
 		public ComputerDtoBuilder withDiscontinueDate(String discontinueDate) {
-			if (discontinueDate != null && discontinueDate.isBlank()) {
-				this.discontinueDate = null;
-			} else {
-				this.discontinueDate = discontinueDate;
-			}
+			this.discontinueDate = formatAttribut(discontinueDate);
 			return this;
 		}
 		
 		public ComputerDtoBuilder withCompanyName(String companyName) {
-			if (companyName != null && companyName.isBlank()) {
-				this.companyName = null;
-			} else {
-				this.companyName = companyName;
-			}
+			this.companyName = formatAttribut(companyName);
 			return this;
 		}
 		
 		public ComputerDtoBuilder withCompanyId(String companyId) {
-			if (companyId != null && companyId.isBlank()) {
-				this.companyId = null;
-			} else {
-				this.companyId = companyId;
-			}
+			this.companyId = formatAttribut(companyId);
 			return this;
 		}
 		

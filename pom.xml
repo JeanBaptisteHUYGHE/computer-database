@@ -82,24 +82,10 @@
 		    <version>4.0.3</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
 		<dependency>
 		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-core</artifactId>
-		    <version>5.3.7</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-context</artifactId>
-		    <version>5.3.7</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-web</artifactId>
+		    <artifactId>spring-webmvc</artifactId>
 		    <version>5.3.7</version>
 		</dependency>
 		
@@ -109,8 +95,6 @@
 		    <artifactId>spring-jdbc</artifactId>
 		    <version>5.3.7</version>
 		</dependency>
-		
-		
 
 	</dependencies>
 

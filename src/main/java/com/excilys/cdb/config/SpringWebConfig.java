@@ -1,7 +1,5 @@
 package com.excilys.cdb.config;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -10,8 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.zaxxer.hikari.HikariConfig;
@@ -19,9 +19,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;
 
 @Configuration
+@EnableWebMvc
 @PropertySource("classpath:application.properties")
 @ImportResource("classpath:applicationContext.xml")
-public class SpringWebConfig implements WebApplicationInitializer {
+public class SpringWebConfig extends AbstractAnnotationConfigDispatcherServletInitializer implements WebMvcConfigurer {
 
 	private static final String DATABASE_PROPERTIES_FILE_PATH = "/database.properties";
 
@@ -32,14 +33,25 @@ public class SpringWebConfig implements WebApplicationInitializer {
 	}
 	
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
-		logger.info("Config Spring web context...");
-		
-		@SuppressWarnings("resource")
-		AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
-		applicationContext.register(SpringWebConfig.class);
-		applicationContext.setServletContext(servletContext);
-	}
+    protected Class<?>[] getRootConfigClasses() {
+        return null;
+    }
+
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class<?>[] {SpringWebConfig.class};
+    }
+
+    @Override
+    protected String[] getServletMappings() {
+        return new String[] {"/"};
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")
+            .addResourceLocations("/static/");
+    }
 	
 	@Bean
 	public DataSource getDataSource() throws DatabaseConnectionException {

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <!DOCTYPE html>
 <html>
@@ -23,7 +24,7 @@
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
                     <h1>Add Computer</h1>
-                    <form action="addComputer" method="POST">
+                    <form:form action="addComputer" method="POST" modelAttribute="computerDto">
                         <fieldset>
                         	<%-- Errors messages --%>
                         	<c:if test="${ not empty errorsList }">
@@ -37,26 +38,26 @@
                             </div>
                         	</c:if>
                             <div class="form-group">
-                                <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name" required>
+                                <form:label path="name">Computer name</form:label>
+                                <form:input path="name" value="${ computerDto.name }" type="text" class="form-control" placeholder="Computer name" required="true" />
                             </div>
                             <div class="form-group">
-                                <label for="introductionDate">Introduced date</label>
-                                <input type="date" class="form-control" id="introductionDate" name="introductionDate" placeholder="Introduced date">
+                                <form:label path="introductionDate">Introduced date</form:label>
+                                <form:input path="introductionDate" value="${ computerDto.introductionDate }" type="date" class="form-control" id="introductionDate" placeholder="Introduced date" />
                             </div>
                             <div class="form-group">
-                                <label for="discontinueDate">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinueDate" name="discontinueDate" placeholder="Discontinued date">
+                                <form:label path="discontinueDate">Discontinued date</form:label>
+                                <form:input path="discontinueDate" value="${ computerDto.discontinueDate }" type="date" class="form-control" id="discontinueDate" placeholder="Discontinued date" />
                             </div>
                             <div class="form-group">
-                                <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" name="companyId">
+                                <form:label path="companyId">Company</form:label>
+                                <form:select path="companyId" value="${ computerDto.companyId }" class="form-control" id="companyId">
                                 	<%-- Companies list --%>
                                 	<option value="" selected>--</option>
 									<c:forEach items="${ companiesDtoList }" var="company">
                                     <option value="${ company.id }">${ company.name }</option>
                                     </c:forEach>
-                                </select>
+                                </form:select>
                             </div>                  
                         </fieldset>
                         <div class="actions pull-right">
@@ -64,7 +65,7 @@
                             or
                             <a href="dashboard" class="btn btn-default">Cancel</a>
                         </div>
-                    </form>
+                    </form:form>
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@ public class ComputerDtoMapper {
 		}
 		computerBuilder.withName(computerDto.getName());
 		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
 		LocalDate introductionDate = null;
 		if (computerDto.getIntroductionDate() != null && computerDto.getIntroductionDate().length() > 0) {
 			introductionDate = LocalDate.parse(computerDto.getIntroductionDate(), formatter);

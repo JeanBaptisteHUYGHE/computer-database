@@ -137,7 +137,7 @@ public class Input {
 	 * @throws InputMismatchException
 	 */
 	public static String readLocalDateOrNull() throws InputMismatchException {
-		System.out.println("(format YYYY/MM/DD or let empty");
+		System.out.println("(format YYYY-MM-DD or let empty");
 		String input = readString();
 		if (input.isBlank()) {
 			return null;

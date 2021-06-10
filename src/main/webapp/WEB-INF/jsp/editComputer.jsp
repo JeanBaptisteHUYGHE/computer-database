@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <!DOCTYPE html>
 <html>
@@ -26,8 +27,8 @@
 					<div class="label label-default pull-right">id: ${ computerDto.id }</div>
 					<h1>Edit Computer</h1>
 
-					<form action="editComputer?id=${ computerDto.id }" method="POST">
-						<input type="hidden" value="${ computerDto.id }" id="id" name="computerId" />
+					<form:form action="editComputer" method="POST" modelAttribute="computerDto">
+						<form:input path="id" type="hidden" id="id" />
 						<fieldset>
 						
 							<%-- Errors messages --%>
@@ -44,33 +45,33 @@
                         	
                         	
 							<div class="form-group">
-                                <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name" value="${ computerDto.name }" required>
+                                <form:label path="name">Computer name</form:label>
+                                <form:input path="name" type="text" class="form-control" id="computerName" placeholder="Computer name" value="${ computerDto.name }" required="" />
                             </div>
                             <div class="form-group">
-                                <label for="introductionDate">Introduced date</label>
-                                <input type="date" class="form-control" id="introductionDate" name="introductionDate" placeholder="Introduced date" value="${ computerDto.introductionDate }">
+                                <form:label path="introductionDate" >Introduced date</form:label>
+                                <form:input path="introductionDate" type="date" class="form-control" id="introductionDate" placeholder="Introduced date" value="${ computerDto.introductionDate }" />
                             </div>
                             <div class="form-group">
-                                <label for="discontinueDate">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinueDate" name="discontinueDate" placeholder="Discontinued date"  value="${ computerDto.discontinueDate }">
+                                <form:label path="discontinueDate">Discontinued date</form:label>
+                                <form:input path="discontinueDate" type="date" class="form-control" id="discontinueDate" placeholder="Discontinued date"  value="${ computerDto.discontinueDate }" />
                             </div>
                             <div class="form-group">
-                                <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" name="companyId">
+                                <form:label path="companyId">Company</form:label>
+                                <form:select path="companyId" class="form-control" id="companyId">
                                 	<%-- Companies list --%>
                                 	<option value="">--</option>
 									<c:forEach items="${ companiesDtoList }" var="company">
                                     <option ${ company.id == computerDto.companyId ? "selected" : "" } value="${ company.id }">${ company.name }</option>
                                     </c:forEach>
-                                </select>
+                                </form:select>
                             </div>         
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="Edit" class="btn btn-primary">
 							or <a href="dashboard" class="btn btn-default">Cancel</a>
 						</div>
-					</form>
+					</form:form>
 				</div>
 			</div>
 		</div>

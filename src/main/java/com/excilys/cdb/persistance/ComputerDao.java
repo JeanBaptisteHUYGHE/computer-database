@@ -54,7 +54,7 @@ public class ComputerDao {
 		try {
 			SqlParameterSource requestParams = new MapSqlParameterSource()
 					.addValue("pageSize", page.getSize())
-					.addValue("offset", (page.getSize() * page.getIndex()));
+					.addValue("offset", page.getSize() * page.getIndex());
 			List<Computer> computersList = namedParameterJdbcTemplate.query(ComputerRequestEnum.GET_COMPUTERS_LIST_FOR_PAGE.get(), requestParams, computerRowMapper);
 			return computersList;
 			
@@ -75,13 +75,16 @@ public class ComputerDao {
 		logger.debug("getComputersListPageForSearch({}, {})", search, page);
 		
 		try {
+			String sqlSearch = "%" + search + "%";
 			SqlParameterSource requestParams = new MapSqlParameterSource()
 					.addValue("pageSize", page.getSize())
-					.addValue("offset", String.valueOf(page.getSize() * page.getIndex()))
-					.addValue("computerNameSearch", search)
-					.addValue("companyNameSearch", search);
+					.addValue("offset", page.getSize() * page.getIndex())
+					.addValue("computerNameSearch", sqlSearch)
+					.addValue("companyNameSearch", sqlSearch);
+			logger.debug("paramSource: {}",  requestParams.toString());
+
 			
-			List<Computer> computersList = namedParameterJdbcTemplate.query(ComputerRequestEnum.GET_COMPUTERS_LIST_FOR_PAGE.get(), requestParams, computerRowMapper);
+			List<Computer> computersList = namedParameterJdbcTemplate.query(ComputerRequestEnum.GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH.get(), requestParams, computerRowMapper);
 			return computersList;
 			
 		} catch (DataAccessException e) {
@@ -218,9 +221,10 @@ public class ComputerDao {
 		logger.debug("getComputersCountForSearch()");
 		
 		try {
+			String sqlSearch = "%" + search + "%";
 			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("computerNameSearch", search)
-					.addValue("companyNameSearch", search);
+					.addValue("computerNameSearch", "%" + sqlSearch)
+					.addValue("companyNameSearch", sqlSearch);
 
 			return namedParameterJdbcTemplate.queryForObject(ComputerRequestEnum.GET_COMPUTERS_COUNT_FOR_SEARCH.get(), requestParams, Integer.class);
 		
