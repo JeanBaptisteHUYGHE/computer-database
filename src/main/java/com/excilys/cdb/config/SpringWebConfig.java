@@ -60,6 +60,8 @@ public class SpringWebConfig extends AbstractAnnotationConfigDispatcherServletIn
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
             .addResourceLocations("/static/");
+        registry.addResourceHandler("/index.html")
+        .addResourceLocations("/index.html");
     }
 	
 	@Bean
