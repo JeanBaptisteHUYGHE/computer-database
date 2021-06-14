@@ -80,5 +80,6 @@
     
     <%-- Script --%>
     <jsp:include page="component/script.jsp" />
+    <script src="static/js/addEditComputerValidator.js"></script>
 </body>
 </html>
