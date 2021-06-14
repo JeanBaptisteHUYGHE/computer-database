@@ -5,7 +5,6 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -26,7 +25,7 @@ import com.excilys.cdb.model.Page.PageBuilder;
 import com.excilys.cdb.service.ComputerService;
 
 @Controller
-@RequestMapping({"/", "/dashboard"})
+@RequestMapping("/dashboard")
 @SessionAttributes("userSession")
 public class DashboardController {
 	
