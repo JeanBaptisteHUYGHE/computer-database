@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.excilys.cdb.persistance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,39 +12,54 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 
+import com.excilys.cdb.config.SpringCliConfig;
+import com.excilys.cdb.config.SpringTestConfig;
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Page;
 
+@ContextConfiguration(classes = SpringTestConfig.class)
 class CompanyDaoTest {
 	
 	@Autowired
-	DatabaseConnection databaseConnection;
-	@Autowired
 	private static CompanyDao companyDao;
+	@Autowired
+	private static DataSource dataSource;
+	
+	private static AnnotationConfigApplicationContext applicationContext;
 	private static Connection connection;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		applicationContext = new AnnotationConfigApplicationContext(SpringCliConfig.class);
+		companyDao = applicationContext.getBean(CompanyDao.class);
+		dataSource = applicationContext.getBean(DataSource.class);
+		
+		connection = dataSource.getConnection();
 		assertNotNull(companyDao);
 	}
 
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 		companyDao = null;
+		applicationContext.close();
 	}
-
+	
 	@BeforeEach
 	void setUp() throws Exception {
-		connection = databaseConnection.getConnection();
+		connection = dataSource.getConnection();
 	}
 
 	@AfterEach

@@ -9,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.excilys.cdb.cli.CommandLineInterface;
-import com.excilys.cdb.config.SpringWebConfig;
+import com.excilys.cdb.config.SpringCliConfig;
 
 
 public class Main {
@@ -35,7 +35,7 @@ public class Main {
 	 * Run the Command line user interface.
 	 */
 	public static void runCli() {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringWebConfig.class);
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(SpringCliConfig.class);
 		CommandLineInterface commandLineInterface = applicationContext.getBean(CommandLineInterface.class);
 		commandLineInterface.start();
 		((ConfigurableApplicationContext) applicationContext).close();

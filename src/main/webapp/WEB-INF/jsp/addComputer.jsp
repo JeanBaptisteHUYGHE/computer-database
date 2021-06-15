@@ -1,29 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Computer Database</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Bootstrap -->
-<link href="static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="static/css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="static/css/main.css" rel="stylesheet" media="screen">
+	<jsp:include page="component/head.jsp" />
 </head>
 <body>
-    <header class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
-        </div>
-    </header>
+    
+	<%-- Nav bar --%>
+	<jsp:include page="component/navbar.jsp" />
 
     <section id="main">
         <div class="container">
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
-                    <h1>Add Computer</h1>
-                    <form action="addComputer" method="POST">
+                    <h1><spring:message code="label.addComputer.title" /></h1>
+                    <form:form action="addComputer" method="POST" modelAttribute="computerDto">
                         <fieldset>
                         	<%-- Errors messages --%>
                         	<c:if test="${ not empty errorsList }">
@@ -37,37 +32,54 @@
                             </div>
                         	</c:if>
                             <div class="form-group">
-                                <label for="computerName">Computer name</label>
-                                <input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name" required>
+                                <form:label path="name">
+                                	<spring:message code="label.common.computer.name" />
+                                </form:label>
+                                <form:input path="name" value="${ computerDto.name }" type="text" class="form-control" 
+                                	placeholder="PC1" required="true" />
                             </div>
                             <div class="form-group">
-                                <label for="introductionDate">Introduced date</label>
-                                <input type="date" class="form-control" id="introductionDate" name="introductionDate" placeholder="Introduced date">
+                                <form:label path="introductionDate">
+                                	<spring:message code="label.common.computer.introductionDate" />
+								</form:label>
+                                <form:input path="introductionDate" value="${ computerDto.introductionDate }" type="date" class="form-control"
+                                	id="introductionDate" />
                             </div>
                             <div class="form-group">
-                                <label for="discontinueDate">Discontinued date</label>
-                                <input type="date" class="form-control" id="discontinueDate" name="discontinueDate" placeholder="Discontinued date">
+                                <form:label path="discontinueDate">
+                                	<spring:message code="label.common.computer.discontinueDate" />
+                                </form:label>
+                                <form:input path="discontinueDate" value="${ computerDto.discontinueDate }" type="date" class="form-control"
+                                	id="discontinueDate" />
                             </div>
                             <div class="form-group">
-                                <label for="companyId">Company</label>
-                                <select class="form-control" id="companyId" name="companyId">
+                                <form:label path="companyId">
+                                	<spring:message code="label.common.computer.company" />
+                                </form:label>
+                                <form:select path="companyId" value="${ computerDto.companyId }" class="form-control" id="companyId">
                                 	<%-- Companies list --%>
                                 	<option value="" selected>--</option>
 									<c:forEach items="${ companiesDtoList }" var="company">
                                     <option value="${ company.id }">${ company.name }</option>
                                     </c:forEach>
-                                </select>
+                                </form:select>
                             </div>                  
                         </fieldset>
                         <div class="actions pull-right">
-                            <input type="submit" value="Add" class="btn btn-primary">
+                            <input type="submit" value='<spring:message code="label.addComputer.button.add" />' class="btn btn-primary">
                             or
-                            <a href="dashboard" class="btn btn-default">Cancel</a>
+                            <a href="dashboard" class="btn btn-default">
+                            	<spring:message code="label.common.navigation.cancel" />
+                            </a>
                         </div>
-                    </form>
+                    </form:form>
                 </div>
             </div>
         </div>
     </section>
+    
+    <%-- Script --%>
+    <jsp:include page="component/script.jsp" />
+    <script src="static/js/addEditComputerValidator.js"></script>
 </body>
 </html>

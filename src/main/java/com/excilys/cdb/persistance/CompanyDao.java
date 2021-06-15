@@ -1,37 +1,42 @@
 package com.excilys.cdb.persistance;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.exception.dao.CompanyNotFoundException;
-import com.excilys.cdb.exception.dao.DaoMapperException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Page;
+import com.excilys.cdb.persistance.dto.mapper.CompanyRowMapper;
 import com.excilys.cdb.persistance.enumeration.CompanyRequestEnum;
-import com.excilys.cdb.persistance.mapper.CompanyDaoMapper;
+import com.excilys.cdb.persistance.enumeration.ComputerRequestEnum;
 
 @Repository
 public class CompanyDao {
 	
-	@Autowired
-	private DatabaseConnection databaseConnection;
-	@Autowired
-	private CompanyDaoMapper companyDaoMapper;
-	@Autowired
-	private ComputerDao computerDao;
 	private Logger logger;
+
+	private JdbcTemplate jdbcTemplate;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private CompanyRowMapper companyRowMapper;
 	
-	private CompanyDao() {
+	public CompanyDao(DataSource dataSource, CompanyRowMapper companyRowMapper) {
 		logger = LoggerFactory.getLogger(CompanyDao.class);
+		
+		jdbcTemplate = new JdbcTemplate(dataSource);
+	    namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	    this.companyRowMapper = companyRowMapper;
 	}
 	
 	/**
@@ -41,25 +46,14 @@ public class CompanyDao {
 	 */
 	public List<Company> getCompaniesList() throws DatabaseConnectionException {
 		logger.debug("getCompaniesList()");
-		try (Connection dbConnection = databaseConnection.getConnection()) {
-			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_ALL_COMPANIES.get());
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			List<Company> companiesList;
-			try {
-				companiesList = companyDaoMapper.fromResultSetToCompaniesList(resultSet);
-			} catch (DaoMapperException e) {
-				throw new DatabaseConnectionException();
-			}
-			
-			resultSet.close();
-			preparedStatement.close();
-			dbConnection.close();
+		try {
+			List<Company> companiesList = jdbcTemplate.query(CompanyRequestEnum.GET_ALL_COMPANIES.get(), companyRowMapper);
 			return companiesList;
-		} catch (SQLException e) {
+			
+		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
-		}	
+		}
 	}
 	
 	/**
@@ -70,25 +64,15 @@ public class CompanyDao {
 	 */
 	public List<Company> getCompaniesListPage(Page page) throws DatabaseConnectionException {
 		logger.debug("getCompaniesListPage({})", page);
-		try (Connection dbConnection = databaseConnection.getConnection()) {
-			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_ALL_COMPANIES_FOR_PAGE.get());
-			preparedStatement.setInt(1, page.getSize());
-			preparedStatement.setInt(2, page.getSize() * page.getIndex());
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			List<Company> companiesList;
-			try {
-				companiesList = companyDaoMapper.fromResultSetToCompaniesList(resultSet);
-			} catch (DaoMapperException e) {
-				throw new DatabaseConnectionException();
-			}
-			
-			resultSet.close();
-			preparedStatement.close();
-			dbConnection.close();
+		
+		try {
+			SqlParameterSource requestParams = new MapSqlParameterSource()
+					.addValue("pageSize", page.getSize())
+					.addValue("offset", (page.getSize() * page.getIndex()));
+			List<Company> companiesList = namedParameterJdbcTemplate.query(CompanyRequestEnum.GET_ALL_COMPANIES_FOR_PAGE.get(), requestParams, companyRowMapper);
 			return companiesList;
 			
-		} catch (SQLException e) {
+		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
 		}
@@ -103,22 +87,19 @@ public class CompanyDao {
 	 */
 	public Company getCompanyById(Integer companyId) throws CompanyNotFoundException, DatabaseConnectionException {
 		logger.debug("getCompanyById({})", companyId);
-		try (Connection dbConnection = databaseConnection.getConnection()) {
-			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_COMPANY_BY_ID.get());
-			preparedStatement.setInt(1, companyId);
-			ResultSet resultSet = preparedStatement.executeQuery();
+		
+		try {
+			SqlParameterSource requestParams = new MapSqlParameterSource()
+					.addValue("id", companyId);
+			List<Company> companiesList = namedParameterJdbcTemplate.query(CompanyRequestEnum.GET_COMPANY_BY_ID.get(),  requestParams, companyRowMapper);
 			
-			Company gettedCompany = companyDaoMapper.fromResultSetToCompany(resultSet);
+			if (companiesList.isEmpty()) {
+				throw new CompanyNotFoundException();
+			}
+			return companiesList.get(0);
 			
-			resultSet.close();
-			preparedStatement.close();
-			dbConnection.close();
-			return gettedCompany;
-			
-		} catch (SQLException e) {
+		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
-			throw new DatabaseConnectionException();
-		} catch (DaoMapperException e) {
 			throw new DatabaseConnectionException();
 		}
 	}
@@ -130,21 +111,11 @@ public class CompanyDao {
 	 */
 	public Integer getCompaniesCount() throws DatabaseConnectionException {
 		logger.debug("getCompaniesCount()");
-		try (Connection dbConnection = databaseConnection.getConnection()) {
-			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.GET_COMPANIES_COUNT.get());
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			Integer companiesCount = companyDaoMapper.fromResultSetToComputersCount(resultSet);
-			
-			resultSet.close();
-			preparedStatement.close();
-			dbConnection.close();
-			return companiesCount;
-			
-		} catch (SQLException e) {
+		try {
+			return jdbcTemplate.queryForObject(CompanyRequestEnum.GET_COMPANIES_COUNT.get(), Integer.class);
+		
+		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
-			throw new DatabaseConnectionException();
-		} catch (DaoMapperException e) {
 			throw new DatabaseConnectionException();
 		}
 	}
@@ -154,36 +125,19 @@ public class CompanyDao {
 	 * @param companyId the company id
 	 * @throws DatabaseConnectionException
 	 */
+	@Transactional
 	public void deleteCompanyById(Integer companyId) throws DatabaseConnectionException {
 		logger.debug("deleteCompanyById()");
-		Connection dbConnection = null;
 		try {
-			dbConnection = databaseConnection.getConnection();
-			dbConnection.setAutoCommit(false);
-			
-			computerDao.deleteComputersByCompanyId(companyId, dbConnection);
-			
-			PreparedStatement preparedStatement = dbConnection.prepareStatement(CompanyRequestEnum.DELETE_COMPANY_BY_ID.get());
-			preparedStatement.setInt(1, companyId);
-			preparedStatement.executeUpdate();
-						
-			dbConnection.commit();
-			dbConnection.setAutoCommit(true);
-			
-			preparedStatement.close();
-			dbConnection.close();
-			
-		} catch (SQLException e) {
-			logger.error("{} in {}", e, e.getStackTrace());	
-			try {
-				if (dbConnection.isValid(0)) {
-					dbConnection.rollback();
-					dbConnection.setAutoCommit(true);
-					dbConnection.close();
-				}
-			} catch (SQLException e2) {
-				logger.error("{} in {}", e2, e2.getStackTrace());	
-			}
+			SqlParameterSource requestParamsForComputers = new MapSqlParameterSource()
+					.addValue("companyId", companyId);
+			namedParameterJdbcTemplate.update(ComputerRequestEnum.DELETE_COMPUTERS_BY_COMPANY_ID.get(), requestParamsForComputers);
+			SqlParameterSource requestParamsForCompany = new MapSqlParameterSource()
+					.addValue("id", companyId);
+			namedParameterJdbcTemplate.update(CompanyRequestEnum.DELETE_COMPANY_BY_ID.get(), requestParamsForCompany);
+		
+		} catch (DataAccessException e) {
+			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
 		}
 	}
