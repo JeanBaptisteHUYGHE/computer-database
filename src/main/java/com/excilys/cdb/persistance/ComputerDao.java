@@ -2,17 +2,16 @@ package com.excilys.cdb.persistance;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.exception.dao.ComputerNotFoundException;
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
@@ -20,25 +19,20 @@ import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistance.dto.ComputerPDto;
 import com.excilys.cdb.persistance.dto.mapper.ComputerPDtoMapper;
-import com.excilys.cdb.persistance.dto.mapper.ComputerRowMapper;
 import com.excilys.cdb.persistance.enumeration.ComputerRequestEnum;
 
 @Repository
+@Transactional
 public class ComputerDao {
 	
 	private Logger logger;
-
-	private JdbcTemplate jdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private ComputerRowMapper computerRowMapper;
+	private SessionFactory sessionFactory;
 	private ComputerPDtoMapper computerPDtoMapper;
 	
-	private ComputerDao(DataSource dataSource, ComputerRowMapper computerRowMapper, ComputerPDtoMapper computerPDtoMapper) {
+	public ComputerDao(SessionFactory sessionFactory,  ComputerPDtoMapper computerPDtoMapper) {
 		logger = LoggerFactory.getLogger(ComputerDao.class);
 		
-		jdbcTemplate = new JdbcTemplate(dataSource);
-	    namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	    this.computerRowMapper = computerRowMapper;
+		this.sessionFactory = sessionFactory;
 	    this.computerPDtoMapper = computerPDtoMapper;	
 	}
 
@@ -52,10 +46,18 @@ public class ComputerDao {
 		logger.debug("getComputersListPage({})", page);
 		
 		try {
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("pageSize", page.getSize())
-					.addValue("offset", page.getSize() * page.getIndex());
-			List<Computer> computersList = namedParameterJdbcTemplate.query(ComputerRequestEnum.GET_COMPUTERS_LIST_FOR_PAGE.get(), requestParams, computerRowMapper);
+			
+			Query<ComputerPDto> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.GET_COMPUTERS_LIST_FOR_PAGE.get(),
+					ComputerPDto.class);
+			query.setFirstResult(page.getIndex() * page.getSize());
+			query.setMaxResults(page.getSize());
+			
+			List<ComputerPDto> results = query.list();
+			
+			List<Computer> computersList = results.stream()
+					.map(computerPDto -> computerPDtoMapper.fromComputerPDtoToComputer(computerPDto))
+					.collect(Collectors.toList());
 			return computersList;
 			
 		} catch (DataAccessException e) {
@@ -75,16 +77,20 @@ public class ComputerDao {
 		logger.debug("getComputersListPageForSearch({}, {})", search, page);
 		
 		try {
+			Query<ComputerPDto> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH.get(),
+					ComputerPDto.class);
 			String sqlSearch = "%" + search + "%";
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("pageSize", page.getSize())
-					.addValue("offset", page.getSize() * page.getIndex())
-					.addValue("computerNameSearch", sqlSearch)
-					.addValue("companyNameSearch", sqlSearch);
-			logger.debug("paramSource: {}",  requestParams.toString());
-
+			query.setFirstResult(page.getIndex() * page.getSize());
+			query.setMaxResults(page.getSize());
+			query.setParameter("computerNameSearch", sqlSearch);
+			query.setParameter("companyNameSearch", sqlSearch);
 			
-			List<Computer> computersList = namedParameterJdbcTemplate.query(ComputerRequestEnum.GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH.get(), requestParams, computerRowMapper);
+			List<ComputerPDto> results = query.list();
+			
+			List<Computer> computersList = results.stream()
+					.map(computerPDto -> computerPDtoMapper.fromComputerPDtoToComputer(computerPDto))
+					.collect(Collectors.toList());
 			return computersList;
 			
 		} catch (DataAccessException e) {
@@ -105,14 +111,18 @@ public class ComputerDao {
 		logger.debug("getComputerById({})", id);
 
 		try {
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("id", id);
-			List<Computer> computersList = namedParameterJdbcTemplate.query(ComputerRequestEnum.GET_COMPUTER_BY_ID.get(),  requestParams, computerRowMapper);
 			
-			if (computersList.isEmpty()) {
+			Query<ComputerPDto> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.GET_COMPUTER_BY_ID.get(),
+					ComputerPDto.class);
+			query.setParameter("id", id);
+			
+			List<ComputerPDto> computersPDtoList = query.list();
+			
+			if (computersPDtoList.isEmpty()) {
 				throw new ComputerNotFoundException();
 			}
-			return computersList.get(0);
+			return computerPDtoMapper.fromComputerPDtoToComputer(computersPDtoList.get(0));
 			
 		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
@@ -132,15 +142,17 @@ public class ComputerDao {
 		ComputerPDto computerPDto = computerPDtoMapper.fromComputerToComputerPDto(computer);
 		
 		try {
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("id", computerPDto.getId())
-					.addValue("name", computerPDto.getName())
-					.addValue("introductionDate", computerPDto.getIntroductionDate())
-					.addValue("discontinueDate", computerPDto.getDiscontinueDate())
-					.addValue("companyId", computerPDto.getCompanyId());
+			Query<?> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.UPDATE_COMPUTER_BY_ID.get());
 			
-			namedParameterJdbcTemplate.update(ComputerRequestEnum.UPDATE_COMPUTER_BY_ID.get(), requestParams);
+			query.setParameter("id", computerPDto.getId());
+			query.setParameter("name", computerPDto.getName());
+			query.setParameter("introductionDate", computerPDto.getIntroductionDate());
+			query.setParameter("discontinueDate", computerPDto.getDiscontinueDate());
+			query.setParameter("companyPDto", computerPDto.getCompanyPDto());
 			
+			query.executeUpdate();
+						
 		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
@@ -159,14 +171,8 @@ public class ComputerDao {
 		ComputerPDto computerPDto = computerPDtoMapper.fromComputerToComputerPDto(computer);
 
 		try {
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("name", computerPDto.getName())
-					.addValue("introductionDate", computerPDto.getIntroductionDate())
-					.addValue("discontinueDate", computerPDto.getDiscontinueDate())
-					.addValue("companyId", computerPDto.getCompanyId());
-			
-			namedParameterJdbcTemplate.update(ComputerRequestEnum.ADD_COMPUTER.get(), requestParams);
-			
+			sessionFactory.getCurrentSession().save(computerPDto);
+						
 		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
@@ -183,11 +189,15 @@ public class ComputerDao {
 		logger.debug("deleteComputerById({})", id);
 		
 		try {
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("id", id);
 			
-			namedParameterJdbcTemplate.update(ComputerRequestEnum.DELETE_COMPUTER_BY_ID.get(), requestParams);
+			Query<?> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.DELETE_COMPUTER_BY_ID.get());
 			
+			query.setParameter("id", id);
+
+			
+			query.executeUpdate();
+						
 		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
@@ -203,8 +213,13 @@ public class ComputerDao {
 		logger.debug("getComputersCount()");
 		
 		try {
-			return jdbcTemplate.queryForObject(ComputerRequestEnum.GET_COMPUTERS_COUNT.get(), Integer.class);
-		
+			
+			Query<Long> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.GET_COMPUTERS_COUNT.get(),
+					Long.class);
+						
+			return query.uniqueResult().intValue();
+					
 		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();
@@ -218,16 +233,18 @@ public class ComputerDao {
 	 * @throws DatabaseConnectionException
 	 */
 	public Integer getComputersCountForSearch(String search) throws DatabaseConnectionException {
-		logger.debug("getComputersCountForSearch()");
+		logger.debug("getComputersCountForSearch({})", search);
 		
 		try {
 			String sqlSearch = "%" + search + "%";
-			SqlParameterSource requestParams = new MapSqlParameterSource()
-					.addValue("computerNameSearch", "%" + sqlSearch)
-					.addValue("companyNameSearch", sqlSearch);
-
-			return namedParameterJdbcTemplate.queryForObject(ComputerRequestEnum.GET_COMPUTERS_COUNT_FOR_SEARCH.get(), requestParams, Integer.class);
-		
+			Query<Long> query = sessionFactory.getCurrentSession().createQuery(
+					ComputerRequestEnum.GET_COMPUTERS_COUNT_FOR_SEARCH.get(),
+					Long.class);
+			query.setParameter("computerNameSearch", sqlSearch);
+			query.setParameter("companyNameSearch", sqlSearch);
+						
+			return query.uniqueResult().intValue();
+			
 		} catch (DataAccessException e) {
 			logger.error("{} in {}", e, e.getStackTrace());
 			throw new DatabaseConnectionException();

@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.excilys.cdb.exception.dao.DatabaseConnectionException;
 import com.zaxxer.hikari.HikariConfig;
@@ -15,6 +18,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;
 
 @Configuration
+@EnableTransactionManagement
 @PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = { 
 		"com.excilys.cdb.cli",
@@ -25,6 +29,7 @@ import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;
 public class SpringCliConfig {
 
 	private static final String DATABASE_PROPERTIES_FILE_PATH = "/database.properties";
+	private static final String HIBERNATE_PACKAGE_SCAN = "com.excilys.cdb.persistance.dto";
 
 	private Logger logger;
 
@@ -46,4 +51,20 @@ public class SpringCliConfig {
 			throw new DatabaseConnectionException();
 		}
 	}
+	
+	@Bean
+    public LocalSessionFactoryBean getSessionFactory() throws DatabaseConnectionException {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(getDataSource());
+        //sessionFactory.setAnnotatedPackages(HIBERNATE_PACKAGE_SCAN);
+        sessionFactory.setPackagesToScan(HIBERNATE_PACKAGE_SCAN);
+        return sessionFactory;
+    }
+	
+	@Bean
+    public HibernateTransactionManager getTransactionManager() throws DatabaseConnectionException {
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        transactionManager.setSessionFactory(getSessionFactory().getObject());
+        return transactionManager;
+    }
 }

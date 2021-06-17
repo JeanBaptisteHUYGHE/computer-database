@@ -17,11 +17,12 @@ $('form').submit(function() {
 	
 		if( (Date.parse(introductionDate) > Date.parse(discontinueDate))) {
 			$('#discontinueDate').val("");
+			
+			alert("⚠️ Date 1 > date 2");
+			
 			return false;
 		}
 	}
 	
-	alert("test");
-
     return true;
 });

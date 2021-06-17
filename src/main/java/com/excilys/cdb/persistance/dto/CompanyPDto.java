@@ -1,17 +1,37 @@
 package com.excilys.cdb.persistance.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name = "company")
 public class CompanyPDto {
 
-	private String id;
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	private Integer id;
+	
 	private String name;
+	
+	@OneToMany(targetEntity = ComputerPDto.class, mappedBy = "companyPDto")
+	private List<ComputerPDto> computersPDtoList = new ArrayList<>();;
 	
 	private CompanyPDto() { }
 	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
@@ -29,15 +49,11 @@ public class CompanyPDto {
 	
 	public static class CompanyPDtoBuilder {
 		
-		private String id;
+		private Integer id;
 		private String name;
 				
-		public CompanyPDtoBuilder withId(String id) {
-			if (id != null && id.isBlank()) {
-				this.id = null;
-			} else {
-				this.id = id;
-			}
+		public CompanyPDtoBuilder withId(Integer id) {
+			this.id = id;
 			return this;
 		}
 		

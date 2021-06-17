@@ -3,49 +3,43 @@ package com.excilys.cdb.persistance.enumeration;
 public enum ComputerRequestEnum {
 
 	GET_COMPUTERS_LIST_FOR_PAGE(
-			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "ORDER BY computer.id "
-			+ "LIMIT :pageSize OFFSET :offset"),
+			"FROM ComputerPDto"),
 
 	GET_COMPUTERS_LIST_BY_PAGE_FOR_SEARCH(
-			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.name LIKE :computerNameSearch or company.name LIKE :companyNameSearch "
-			+ "ORDER BY computer.id "
-			+ "LIMIT :pageSize OFFSET :offset"),
+			"SELECT computerPDto "
+			+ "FROM ComputerPDto as computerPDto LEFT OUTER JOIN computerPDto.companyPDto as companyPDto "
+			+ "WHERE computerPDto.name LIKE :computerNameSearch or companyPDto.name LIKE :companyNameSearch "
+			+ "ORDER BY computerPDto.id"),
 	
 	GET_COMPUTER_BY_ID(
-			"SELECT computer.id as id, computer.name as name, introduced, discontinued, company_id, company.name as company_name "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.id = :id"),
+			"FROM ComputerPDto as computerPDto "
+			+ "WHERE computerPDto.id = :id"),
 	
 	UPDATE_COMPUTER_BY_ID(
-			"UPDATE computer "
-			+ "SET name = :name, introduced = :introductionDate, discontinued = :discontinueDate, company_id = :companyId "
-			+ "WHERE id = :id"),
-	
-	ADD_COMPUTER(
-			"INSERT INTO computer (name, introduced, discontinued, company_id) "
-			+ "VALUES (:name, :introductionDate, :discontinueDate, :companyId)"),
+			"UPDATE ComputerPDto as computerPDto "
+			+ "SET computerPDto.name = :name, "
+				+ "computerPDto.introductionDate = :introductionDate, "
+				+ "computerPDto.discontinueDate = :discontinueDate, "
+				+ "computerPDto.companyPDto = :companyPDto "
+			+ "WHERE computerPDto.id = :id"),
 	
 	DELETE_COMPUTER_BY_ID(
-			"DELETE FROM computer "
-			+ "WHERE id = :id"),
+			"DELETE FROM ComputerPDto as computerPDto "
+			+ "WHERE computerPDto.id = :id"),
 	
 	DELETE_COMPUTERS_BY_COMPANY_ID(
 			"DELETE FROM computer "
 			+ "WHERE company_id = :companyId"),
 	
 	GET_COMPUTERS_COUNT(
-			"SELECT count(id) "
-			+ "FROM computer"),
+			"SELECT count(computerPDto.id) "
+			+ "FROM ComputerPDto as computerPDto"),
 	
 	GET_COMPUTERS_COUNT_FOR_SEARCH(
-			"SELECT count(computer.id) "
-			+ "FROM computer LEFT JOIN company ON computer.company_id = company.id "
-			+ "WHERE computer.name LIKE :computerNameSearch or company.name LIKE :companyNameSearch "
-			+ "ORDER BY computer.id");
+			"SELECT count(computerPDto.id) "
+			+ "FROM ComputerPDto as computerPDto LEFT OUTER JOIN computerPDto.companyPDto as companyPDto "
+			+ "WHERE computerPDto.name LIKE :computerNameSearch or companyPDto.name LIKE :companyNameSearch "
+			+ "ORDER BY computerPDto.id");
 	
 	private final String request;
 	

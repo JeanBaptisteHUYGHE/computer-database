@@ -19,7 +19,7 @@ public class CompanyPDtoMapper {
 	
 	public CompanyPDto fromCompanyToCompanyPDto(Company company) {
 		CompanyPDtoBuilder companyPDtoBuilder = new CompanyPDtoBuilder();
-		companyPDtoBuilder.withId(company.getId().toString());
+		companyPDtoBuilder.withId(company.getId());
 		companyPDtoBuilder.withName(company.getName());
 		return companyPDtoBuilder.build();
 	}

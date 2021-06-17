@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -34,6 +36,7 @@ public class SpringWebConfig extends AbstractAnnotationConfigDispatcherServletIn
 
 	private static final String DATABASE_PROPERTIES_FILE_PATH = "database.properties";
 	private static final String LANGUAGE_PATH_AND_NAME = "lang/messages";
+	private static final String HIBERNATE_PACKAGE_SCAN = "com.excilys.cdb.persistance";
 
 	private Logger logger;
 
@@ -86,6 +89,21 @@ public class SpringWebConfig extends AbstractAnnotationConfigDispatcherServletIn
 	    messageSource.setDefaultEncoding("UTF-8");
 	    return messageSource;
 	}
+	
+	@Bean
+    public LocalSessionFactoryBean getSessionFactory() throws DatabaseConnectionException {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(getDataSource());
+        sessionFactory.setPackagesToScan(HIBERNATE_PACKAGE_SCAN);
+        return sessionFactory;
+    }
+	
+	@Bean
+    public HibernateTransactionManager getTransactionManager() throws DatabaseConnectionException {
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        transactionManager.setSessionFactory(getSessionFactory().getObject());
+        return transactionManager;
+    }
 	
 	@Bean
 	public LocaleResolver localeResolver() {

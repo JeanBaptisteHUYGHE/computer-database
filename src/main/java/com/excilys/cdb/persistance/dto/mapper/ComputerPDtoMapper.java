@@ -2,13 +2,14 @@ package com.excilys.cdb.persistance.dto.mapper;
 
 import com.excilys.cdb.model.Company.CompanyBuilder;
 
+import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Computer.ComputerBuilder;
+import com.excilys.cdb.persistance.dto.CompanyPDto.CompanyPDtoBuilder;
 import com.excilys.cdb.persistance.dto.ComputerPDto;
 import com.excilys.cdb.persistance.dto.ComputerPDto.ComputerPDtoBuilder;
 
@@ -24,28 +25,30 @@ public class ComputerPDtoMapper {
 		}
 		computerBuilder.withName(computerPDto.getName());
 		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/d");
+
 		LocalDate introductionDate = null;
-		if (computerPDto.getIntroductionDate() != null && computerPDto.getIntroductionDate().length() > 0) {
-			introductionDate = LocalDate.parse(computerPDto.getIntroductionDate(), formatter);
+		if (computerPDto.getIntroductionDate() != null) {
+			introductionDate = computerPDto.getIntroductionDate().toLocalDate();
 		}
 		computerBuilder.withIntroductionDate(introductionDate);
 		
 		LocalDate discontinueDate = null;
-		if (computerPDto.getDiscontinueDate() != null && computerPDto.getDiscontinueDate().length() > 0) {
-			discontinueDate = LocalDate.parse(computerPDto.getDiscontinueDate(), formatter);
+		if (computerPDto.getDiscontinueDate() != null) {
+			discontinueDate = computerPDto.getDiscontinueDate().toLocalDate();
+
 		}
 		computerBuilder.withDiscontinueDate(discontinueDate);
 		
-		
-		if (computerPDto.getCompanyId() != null || computerPDto.getCompanyName() != null) {
+		if (computerPDto.getCompanyPDto() != null) {
 			CompanyBuilder companyBuilder = new CompanyBuilder();
-			if (computerPDto.getCompanyId() != null) {
-				companyBuilder.withId(Integer.valueOf(computerPDto.getCompanyId()));
+			if (computerPDto.getCompanyPDto().getId() != null) {
+				companyBuilder.withId(Integer.valueOf(computerPDto.getCompanyPDto().getId()));
 			}
-			companyBuilder.withName(computerPDto.getCompanyName());
+			companyBuilder.withName(computerPDto.getCompanyPDto().getName());
+			
 			computerBuilder.withCompany(companyBuilder.build());
 		}
+		
 		return computerBuilder.build();		
 	}
 	
@@ -53,20 +56,23 @@ public class ComputerPDtoMapper {
 		ComputerPDtoBuilder computerPDtoBuilder = new ComputerPDtoBuilder();
 		
 		if (computer.getId().isPresent()) {
-			computerPDtoBuilder.withId(computer.getId().get().toString());
+			computerPDtoBuilder.withId(computer.getId().get());
 		}
 		computerPDtoBuilder.withName(computer.getName());
 		if (computer.getIntroductionDate().isPresent()) {
-			computerPDtoBuilder.withIntroductionDate(computer.getIntroductionDate().get().toString());
+			computerPDtoBuilder.withIntroductionDate(Date.valueOf(computer.getIntroductionDate().get().toString()));
 		}
 		
 		if (computer.getDiscontinueDate().isPresent()) {
-			computerPDtoBuilder.withDiscontinueDate(computer.getDiscontinueDate().get().toString());
+			computerPDtoBuilder.withDiscontinueDate(Date.valueOf(computer.getDiscontinueDate().get().toString()));
 		}
 		
+		
 		if (computer.getCompany().isPresent()) {
-			computerPDtoBuilder.withCompanyId(computer.getCompany().get().getId().toString());
-			computerPDtoBuilder.withCompanyName(computer.getCompany().get().getName());
+			CompanyPDtoBuilder companyPDtoBuilder = new CompanyPDtoBuilder();
+			companyPDtoBuilder.withId(computer.getCompany().get().getId());
+			companyPDtoBuilder.withName(computer.getCompany().get().getName());
+			computerPDtoBuilder.withCompany(companyPDtoBuilder.build());
 		}
 		
 		return computerPDtoBuilder.build();

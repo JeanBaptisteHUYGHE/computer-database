@@ -3,28 +3,19 @@ package com.excilys.cdb.persistance.enumeration;
 public enum CompanyRequestEnum {
 	
 	GET_ALL_COMPANIES(
-			"SELECT id, name "
-			+ "FROM company "
-			+ "ORDER BY name"),
-	
-	GET_ALL_COMPANIES_FOR_PAGE(
-			"SELECT id, name "
-			+ "FROM company "
-			+ "ORDER BY name "
-			+ "LIMIT :pageSize OFFSET :offset"),
-	
+			"FROM CompanyPDto"),
+
 	GET_COMPANY_BY_ID(
-			"SELECT id, name "
-			+ "FROM company "
-			+ "WHERE id = :id"),
+			"FROM CompanyPDto as companyPDto "
+			+ "WHERE companyPDto.id = :id"),
 	
 	GET_COMPANIES_COUNT(
-			"SELECT count(id) "
-			+ "FROM company"),
+			"SELECT count(companyPDto.id) "
+			+ "FROM CompanyPDto as companyPDto"),
 	
 	DELETE_COMPANY_BY_ID(
-			"DELETE FROM company "
-			+ "WHERE id = :id");
+			"DELETE FROM CompanyPDto as companyPDto "
+			+ "WHERE companyPDto.id = :id");
 	
 	private final String request;
 	

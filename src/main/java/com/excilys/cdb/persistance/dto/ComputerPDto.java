@@ -1,21 +1,46 @@
 package com.excilys.cdb.persistance.dto;
 
+import java.sql.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name = "computer")
 public class ComputerPDto {
 
-	private String id;
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	private Integer id;
+	
 	private String name;
-	private String introductionDate;
-	private String discontinueDate;
-	private String companyName;
-	private String companyId;
+	
+	@Column(name = "introduced")
+	private Date introductionDate;
+	
+	@Column(name = "discontinued")
+	private Date discontinueDate;
+	
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	private CompanyPDto companyPDto;	
+	
 	
 	private ComputerPDto() { }
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -27,59 +52,46 @@ public class ComputerPDto {
 		this.name = name;
 	}
 
-	public String getIntroductionDate() {
+	public Date getIntroductionDate() {
 		return introductionDate;
 	}
 
-	public void setIntroductionDate(String introductionDate) {
+	public void setIntroductionDate(Date introductionDate) {
 		this.introductionDate = introductionDate;
 	}
 
-	public String getDiscontinueDate() {
+	public Date getDiscontinueDate() {
 		return discontinueDate;
 	}
 
-	public void setDiscontinueDate(String discontinueDate) {
+	public void setDiscontinueDate(Date discontinueDate) {
 		this.discontinueDate = discontinueDate;
 	}
 	
-	public String getCompanyName() {
-		return companyName;
+	public CompanyPDto getCompanyPDto() {
+		return companyPDto;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setCompanyPDto(CompanyPDto companyPDto) {
+		this.companyPDto = companyPDto;
 	}
 
-	public String getCompanyId() {
-		return companyId;
-	}
-
-	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
-	}
-	
 	public String toString() {
-		return String.format("<ComputerPDto; id: %s, name:%s, introductionDate: %s, discontinueDate: %s, companyName: %s, companyId: %s>",
-				id, name, introductionDate, discontinueDate, companyName, companyId);
+		return String.format("<ComputerPDto; id: %s, name:%s, introductionDate: %s, discontinueDate: %s, company: %s>",
+				id, name, introductionDate, discontinueDate, companyPDto);
 	}
 
 
 	public static class ComputerPDtoBuilder {
 		
-		private String id;
+		private Integer id;
 		private String name;
-		private String introductionDate;
-		private String discontinueDate;
-		private String companyName;
-		private String companyId;
+		private Date introductionDate;
+		private Date discontinueDate;
+		private CompanyPDto companyPDto;
 				
-		public ComputerPDtoBuilder withId(String id) {
-			if (id != null && id.isBlank()) {
-				this.id = null;
-			} else {
-				this.id = id;
-			}
+		public ComputerPDtoBuilder withId(Integer id) {
+			this.id = id;
 			return this;
 		}
 		
@@ -92,39 +104,18 @@ public class ComputerPDto {
 			return this;
 		}
 		
-		public ComputerPDtoBuilder withIntroductionDate(String introductionDate) {
-			if (introductionDate != null && introductionDate.isBlank()) {
-				this.introductionDate = null;
-			} else {
-				this.introductionDate = introductionDate;
-			}
+		public ComputerPDtoBuilder withIntroductionDate(Date introductionDate) {
+			this.introductionDate = introductionDate;
 			return this;
 		}
 		
-		public ComputerPDtoBuilder withDiscontinueDate(String discontinueDate) {
-			if (discontinueDate != null && discontinueDate.isBlank()) {
-				this.discontinueDate = null;
-			} else {
-				this.discontinueDate = discontinueDate;
-			}
+		public ComputerPDtoBuilder withDiscontinueDate(Date discontinueDate) {
+			this.discontinueDate = discontinueDate;
 			return this;
 		}
 		
-		public ComputerPDtoBuilder withCompanyName(String companyName) {
-			if (companyName != null && companyName.isBlank()) {
-				this.companyName = null;
-			} else {
-				this.companyName = companyName;
-			}
-			return this;
-		}
-		
-		public ComputerPDtoBuilder withCompanyId(String companyId) {
-			if (companyId != null && companyId.isBlank()) {
-				this.companyId = null;
-			} else {
-				this.companyId = companyId;
-			}
+		public ComputerPDtoBuilder withCompany(CompanyPDto companyPDto) {
+			this.companyPDto = companyPDto;
 			return this;
 		}
 		
@@ -134,8 +125,7 @@ public class ComputerPDto {
 			computerPDto.setName(name);
 			computerPDto.setIntroductionDate(introductionDate);
 			computerPDto.setDiscontinueDate(discontinueDate);
-			computerPDto.setCompanyName(companyName);
-			computerPDto.setCompanyId(companyId);
+			computerPDto.setCompanyPDto(companyPDto);
 			return computerPDto;
 		}
 	}
