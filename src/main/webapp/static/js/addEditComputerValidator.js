@@ -15,9 +15,7 @@ $('form').submit(function() {
 	
 	if (introductionDate && discontinueDate) {
 	
-		if( (Date.parse(introductionDate) > Date.parse(discontinueDate))) {
-			$('#discontinueDate').val("");
-			
+		if( (Date.parse(introductionDate) > Date.parse(discontinueDate))) {			
 			alert("⚠️ Date 1 > date 2");
 			
 			return false;
