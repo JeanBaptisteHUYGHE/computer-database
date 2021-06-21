@@ -16,7 +16,7 @@ insert into company (id,name) values ( 15,'Canon');
 insert into company (id,name) values ( 16,'Nokia');
 insert into company (id,name) values ( 17,'Sony');
 insert into company (id,name) values ( 18,'OQO');
-insert into company (id,name) values ( 19,'NeXT');    
+insert into company (id,name) values ( 19,'NeXT');
 insert into company (id,name) values ( 20,'Atari');
 insert into company (id,name) values ( 22,'Acorn computer');
 insert into company (id,name) values ( 23,'Timex Sinclair');
@@ -28,7 +28,7 @@ insert into company (id,name) values ( 28,'Zemmix');
 insert into company (id,name) values ( 29,'ACVS');
 insert into company (id,name) values ( 30,'Sanyo');
 insert into company (id,name) values ( 31,'Cray');
-insert into company (id,name) values ( 32,'Evans & Sutherland');    
+insert into company (id,name) values ( 32,'Evans & Sutherland');
 insert into company (id,name) values ( 33,'E.S.R. Inc.');
 insert into company (id,name) values ( 34,'OMRON');
 insert into company (id,name) values ( 35,'BBN Technologies');
@@ -615,3 +615,6 @@ insert into computer (id,name,introduced,discontinued,company_id) values (571,'L
 insert into computer (id,name,introduced,discontinued,company_id) values (572,'Dell Vostro',null,null,null);
 insert into computer (id,name,introduced,discontinued,company_id) values (573,'Gateway LT3103U','2008-01-01',null,null);
 insert into computer (id,name,introduced,discontinued,company_id) values (574,'iPhone 4S','2011-10-14',null,1);
+
+insert into user (login, password, name, role) values ('admin', 'admin', 'Administrator', 'admin');
+insert into user (login, password, name, role) values ('user', 'user', 'User', 'user');
