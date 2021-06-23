@@ -15,10 +15,7 @@ import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;
 
 @Configuration
 @ComponentScan(basePackages = { 
-		"com.excilys.cdb.cli",
-		"com.excilys.cdb.dto",
 		"com.excilys.cdb.persistence",
-		"com.excilys.cdb.service"
 		})
 public class SpringTestConfig {
 

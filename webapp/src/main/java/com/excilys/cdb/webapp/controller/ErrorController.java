@@ -1,4 +1,4 @@
-package com.excilys.cdb.webapp;
+package com.excilys.cdb.webapp.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +38,7 @@ public class ErrorController {
         model.addAttribute("errorCode", errorCode);
         model.addAttribute("errorMessage", errorMessage);
 
-        return "/WEB-INF/jsp/error.jsp";
+        return "error";
     }
 	
 	/**

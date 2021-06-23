@@ -1,4 +1,4 @@
-package com.excilys.cdb.webapp;
+package com.excilys.cdb.webapp.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +65,7 @@ public class DashboardController {
 		model.addAttribute("computersCount", computersCount);
 		model.addAttribute("page", page);
 
-		return "/WEB-INF/jsp/dashboard.jsp";
+		return "dashboard";
 	}
 	
 	@PostMapping

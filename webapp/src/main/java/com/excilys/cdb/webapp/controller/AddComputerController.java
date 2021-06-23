@@ -1,4 +1,4 @@
-package com.excilys.cdb.webapp;
+package com.excilys.cdb.webapp.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class AddComputerController {
 		model.addAttribute("errorsList", errorsList);
 		model.addAttribute("companiesDtoList", companiesDtoList);
 		
-		return "/WEB-INF/jsp/addComputer.jsp";
+		return "addComputer";
 	}
 	
 	@PostMapping

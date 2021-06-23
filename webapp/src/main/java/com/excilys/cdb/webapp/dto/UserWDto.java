@@ -1,34 +1,17 @@
-package com.excilys.cdb.persistence.dto;
+package com.excilys.cdb.webapp.dto;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+public class UserWDto {
 
-import org.hibernate.annotations.GenericGenerator;
-
-
-@Entity
-@Table(name = "user")
-public class UserPDto {
-
-	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
 	private Integer id;
-	
 	private String name;
 	private String login;
 	private String password;
 	private String role;
-	
-	@Column(name = "active")
 	private boolean isActive;
 	
 	
-	private UserPDto() { }
+	private UserWDto() { }
 	
 	
 	public Integer getId() {
@@ -80,11 +63,11 @@ public class UserPDto {
 	}
 
 	public String toString() {
-		return String.format("<UserPDto; id: %s, name: %s, login: %s, password: %s, role: %s, active: %s>",
+		return String.format("<UserWDto; id: %s, name: %s, login: %s, password: %s, role: %s, active: %s>",
 				id, name, login, password, role, isActive);
 	}
 	
-	public static class UserPDtoBuilder {
+	public static class UserWDtoBuilder {
 		
 		private Integer id;
 		private String name;
@@ -93,47 +76,47 @@ public class UserPDto {
 		private String role;
 		private boolean isActive;
 
-		public UserPDtoBuilder() { }
+		public UserWDtoBuilder() { }
 		
-		public UserPDtoBuilder withId(Integer id) {
+		public UserWDtoBuilder withId(Integer id) {
 			this.id = id;
 			return this;
 		}
 		
-		public UserPDtoBuilder withName(String name) {
+		public UserWDtoBuilder withName(String name) {
 			this.name = name;
 			return this;
 		}
 		
-		public UserPDtoBuilder withLogin(String login) {
+		public UserWDtoBuilder withLogin(String login) {
 			this.login = login;
 			return this;
 		}
 		
-		public UserPDtoBuilder withPassword(String password) {
+		public UserWDtoBuilder withPassword(String password) {
 			this.password = password;
 			return this;
 		}
 		
-		public UserPDtoBuilder withRole(String role) {
+		public UserWDtoBuilder withRole(String role) {
 			this.role = role;
 			return this;
 		}
 		
-		public UserPDtoBuilder withActive(boolean isActive) {
+		public UserWDtoBuilder withActive(boolean isActive) {
 			this.isActive = isActive;
 			return this;
 		}
 		
-		public UserPDto build() {
-			UserPDto user = new UserPDto();
-			user.setId(id);
-			user.setName(name);
-			user.setLogin(login);
-			user.setPassword(password);
-			user.setRole(role);
-			user.setActive(isActive);
-			return user;
+		public UserWDto build() {
+			UserWDto userWDto = new UserWDto();
+			userWDto.setId(id);
+			userWDto.setName(name);
+			userWDto.setLogin(login);
+			userWDto.setPassword(password);
+			userWDto.setRole(role);
+			userWDto.setActive(isActive);
+			return userWDto;
 		}
 	}
 }
