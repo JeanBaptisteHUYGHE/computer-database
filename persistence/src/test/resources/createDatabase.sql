@@ -1,5 +1,6 @@
 drop table if exists computer;
 drop table if exists company;
+drop table if exists user;
 
 create table company (
 	id bigint not null auto_increment,
@@ -22,8 +23,7 @@ create table company (
 		password                  varchar(255),
 		name                      varchar(255),
 		role                      enum('admin', 'user') default 'user',
-		active                    boolean default 1,
-		constraint pk_computer primary key (id)
+		active                    boolean default 1
 	);
 
   alter table computer add constraint fk_computer_company_1 foreign key (company_id) references company (id) on delete restrict on update restrict;
