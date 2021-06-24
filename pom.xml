@@ -19,7 +19,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		
+
 		<spring.version>5.3.8</spring.version>
 		<spring-security.version>5.5.1</spring-security.version>
 	</properties>
@@ -56,7 +56,7 @@
 
 		<pluginManagement>
 
-			<!-- lock down plugins versions to avoid using Maven defaults (may be 
+			<!-- lock down plugins versions to avoid using Maven defaults (may be
 				moved to parent pom) -->
 			<plugins>
 
@@ -76,7 +76,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.0</version>
 				</plugin>
-				
+
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.1</version>
@@ -102,7 +102,7 @@
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.7.1</version>
 				</plugin>
-				
+
 				<plugin>
 					<artifactId>maven-project-info-reports-plugin</artifactId>
 					<version>3.0.0</version>
@@ -117,6 +117,7 @@
 		<module>console</module>
 		<module>persistence</module>
 		<module>service</module>
+		<module>restapi</module>
 	</modules>
 
 	<reporting>

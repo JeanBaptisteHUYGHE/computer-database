@@ -43,7 +43,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		logger.debug("SpringSecurityConfig.configure(): http");
 				
 		http.authorizeRequests()
-			//.mvcMatchers("/addComputer").hasAuthority("admin")
+			.mvcMatchers("/addComputer").hasAuthority("admin")
 			.mvcMatchers("/login", "/logout", "/static/**").permitAll()
 			.anyRequest().authenticated();
 		

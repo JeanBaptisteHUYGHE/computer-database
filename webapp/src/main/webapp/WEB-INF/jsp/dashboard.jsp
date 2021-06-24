@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -25,14 +26,17 @@
 							class="btn btn-primary" />
 					</form>
 				</div>
-				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="addComputer">
-						<spring:message code="label.dashboard.button.addComputer"/>
-					</a>
-					<a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">
-						<spring:message code="label.dashboard.button.edit"/>
-					</a>
-				</div>
+				<%-- Administrator buttons --%>
+				<security:authorize access="hasAuthority('admin')">
+					<div class="pull-right">
+						<a class="btn btn-success" id="addComputer" href="addComputer">
+							<spring:message code="label.dashboard.button.addComputer"/>
+						</a>
+						<a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">
+							<spring:message code="label.dashboard.button.edit"/>
+						</a>
+					</div>
+				</security:authorize>
 			</div>
 		</div>
 		
